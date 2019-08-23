@@ -39,6 +39,12 @@ public static class HexMetrics {
 
 	public const int chunkSizeX = 5, chunkSizeZ = 5;
 
+	public const int hashGridSize = 256;
+
+	public const float hashGridScale = 0.25f;
+
+	static HexHash[] hashGrid;
+
 	static Vector3[] corners = {
 		new Vector3(0f, 0f, outerRadius),
 		new Vector3(innerRadius, 0f, 0.5f * outerRadius),
@@ -56,6 +62,28 @@ public static class HexMetrics {
 			position.x * noiseScale,
 			position.z * noiseScale
 		);
+	}
+
+	public static void InitializeHashGrid (int seed) {
+		hashGrid = new HexHash[hashGridSize * hashGridSize];
+		Random.State currentState = Random.state;
+		Random.InitState(seed);
+		for (int i = 0; i < hashGrid.Length; i++) {
+			hashGrid[i] = HexHash.Create();
+		}
+		Random.state = currentState;
+	}
+
+	public static HexHash SampleHashGrid (Vector3 position) {
+		int x = (int)(position.x * hashGridScale) % hashGridSize;
+		if (x < 0) {
+			x += hashGridSize;
+		}
+		int z = (int)(position.z * hashGridScale) % hashGridSize;
+		if (z < 0) {
+			z += hashGridSize;
+		}
+		return hashGrid[x + z * hashGridSize];
 	}
 
 	public static Vector3 GetFirstCorner (HexDirection direction) {

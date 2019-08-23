@@ -8,6 +8,8 @@ public class HexCell : MonoBehaviour {
 
 	public HexGridChunk chunk;
 
+    int featureLevel;
+
 	public Color Color {
 		get {
 			return color;
@@ -52,6 +54,22 @@ public class HexCell : MonoBehaviour {
 			Refresh();
 		}
 	}
+
+    public int FeatureLevel
+    {
+        get
+        {
+            return featureLevel;
+        }
+        set
+        {
+            if (featureLevel != value)
+            {
+                featureLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
 
 	public int WaterLevel {
 		get {
