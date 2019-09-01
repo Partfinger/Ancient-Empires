@@ -38,14 +38,14 @@ public class HexMapEditor : MonoBehaviour {
 		}
 	}
 
-    public void SetApplyFeature(bool toggle)
-    {
-        applyFeature = toggle;
-    }
-
     public void SetActiveFeature(int num)
     {
         activeFeature = num;
+    }
+
+    public void SetApplyFeature(bool toggle)
+    {
+        applyFeature = toggle;
     }
 
     public void SetActiveFeatureLevel(float level)
@@ -163,6 +163,7 @@ public class HexMapEditor : MonoBehaviour {
             if (applyFeature)
             {
                 cell.FeatureLevel = activeFeatureLevel;
+                cell.ActiveFeature = activeFeature;
             }
 			if (riverMode == OptionalToggle.No) {
 				cell.RemoveRiver();

@@ -43,8 +43,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7980a4cbe74644514bcd19be773f45c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  featurePrefab: {fileID: 8627972561475793570, guid: e342e614686392747a1c00b8dc518ce3,
-    type: 3}
+  hexFeatureCollection:
+  - prefabs:
+    - {fileID: 6817357047447220664, guid: e342e614686392747a1c00b8dc518ce3, type: 3}
+  - prefabs:
+    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+  - prefabs:
+    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
 --- !u!1 &1000010636493760
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class HexBuilding : MonoBehaviour, IHexFeature
+public abstract class HexBuilding : HexFeature
 {
-    [SerializeField]
-    protected Buff buff;
-
     [SerializeField]
     protected bool isCaption;
 
     [SerializeField]
     protected int owner;
 
-    public Buff Buff { get { return buff; } }
     public bool IsCaption { get { return IsCaption; } }
     public int Owner
     {
@@ -27,12 +23,12 @@ public abstract class HexBuilding : MonoBehaviour, IHexFeature
         }
     }
 
-    public void Click()
+    public override void Click()
     {
         return;
     }
 
-    public void UnitAction(Unit unit)
+    public override void UnitAction(Unit unit)
     {
         if (true && isCaption)
         {

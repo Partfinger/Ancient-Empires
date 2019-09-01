@@ -2,7 +2,7 @@
 
 public class HexFeatureManager : MonoBehaviour {
 
-	public Transform featurePrefab;
+	public HexFeatureCollection[] hexFeatureCollection;
 
 	Transform container;
 
@@ -21,7 +21,7 @@ public class HexFeatureManager : MonoBehaviour {
 		if (hash.a >= cell.FeatureLevel / 6f) {
 			return;
 		}
-		Transform instance = Instantiate(featurePrefab);
+		Transform instance = Instantiate(hexFeatureCollection[cell.ActiveFeature].Pick(hash.с).transform);
 		instance.localPosition = HexMetrics.Perturb(position);
 		instance.localRotation = Quaternion.Euler(-90f, 360f * hash.b, 0f);
 		instance.SetParent(container, false);
