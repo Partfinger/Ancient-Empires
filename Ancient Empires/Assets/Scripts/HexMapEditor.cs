@@ -8,6 +8,8 @@ public class HexMapEditor : MonoBehaviour {
 	public HexGrid hexGrid;
 
 	int activeElevation;
+	int activeWaterLevel;
+    byte activeFeatureLevel = 1, activeFeature, activeBuildingLevel = 0, activeBuilding;
 
 	Color activeColor;
 
@@ -15,8 +17,11 @@ public class HexMapEditor : MonoBehaviour {
 
 	bool applyColor;
 	bool applyElevation = true;
+	bool applyWaterLevel = true;
+    bool applyFeature = false;
+    bool applyBuilding = false;
 
-	enum OptionalToggle {
+    enum OptionalToggle {
 		Ignore, Yes, No
 	}
 
@@ -33,12 +38,49 @@ public class HexMapEditor : MonoBehaviour {
 		}
 	}
 
-	public void SetApplyElevation (bool toggle) {
+    public void SetActiveFeature(int num)
+    {
+        activeFeature = (byte)num;
+    }
+
+    public void SetActiveBuilding(int num)
+    {
+        activeBuilding = (byte)num;
+    }
+
+    public void SetApplyFeature(bool toggle)
+    {
+        applyFeature = toggle;
+    }
+
+    public void SetApplyBuilding(bool toggle)
+    {
+        applyBuilding = toggle;
+    }
+
+    public void SetActiveFeatureLevel(float level)
+    {
+        activeFeatureLevel = (byte)level;
+    }
+
+    public void SetActiveBuildingLevel(float level)
+    {
+        activeBuildingLevel = (byte)level;
+    }
+
+    public void SetApplyElevation (bool toggle) {
 		applyElevation = toggle;
 	}
 
 	public void SetElevation (float elevation) {
 		activeElevation = (int)elevation;
+	}
+
+	public void SetApplyWaterLevel (bool toggle) {
+		applyWaterLevel = toggle;
+	}
+	public void SetWaterLevel (float level) {
+		activeWaterLevel = (int)level;
 	}
 
 	public void SetBrushSize (float size) {
@@ -130,7 +172,28 @@ public class HexMapEditor : MonoBehaviour {
 			if (applyElevation) {
 				cell.Elevation = activeElevation;
 			}
-			if (riverMode == OptionalToggle.No) {
+			if (applyWaterLevel) {
+				cell.WaterLevel = activeWaterLevel;
+			}
+            if (applyBuilding ^ applyFeature)
+            {
+                if (applyBuilding)
+                {
+                    cell.BuildingLevel = activeBuildingLevel;
+                    cell.ActiveBuilding = activeBuilding;
+                    if (cell.IsFeature)
+                    {
+                        cell.FeatureLevel = 0;
+                        cell.ActiveFeature = 0;
+                    }
+                }
+                else if (!cell.IsBuilding)
+                {
+                    cell.FeatureLevel = activeFeatureLevel;
+                    cell.ActiveFeature = activeFeature;
+                }
+            }
+            if (riverMode == OptionalToggle.No) {
 				cell.RemoveRiver();
 			}
 			if (roadMode == OptionalToggle.No) {

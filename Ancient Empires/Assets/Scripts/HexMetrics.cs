@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 
+public enum UserAction
+{
+    empty
+}
+
 public static class HexMetrics {
 
 	public const float outerToInner = 0.866025404f;
@@ -12,6 +17,10 @@ public static class HexMetrics {
 	public const float solidFactor = 0.8f;
 
 	public const float blendFactor = 1f - solidFactor;
+
+	public const float waterFactor = 0.6f;
+
+	public const float waterBlendFactor = 1f - waterFactor;
 
 	public const float elevationStep = 3f;
 
@@ -29,11 +38,19 @@ public static class HexMetrics {
 
 	public const float streamBedElevationOffset = -1.75f;
 
-	public const float riverSurfaceElevationOffset = -0.5f;
+	public const float waterElevationOffset = -0.5f;
 
 	public const float noiseScale = 0.003f;
 
 	public const int chunkSizeX = 5, chunkSizeZ = 5;
+
+	public const int hashGridSize = 256;
+
+	public const float hashGridScale = 0.25f;
+
+    public const float bridgeDesignLength = 7f;
+
+    static HexHash[] hashGrid;
 
 	static Vector3[] corners = {
 		new Vector3(0f, 0f, outerRadius),
@@ -52,6 +69,28 @@ public static class HexMetrics {
 			position.x * noiseScale,
 			position.z * noiseScale
 		);
+	}
+
+	public static void InitializeHashGrid (int seed) {
+		hashGrid = new HexHash[hashGridSize * hashGridSize];
+		Random.State currentState = Random.state;
+		Random.InitState(seed);
+		for (int i = 0; i < hashGrid.Length; i++) {
+			hashGrid[i] = HexHash.Create();
+		}
+		Random.state = currentState;
+	}
+
+	public static HexHash SampleHashGrid (Vector3 position) {
+		int x = (int)(position.x * hashGridScale) % hashGridSize;
+		if (x < 0) {
+			x += hashGridSize;
+		}
+		int z = (int)(position.z * hashGridScale) % hashGridSize;
+		if (z < 0) {
+			z += hashGridSize;
+		}
+		return hashGrid[x + z * hashGridSize];
 	}
 
 	public static Vector3 GetFirstCorner (HexDirection direction) {
@@ -76,9 +115,22 @@ public static class HexMetrics {
 			(0.5f * solidFactor);
 	}
 
+	public static Vector3 GetFirstWaterCorner (HexDirection direction) {
+		return corners[(int)direction] * waterFactor;
+	}
+
+	public static Vector3 GetSecondWaterCorner (HexDirection direction) {
+		return corners[(int)direction + 1] * waterFactor;
+	}
+
 	public static Vector3 GetBridge (HexDirection direction) {
 		return (corners[(int)direction] + corners[(int)direction + 1]) *
 			blendFactor;
+	}
+
+	public static Vector3 GetWaterBridge (HexDirection direction) {
+		return (corners[(int)direction] + corners[(int)direction + 1]) *
+			waterBlendFactor;
 	}
 
 	public static Vector3 TerraceLerp (Vector3 a, Vector3 b, int step) {
