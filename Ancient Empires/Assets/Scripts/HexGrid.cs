@@ -21,7 +21,8 @@ public class HexGrid : MonoBehaviour {
 	int cellCountX, cellCountZ;
 
 	void Awake () {
-		HexMetrics.noiseSource = noiseSource;
+        Application.targetFrameRate = 60;
+        HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid(seed);
 
 		cellCountX = chunkCountX * HexMetrics.chunkSizeX;

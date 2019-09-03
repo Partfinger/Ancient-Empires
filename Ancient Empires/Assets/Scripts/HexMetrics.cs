@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 
+public enum UserAction
+{
+    empty
+}
+
 public static class HexMetrics {
 
 	public const float outerToInner = 0.866025404f;

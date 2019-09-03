@@ -20,8 +20,9 @@ public class HexMapEditor : MonoBehaviour {
 	bool applyElevation = true;
 	bool applyWaterLevel = true;
     bool applyFeature = false;
+    bool applyBuilding = false;
 
-	enum OptionalToggle {
+    enum OptionalToggle {
 		Ignore, Yes, No
 	}
 
@@ -46,6 +47,11 @@ public class HexMapEditor : MonoBehaviour {
     public void SetApplyFeature(bool toggle)
     {
         applyFeature = toggle;
+    }
+
+    public void SetApplyBuilding(bool toggle)
+    {
+        applyBuilding = toggle;
     }
 
     public void SetActiveFeatureLevel(float level)
@@ -160,8 +166,9 @@ public class HexMapEditor : MonoBehaviour {
 			if (applyWaterLevel) {
 				cell.WaterLevel = activeWaterLevel;
 			}
-            if (applyFeature)
+            if (applyBuilding || applyFeature)
             {
+                cell.IsBuilding = applyBuilding;
                 cell.FeatureLevel = activeFeatureLevel;
                 cell.ActiveFeature = activeFeature;
             }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class HexBuilding : HexFeature
+public abstract class HexBuilding : MonoBehaviour
 {
     [SerializeField]
     protected bool isCaption;
@@ -10,7 +10,13 @@ public abstract class HexBuilding : HexFeature
     [SerializeField]
     protected int owner;
 
+    [SerializeField]
+    protected Buff buff;
+
+    public HexCell cell;
+
     public bool IsCaption { get { return IsCaption; } }
+
     public int Owner
     {
         get
@@ -23,16 +29,9 @@ public abstract class HexBuilding : HexFeature
         }
     }
 
-    public override void Click()
-    {
-        return;
-    }
+    public Buff Buff => buff;
 
-    public override void UnitAction(Unit unit)
-    {
-        if (true && isCaption)
-        {
-            
-        }
-    }
+    public abstract UnitActions GetUnitActions(ref Unit unit);
+
+    public abstract UserAction GetUserAction();
 }

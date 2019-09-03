@@ -45,16 +45,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexFeatureCollection:
   - prefabs:
-    - {fileID: 6817357047447220664, guid: e342e614686392747a1c00b8dc518ce3, type: 3}
+    - {fileID: 8627972561475793570, guid: e342e614686392747a1c00b8dc518ce3, type: 3}
   - prefabs:
-    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+    - {fileID: 8517340260452852402, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
   - prefabs:
-    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
-    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
-    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
-    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
-    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
-    - {fileID: -6571504305810193996, guid: 2462bc3072f0d8c40976bb2bf0860dc2, type: 3}
+    - {fileID: 3228749274558660636, guid: a26e4332d3fcd5944bdd9baf9843f516, type: 3}
+    - {fileID: 4949621418940917915, guid: 102fb317e1788e44ba0787044d5bdd65, type: 3}
+    - {fileID: 444701724384044392, guid: f7412b248b031f34fb6eb290cefa2c06, type: 3}
+    - {fileID: 4824027925652114683, guid: 450a0403f6d9600428383c74c3912af2, type: 3}
+    - {fileID: 3704736933575129737, guid: fc2e06d8833f3024d8579fe4f9323a64, type: 3}
+    - {fileID: 1151163031285908527, guid: 75504249d0feb0a4f8377a340d5167ec, type: 3}
+  hexBuildingCollections:
+  - prefabs:
+    - {fileID: 1858579495946398813, guid: c7738db578764694792ed6dc78926f54, type: 3}
+  BrigdePrefab: {fileID: 4000012598710820, guid: 234387bb7219042168570e127fbd5b58,
+    type: 3}
 --- !u!1 &1000010636493760
 GameObject:
   m_ObjectHideFlags: 0

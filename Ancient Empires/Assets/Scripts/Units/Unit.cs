@@ -2,26 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UnitActions
+{
+    empty, finish, move, attack, mend, capture
+}
+
 public abstract class Unit : MonoBehaviour
 {
     public HexCell cell;
     public static HexGrid grid;
 
-    public int Health { get { return health; } }
-
+    /// BaseOffenceMin - 0, BaseOffenceMax - 1, BaseDefence - 2, BaseMobility - 3, HealthMax - 4, OffenceMin - 5,
+    /// OffenceMax - 6, defence - 7, Mobility - 8, health -9, experience - 10, nextRankExperience - 11, rank - 12
     [SerializeField]
-    int BaseOffenceMin, BaseOffenceMax, BaseDefence, BaseMobility, HealthMax;
-    public int BonusOffence, BonusDefence, BonusMobility;
-    int OffenceMin, OffenceMax, defence, Mobility;
+    int[] stats;
+    public Buff buff = new Buff();
 
-    int health;
-    int experience = 0;
-    int nextRankExperience;
-    protected byte rank = 1;
+    public int Health { get { return stats[9]; } }
 
     private void Awake()
     {
-        health = HealthMax * 1;
+        stats[9] = stats[4] * 1;
         RecountStats();
     }
 
@@ -29,7 +30,7 @@ public abstract class Unit : MonoBehaviour
     {
         get
         {
-            return Random.Range(OffenceMin, OffenceMax) + BonusOffence;
+            return Random.Range(stats[5], stats[6]) + buff.stats[0];
         }
     }
 
@@ -37,18 +38,18 @@ public abstract class Unit : MonoBehaviour
     {
         get
         {
-            return defence + BonusDefence;
+            return stats[7] + buff.stats[1];
         }
     }
 
     public int QualitySum
     {
-        get { return OffenceMin + OffenceMax + defence; }
+        get { return stats[5] + stats[6] + stats[7]; }
     }
 
     public void GetMotionSpace()
     {
-        int mobility = Mobility + BonusMobility;
+        int mobility = stats[8] + buff.stats[2];
 
 
     }
@@ -60,29 +61,29 @@ public abstract class Unit : MonoBehaviour
 
     void CheckNextRank()
     {
-        if (experience > nextRankExperience)
+        if (stats[10] > stats[11])
         {
-            SetRank(rank++);
+            SetRank(stats[12]++);
         }
     }
 
-    public void SetRank(byte newRank)
+    public void SetRank(int newRank)
     {
-        rank = newRank;
-        experience -= nextRankExperience;
+        stats[12] = newRank;
+        stats[10] -= stats[11];
         RecountStats();
     }
 
     void RecountStats()
     {
-        int bonus = rank << 1;
+        int bonus = stats[12] << 1;
 
-        OffenceMin = BaseOffenceMin + bonus;
-        OffenceMax = BaseOffenceMin + bonus;
-        defence = BaseDefence + bonus;
-        Mobility = BaseMobility + (rank / 6);
+        stats[5] = stats[0] + bonus;
+        stats[6] = stats[1] + bonus;
+        stats[7] = stats[2] + bonus;
+        stats[8] = stats[3] + (stats[12] / 6);
 
-        nextRankExperience = GetNextRankExperience();
+        stats[11] = GetNextRankExperience();
     }
 
     public int GetNextRankExperience()
@@ -104,7 +105,7 @@ public abstract class Unit : MonoBehaviour
             hit = victim.Health;
         }
         victim.Hit(hit);
-        experience += victim.QualitySum * hit;
+        stats[10] += victim.QualitySum * hit;
         CheckNextRank();
     }
 
@@ -125,23 +126,28 @@ public abstract class Unit : MonoBehaviour
 
     public void Hit(int hit)
     {
-        health -= hit;
+        stats[9] -= hit;
     }
 
     public void Cure(int hp)
     {
-        int delta = HealthMax - health;
+        int delta = stats[4] - stats[9];
         if (delta < hp)
         {
-            health += delta;
+            stats[9] += delta;
         }
         else
         {
-            health += hp;
+            stats[9] += hp;
         }
     }
 
     public abstract void Battle(Unit attacking, Unit victim);
 
     public abstract HexCell[] GetAttackCells();
+
+    public virtual UnitActions Skill()
+    {
+        return 0;
+    }
 }

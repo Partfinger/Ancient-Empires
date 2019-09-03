@@ -8,10 +8,30 @@ public class HexCell : MonoBehaviour {
 
 	public HexGridChunk chunk;
 
-    int featureLevel;
-    int activeFeature;
+    public HexBuilding Building = null;
 
-	public Color Color {
+    public Buff buff = new Buff();
+
+    public Unit unit;
+
+    int featureLevel = 0;
+    int activeFeature = 0;
+
+    Color color;
+
+    int elevation = int.MinValue;
+    int waterLevel;
+
+    bool hasIncomingRiver, hasOutgoingRiver, hasBuilding;
+    HexDirection incomingRiver, outgoingRiver;
+
+    [SerializeField]
+    HexCell[] neighbors;
+
+    [SerializeField]
+    bool[] roads;
+
+    public Color Color {
 		get {
 			return color;
 		}
@@ -102,7 +122,20 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
-	public bool IsUnderwater {
+    public bool IsBuilding
+    {
+        get
+        {
+            return hasBuilding;
+        }
+        set
+        {
+            hasBuilding = value;
+        }
+    }
+
+
+    public bool IsUnderwater {
 		get {
 			return waterLevel > elevation;
 		}
@@ -167,7 +200,6 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
-
 	public float StreamBedY {
 		get {
 			return
@@ -191,20 +223,6 @@ public class HexCell : MonoBehaviour {
 				HexMetrics.elevationStep;
 		}
 	}
-
-	Color color;
-
-	int elevation = int.MinValue;
-	int waterLevel;
-
-	bool hasIncomingRiver, hasOutgoingRiver;
-	HexDirection incomingRiver, outgoingRiver;
-
-	[SerializeField]
-	HexCell[] neighbors;
-
-	[SerializeField]
-	bool[] roads;
 
 	public HexCell GetNeighbor (HexDirection direction) {
 		return neighbors[(int)direction];
