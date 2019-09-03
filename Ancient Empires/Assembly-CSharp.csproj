@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Buffs\Buff.cs" />
+    <Compile Include="Assets\Scripts\Buffs\Buffs.cs" />
     <Compile Include="Assets\Scripts\EdgeVertices.cs" />
     <Compile Include="Assets\Scripts\Features\HexBuilding.cs" />
     <Compile Include="Assets\Scripts\Features\HexCastle.cs" />

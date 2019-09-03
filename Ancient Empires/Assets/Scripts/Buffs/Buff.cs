@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿[System.Serializable]
 public class Buff
 {
     // 0 - a, 1 -d, 2 - m
@@ -36,23 +33,9 @@ public class Buff
         return new Buff(b1.stats[0] - b2.stats[0], b1.stats[1] - b2.stats[1], b1.stats[2] - b2.stats[2]);
     }
 
-    public new string ToString()
+    public override string ToString()
     {
         return string.Format("{0} {1} {2}", stats[0], stats[1], stats[2]);
     }
 
-    public static Buff Castle()
-    {
-        return new Buff(0, 25);
-    }
-
-    public static Buff AttackHeights(ref Unit unit)
-    {
-        return new Buff(-(unit.Offence / 4));
-    }
-
-    public static Buff River()
-    {
-        return new Buff();
-    }
 }

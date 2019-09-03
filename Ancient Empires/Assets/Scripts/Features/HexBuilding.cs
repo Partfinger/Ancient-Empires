@@ -10,9 +10,6 @@ public abstract class HexBuilding : MonoBehaviour
     [SerializeField]
     protected int owner;
 
-    [SerializeField]
-    protected Buff buff;
-
     public HexCell cell;
 
     public bool IsCaption { get { return IsCaption; } }
@@ -29,9 +26,15 @@ public abstract class HexBuilding : MonoBehaviour
         }
     }
 
-    public Buff Buff => buff;
-
     public abstract UnitActions GetUnitActions(ref Unit unit);
 
     public abstract UserAction GetUserAction();
+
+    protected abstract void ApplyBuff();
+
+    public void AppointCell(ref HexCell c)
+    {
+        cell = c;
+        ApplyBuff();
+    }
 }

@@ -10,7 +10,6 @@ public enum UnitActions
 public abstract class Unit : MonoBehaviour
 {
     public HexCell cell;
-    public static HexGrid grid;
 
     /// BaseOffenceMin - 0, BaseOffenceMax - 1, BaseDefence - 2, BaseMobility - 3, HealthMax - 4, OffenceMin - 5,
     /// OffenceMax - 6, defence - 7, Mobility - 8, health -9, experience - 10, nextRankExperience - 11, rank - 12
@@ -142,7 +141,7 @@ public abstract class Unit : MonoBehaviour
         }
     }
 
-    public abstract void Battle(Unit attacking, Unit victim);
+    public abstract void Battle(Unit attacker, Unit victim);
 
     public abstract HexCell[] GetAttackCells();
 

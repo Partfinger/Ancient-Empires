@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class HexCastle : HexBuilding
 {
-
-    private void Awake()
+    protected override void ApplyBuff()
     {
-        buff = Buff.Castle();
+        cell.buff = Buffs.Castle();
     }
 
     public override UnitActions GetUnitActions(ref Unit unit)

@@ -14,15 +14,18 @@ public class HexCell : MonoBehaviour {
 
     public Unit unit;
 
-    int featureLevel = 0;
-    int activeFeature = 0;
+    byte featureLevel = 1;
+    byte activeFeature = 0;
+
+    byte buildingLevel = 0;
+    byte activeBuilding = 0;
 
     Color color;
 
     int elevation = int.MinValue;
     int waterLevel;
 
-    bool hasIncomingRiver, hasOutgoingRiver, hasBuilding;
+    bool hasIncomingRiver, hasOutgoingRiver;
     HexDirection incomingRiver, outgoingRiver;
 
     [SerializeField]
@@ -76,7 +79,7 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
-    public int FeatureLevel
+    public byte FeatureLevel
     {
         get
         {
@@ -92,7 +95,7 @@ public class HexCell : MonoBehaviour {
         }
     }
 
-    public int ActiveFeature
+    public byte ActiveFeature
     {
         get
         {
@@ -103,6 +106,38 @@ public class HexCell : MonoBehaviour {
             if (activeFeature != value)
             {
                 activeFeature = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+    public byte BuildingLevel
+    {
+        get
+        {
+            return buildingLevel;
+        }
+        set
+        {
+            if (buildingLevel != value)
+            {
+                buildingLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+    public byte ActiveBuilding
+    {
+        get
+        {
+            return activeBuilding;
+        }
+        set
+        {
+            if (activeBuilding != value)
+            {
+                activeBuilding = value;
                 RefreshSelfOnly();
             }
         }
@@ -126,14 +161,17 @@ public class HexCell : MonoBehaviour {
     {
         get
         {
-            return hasBuilding;
-        }
-        set
-        {
-            hasBuilding = value;
+            return activeBuilding > 0;
         }
     }
 
+    public bool IsFeature
+    {
+        get
+        {
+            return activeFeature > 0;
+        }
+    }
 
     public bool IsUnderwater {
 		get {

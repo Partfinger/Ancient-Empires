@@ -9,8 +9,7 @@ public class HexMapEditor : MonoBehaviour {
 
 	int activeElevation;
 	int activeWaterLevel;
-    int activeFeatureLevel;
-    int activeFeature;
+    byte activeFeatureLevel = 1, activeFeature, activeBuildingLevel = 0, activeBuilding;
 
 	Color activeColor;
 
@@ -41,7 +40,12 @@ public class HexMapEditor : MonoBehaviour {
 
     public void SetActiveFeature(int num)
     {
-        activeFeature = num;
+        activeFeature = (byte)num;
+    }
+
+    public void SetActiveBuilding(int num)
+    {
+        activeBuilding = (byte)num;
     }
 
     public void SetApplyFeature(bool toggle)
@@ -56,7 +60,12 @@ public class HexMapEditor : MonoBehaviour {
 
     public void SetActiveFeatureLevel(float level)
     {
-        activeFeatureLevel = (int)level;
+        activeFeatureLevel = (byte)level;
+    }
+
+    public void SetActiveBuildingLevel(float level)
+    {
+        activeBuildingLevel = (byte)level;
     }
 
     public void SetApplyElevation (bool toggle) {
@@ -166,13 +175,25 @@ public class HexMapEditor : MonoBehaviour {
 			if (applyWaterLevel) {
 				cell.WaterLevel = activeWaterLevel;
 			}
-            if (applyBuilding || applyFeature)
+            if (applyBuilding ^ applyFeature)
             {
-                cell.IsBuilding = applyBuilding;
-                cell.FeatureLevel = activeFeatureLevel;
-                cell.ActiveFeature = activeFeature;
+                if (applyBuilding)
+                {
+                    cell.BuildingLevel = activeBuildingLevel;
+                    cell.ActiveBuilding = activeBuilding;
+                    if (cell.IsFeature)
+                    {
+                        cell.FeatureLevel = 0;
+                        cell.ActiveFeature = 0;
+                    }
+                }
+                else if (!cell.IsBuilding)
+                {
+                    cell.FeatureLevel = activeFeatureLevel;
+                    cell.ActiveFeature = activeFeature;
+                }
             }
-			if (riverMode == OptionalToggle.No) {
+            if (riverMode == OptionalToggle.No) {
 				cell.RemoveRiver();
 			}
 			if (roadMode == OptionalToggle.No) {
