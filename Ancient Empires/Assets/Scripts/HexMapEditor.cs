@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using System.IO;
 
 public class HexMapEditor : MonoBehaviour {
 
-	public Color[] colors;
-
 	public HexGrid hexGrid;
 
-	int activeElevation;
-	int activeWaterLevel;
+    sbyte activeElevation;
+	sbyte activeWaterLevel;
+    byte activeTerrainTypeIndex;
     byte activeFeatureLevel = 1, activeFeature, activeBuildingLevel = 0, activeBuilding;
-
-	Color activeColor;
 
 	int brushSize;
 
-	bool applyColor;
 	bool applyElevation = true;
 	bool applyWaterLevel = true;
     bool applyFeature = false;
@@ -31,12 +28,10 @@ public class HexMapEditor : MonoBehaviour {
 	HexDirection dragDirection;
 	HexCell previousCell;
 
-	public void SelectColor (int index) {
-		applyColor = index >= 0;
-		if (applyColor) {
-			activeColor = colors[index];
-		}
-	}
+    public void SetTerrainTypeIndex(int index)
+    {
+        activeTerrainTypeIndex = (byte)index;
+    }
 
     public void SetActiveFeature(int num)
     {
@@ -73,14 +68,14 @@ public class HexMapEditor : MonoBehaviour {
 	}
 
 	public void SetElevation (float elevation) {
-		activeElevation = (int)elevation;
+		activeElevation = (sbyte)elevation;
 	}
 
 	public void SetApplyWaterLevel (bool toggle) {
 		applyWaterLevel = toggle;
 	}
 	public void SetWaterLevel (float level) {
-		activeWaterLevel = (int)level;
+		activeWaterLevel = (sbyte)level;
 	}
 
 	public void SetBrushSize (float size) {
@@ -97,10 +92,6 @@ public class HexMapEditor : MonoBehaviour {
 
 	public void ShowUI (bool visible) {
 		hexGrid.ShowUI(visible);
-	}
-
-	void Awake () {
-		SelectColor(0);
 	}
 
 	void Update () {
@@ -166,10 +157,11 @@ public class HexMapEditor : MonoBehaviour {
 
 	void EditCell (HexCell cell) {
 		if (cell) {
-			if (applyColor) {
-				cell.Color = activeColor;
-			}
-			if (applyElevation) {
+            if (activeTerrainTypeIndex > 0)
+            {
+                cell.TerrainTypeIndex = activeTerrainTypeIndex;
+            }
+            if (applyElevation) {
 				cell.Elevation = activeElevation;
 			}
 			if (applyWaterLevel) {
@@ -212,4 +204,38 @@ public class HexMapEditor : MonoBehaviour {
 			}
 		}
 	}
+
+    public void Save()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (
+            BinaryWriter writer =
+                new BinaryWriter(File.Open(path, FileMode.Create))
+        )
+        {
+            writer.Write(1);
+            hexGrid.Save(writer);
+        }
+    }
+
+    public void Load()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
+        {
+            int header = reader.ReadInt32();
+            if (header == 1)
+            {
+                hexGrid.Load(reader);
+                HexMapCamera.ValidatePosition();
+            }
+            else
+            {
+                Debug.LogWarning("Unknown map format " + header);
+                return;
+            }
+            hexGrid.Load(reader);
+        }
+    }
+
 }

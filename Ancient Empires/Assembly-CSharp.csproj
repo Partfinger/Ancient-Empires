@@ -82,6 +82,9 @@
     <Compile Include="Assets\Scripts\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\INI.cs" />
     <Compile Include="Assets\Scripts\ListPool.cs" />
+    <Compile Include="Assets\Scripts\UI\NewMapMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\SaveLoadItem.cs" />
+    <Compile Include="Assets\Scripts\UI\SaveLoadMenu.cs" />
     <Compile Include="Assets\Scripts\Units\IUnit.cs" />
     <Compile Include="Assets\Scripts\Units\MeleeUnit.cs" />
     <Compile Include="Assets\Scripts\Units\RangedUnit.cs" />
