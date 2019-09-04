@@ -7,6 +7,8 @@ public enum UserAction
 
 public static class HexMetrics {
 
+    public const int EditorVers = 1;
+
 	public const float outerToInner = 0.866025404f;
 	public const float innerToOuter = 1f / outerToInner;
 
@@ -49,8 +51,6 @@ public static class HexMetrics {
 	public const float hashGridScale = 0.25f;
 
     public const float bridgeDesignLength = 7f;
-
-    public static Color[] colors;
 
     static HexHash[] hashGrid;
 

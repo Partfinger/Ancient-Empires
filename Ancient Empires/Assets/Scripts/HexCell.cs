@@ -21,7 +21,7 @@ public class HexCell : MonoBehaviour {
     byte buildingLevel = 0;
     byte activeBuilding = 0;
 
-    byte terrainTypeIndex = 1 ;
+    byte terrainTypeIndex = 1;
 
     sbyte elevation = sbyte.MinValue;
     sbyte waterLevel;
@@ -35,17 +35,11 @@ public class HexCell : MonoBehaviour {
     [SerializeField]
     bool[] roads;
 
-    public Color Color {
-		get {
-            return HexMetrics.colors[terrainTypeIndex - 1];
-        }
-	}
-
     public byte TerrainTypeIndex
     {
         get
         {
-            return terrainTypeIndex;
+            return (byte)(terrainTypeIndex-1);
         }
         set
         {

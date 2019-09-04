@@ -8,7 +8,7 @@ public class HexMapEditor : MonoBehaviour {
 
     sbyte activeElevation;
 	sbyte activeWaterLevel;
-    byte activeTerrainTypeIndex;
+    byte activeTerrainTypeIndex = 1;
     byte activeFeatureLevel = 1, activeFeature, activeBuildingLevel = 0, activeBuilding;
 
 	int brushSize;

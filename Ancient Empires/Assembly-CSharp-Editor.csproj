@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Editor\HexCoordinatesDrawer.cs" />
+    <Compile Include="Assets\Scripts\Editor\TextureArrayWizard.cs" />
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>D:/Unity and KO/Ancient-Empires/Ancient Empires/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
     </Reference>
