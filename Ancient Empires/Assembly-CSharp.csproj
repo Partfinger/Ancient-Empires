@@ -62,6 +62,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\_HexGrid_.cs" />
     <Compile Include="Assets\Scripts\Buffs\Buff.cs" />
     <Compile Include="Assets\Scripts\Buffs\Buffs.cs" />
     <Compile Include="Assets\Scripts\EdgeVertices.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Assets\Scripts\Features\HexFeatureCollection.cs" />
     <Compile Include="Assets\Scripts\Features\HexFeatureManager.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
+    <Compile Include="Assets\Scripts\HexCellPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\HexCoordinates.cs" />
     <Compile Include="Assets\Scripts\HexDirection.cs" />
     <Compile Include="Assets\Scripts\HexEdgeType.cs" />
@@ -93,6 +95,7 @@
     <None Include="Assets\Materials\Terrain.shader" />
     <None Include="Assets\Materials\Water Shore.shader" />
     <None Include="Assets\Materials\Estuary.shader" />
+    <None Include="Assets\Materials\Highlight\Highlight.shader" />
     <None Include="Assets\Materials\Road.shader" />
     <None Include="Assets\Materials\Water.shader" />
     <None Include="Assets\Materials\Water.cginc" />

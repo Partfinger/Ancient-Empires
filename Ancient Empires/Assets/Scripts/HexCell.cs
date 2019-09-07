@@ -38,6 +38,19 @@ public class HexCell : MonoBehaviour {
     [SerializeField]
     bool[] roads;
 
+    public HexCell PathFrom { get; set; }
+    public int SearchHeuristic { get; set; }
+    public int SearchPhase { get; set; }
+    public int SearchPriority
+    {
+        get
+        {
+            return distance + SearchHeuristic;
+        }
+    }
+
+    public HexCell NextWithSamePriority { get; set; }
+
     public int Distance
     {
         get
@@ -47,7 +60,6 @@ public class HexCell : MonoBehaviour {
         set
         {
             distance = value;
-            UpdateDistanceLabel();
         }
     }
 
@@ -273,12 +285,6 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
-    void UpdateDistanceLabel()
-    {
-        Text label = uiRect.GetComponent<Text>();
-        label.text = distance == int.MaxValue ? "" : distance.ToString();
-    }
-
     void RefreshPosition()
     {
         Vector3 position = transform.localPosition;
@@ -439,7 +445,32 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
-	void RefreshSelfOnly () {
+    public void SetLabel(string text)
+    {
+        UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
+        label.text = text;
+    }
+
+    public void DisableHighlight()
+    {
+        Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.enabled = false;
+    }
+
+    public void EnableHighlight()
+    {
+        Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.enabled = true;
+    }
+
+    public void EnableHighlight(Color color)
+    {
+        Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.color = color;
+        highlight.enabled = true;
+    }
+
+    void RefreshSelfOnly () {
 		chunk.Refresh();
 	}
 

@@ -20,6 +20,8 @@ public class HexMapEditor : MonoBehaviour {
     bool applyBuilding = false;
     bool editMode = true;
 
+    HexCell previousCell, searchFromCell, searchToCell;
+
     enum OptionalToggle {
 		Ignore, Yes, No
 	}
@@ -28,7 +30,6 @@ public class HexMapEditor : MonoBehaviour {
 
 	bool isDrag;
 	HexDirection dragDirection;
-	HexCell previousCell;
 
     public void SetTerrainTypeIndex(int index)
     {
@@ -126,14 +127,36 @@ public class HexMapEditor : MonoBehaviour {
 			else {
 				isDrag = false;
 			}
+
             if (editMode)
             {
                 EditCells(currentCell);
             }
-            else
+            else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
             {
-                hexGrid.FindDistancesTo(currentCell);
+                if (searchFromCell != currentCell)
+                {
+                    if (searchFromCell)
+                    {
+                        searchFromCell.DisableHighlight();
+                    }
+                    searchFromCell = currentCell;
+                    searchFromCell.EnableHighlight(Color.blue);
+                    if (searchToCell)
+                    {
+                        hexGrid.FindPath(searchFromCell, searchToCell, 50);
+                    }
+                }
             }
+            else if (searchFromCell && searchFromCell != currentCell)
+            {
+                if (searchToCell != currentCell)
+                {
+                    searchToCell = currentCell;
+                    hexGrid.FindPath(searchFromCell, searchToCell, 50);
+                }
+            }
+
             previousCell = currentCell;
 		}
 		else {
