@@ -29,7 +29,7 @@ public class HexFeatureManager : MonoBehaviour {
 			return;
 		}
         int activeFeature = cell.ActiveFeature - 1;
-
+        Debug.Log(activeFeature);
         Transform instance = Instantiate(hexFeatureCollection[activeFeature].Pick(hash.с));
         cell.buff.AddDef(defence[activeFeature]);
 		instance.localPosition = HexMetrics.Perturb(position);

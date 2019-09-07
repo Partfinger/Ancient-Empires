@@ -5,6 +5,7 @@ using System.IO;
 public class HexMapEditor : MonoBehaviour {
 
 	public HexGrid hexGrid;
+    public Material terrainMaterial;
 
     sbyte activeElevation;
 	sbyte activeWaterLevel;
@@ -17,6 +18,7 @@ public class HexMapEditor : MonoBehaviour {
 	bool applyWaterLevel = true;
     bool applyFeature = false;
     bool applyBuilding = false;
+    bool editMode = true;
 
     enum OptionalToggle {
 		Ignore, Yes, No
@@ -90,11 +92,18 @@ public class HexMapEditor : MonoBehaviour {
 		roadMode = (OptionalToggle)mode;
 	}
 
-	public void ShowUI (bool visible) {
-		hexGrid.ShowUI(visible);
-	}
+    public void SetEditMode(bool toggle)
+    {
+        editMode = toggle;
+        hexGrid.ShowUI(!toggle);
+    }
 
-	void Update () {
+    void Awake()
+    {
+        terrainMaterial.DisableKeyword("GRID_ON");
+    }
+
+    void Update () {
 		if (
 			Input.GetMouseButton(0) &&
 			!EventSystem.current.IsPointerOverGameObject()
@@ -117,8 +126,15 @@ public class HexMapEditor : MonoBehaviour {
 			else {
 				isDrag = false;
 			}
-			EditCells(currentCell);
-			previousCell = currentCell;
+            if (editMode)
+            {
+                EditCells(currentCell);
+            }
+            else
+            {
+                hexGrid.FindDistancesTo(currentCell);
+            }
+            previousCell = currentCell;
 		}
 		else {
 			previousCell = null;
@@ -235,6 +251,18 @@ public class HexMapEditor : MonoBehaviour {
                 return;
             }
             hexGrid.Load(reader);
+        }
+    }
+
+    public void ShowGrid(bool visible)
+    {
+        if (visible)
+        {
+            terrainMaterial.EnableKeyword("GRID_ON");
+        }
+        else
+        {
+            terrainMaterial.DisableKeyword("GRID_ON");
         }
     }
 

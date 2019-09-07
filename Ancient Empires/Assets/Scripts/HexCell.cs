@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
+using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour {
 
@@ -14,6 +15,8 @@ public class HexCell : MonoBehaviour {
     public Buff buff = new Buff();
 
     public Unit unit;
+
+    int distance;
 
     byte featureLevel = 1;
     byte activeFeature = 0;
@@ -34,6 +37,19 @@ public class HexCell : MonoBehaviour {
 
     [SerializeField]
     bool[] roads;
+
+    public int Distance
+    {
+        get
+        {
+            return distance;
+        }
+        set
+        {
+            distance = value;
+            UpdateDistanceLabel();
+        }
+    }
 
     public byte TerrainTypeIndex
     {
@@ -256,6 +272,12 @@ public class HexCell : MonoBehaviour {
 				HexMetrics.elevationStep;
 		}
 	}
+
+    void UpdateDistanceLabel()
+    {
+        Text label = uiRect.GetComponent<Text>();
+        label.text = distance == int.MaxValue ? "" : distance.ToString();
+    }
 
     void RefreshPosition()
     {
