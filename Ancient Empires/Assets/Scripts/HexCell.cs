@@ -14,8 +14,6 @@ public class HexCell : MonoBehaviour {
 
     public Buff buff = new Buff();
 
-    public Unit unit;
-
     int distance;
 
     byte featureLevel = 1;
@@ -33,10 +31,12 @@ public class HexCell : MonoBehaviour {
     HexDirection incomingRiver, outgoingRiver;
 
     [SerializeField]
-    HexCell[] neighbors;
+    HexCell[] neighbors = new HexCell[6];
 
     [SerializeField]
-    bool[] roads;
+    bool[] roads = new bool[6];
+
+    public Unit Unit { get; set; }
 
     public HexCell PathFrom { get; set; }
     public int SearchHeuristic { get; set; }
@@ -442,7 +442,11 @@ public class HexCell : MonoBehaviour {
 					neighbor.chunk.Refresh();
 				}
 			}
-		}
+            if (Unit)
+            {
+                Unit.ValidateLocation();
+            }
+        }
 	}
 
     public void SetLabel(string text)
@@ -472,7 +476,11 @@ public class HexCell : MonoBehaviour {
 
     void RefreshSelfOnly () {
 		chunk.Refresh();
-	}
+        if (Unit)
+        {
+            Unit.ValidateLocation();
+        }
+    }
 
     public void Save(BinaryWriter writer)
     {

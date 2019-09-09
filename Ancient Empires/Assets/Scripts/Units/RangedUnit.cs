@@ -7,10 +7,14 @@ public class RangedUnit : Unit
     [SerializeField]
     int AttackDistanceMin, AttackDistanceMax;
 
-    public override void Battle(Unit attacking, Unit victim)
+    public override void Battle(Unit victim)
     {
-        attacking.Attack(victim);
-        victim.CheckIsDead();
+        Attack(victim);
+        unitData.CheckNextRank();
+        if (!victim.unitData.IsDead)
+        {
+            victim.unitData.CheckNextRank();
+        }
     }
 
     public override HexCell[] GetAttackCells()

@@ -4,32 +4,33 @@ using System.IO;
 
 public class HexMapEditor : MonoBehaviour {
 
-	public HexGrid hexGrid;
+    public HexGrid hexGrid;
     public Material terrainMaterial;
 
+    public UnitsArray unitsArray;
+
     sbyte activeElevation;
-	sbyte activeWaterLevel;
+    sbyte activeWaterLevel;
     byte activeTerrainTypeIndex = 1;
     byte activeFeatureLevel = 1, activeFeature, activeBuildingLevel = 0, activeBuilding;
 
-	int brushSize;
+    int brushSize;
 
-	bool applyElevation = true;
-	bool applyWaterLevel = true;
+    bool applyElevation = true;
+    bool applyWaterLevel = true;
     bool applyFeature = false;
     bool applyBuilding = false;
-    bool editMode = true;
 
-    HexCell previousCell, searchFromCell, searchToCell;
+    HexCell previousCell;
 
     enum OptionalToggle {
-		Ignore, Yes, No
-	}
+        Ignore, Yes, No
+    }
 
-	OptionalToggle riverMode, roadMode;
+    OptionalToggle riverMode, roadMode;
 
-	bool isDrag;
-	HexDirection dragDirection;
+    bool isDrag;
+    HexDirection dragDirection;
 
     public void SetTerrainTypeIndex(int index)
     {
@@ -66,105 +67,115 @@ public class HexMapEditor : MonoBehaviour {
         activeBuildingLevel = (byte)level;
     }
 
-    public void SetApplyElevation (bool toggle) {
-		applyElevation = toggle;
-	}
+    public void SetApplyElevation(bool toggle) {
+        applyElevation = toggle;
+    }
 
-	public void SetElevation (float elevation) {
-		activeElevation = (sbyte)elevation;
-	}
+    public void SetElevation(float elevation) {
+        activeElevation = (sbyte)elevation;
+    }
 
-	public void SetApplyWaterLevel (bool toggle) {
-		applyWaterLevel = toggle;
-	}
-	public void SetWaterLevel (float level) {
-		activeWaterLevel = (sbyte)level;
-	}
+    public void SetApplyWaterLevel(bool toggle) {
+        applyWaterLevel = toggle;
+    }
+    public void SetWaterLevel(float level) {
+        activeWaterLevel = (sbyte)level;
+    }
 
-	public void SetBrushSize (float size) {
-		brushSize = (int)size;
-	}
+    public void SetBrushSize(float size) {
+        brushSize = (int)size;
+    }
 
-	public void SetRiverMode (int mode) {
-		riverMode = (OptionalToggle)mode;
-	}
+    public void SetRiverMode(int mode) {
+        riverMode = (OptionalToggle)mode;
+    }
 
-	public void SetRoadMode (int mode) {
-		roadMode = (OptionalToggle)mode;
-	}
+    public void SetRoadMode(int mode) {
+        roadMode = (OptionalToggle)mode;
+    }
 
     public void SetEditMode(bool toggle)
     {
-        editMode = toggle;
-        hexGrid.ShowUI(!toggle);
+        enabled = toggle;
     }
 
     void Awake()
     {
         terrainMaterial.DisableKeyword("GRID_ON");
+        SetEditMode(false);
     }
 
-    void Update () {
-		if (
-			Input.GetMouseButton(0) &&
-			!EventSystem.current.IsPointerOverGameObject()
-		) {
-			HandleInput();
-		}
-		else {
-			previousCell = null;
-		}
-	}
-
-	void HandleInput () {
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit)) {
-			HexCell currentCell = hexGrid.GetCell(hit.point);
-			if (previousCell && previousCell != currentCell) {
-				ValidateDrag(currentCell);
-			}
-			else {
-				isDrag = false;
-			}
-
-            if (editMode)
+    void Update()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Input.GetMouseButton(0))
             {
-                EditCells(currentCell);
+                HandleInput();
+                return;
             }
-            else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+            if (Input.GetKeyDown(KeyCode.U))
             {
-                if (searchFromCell != currentCell)
+                if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    if (searchFromCell)
-                    {
-                        searchFromCell.DisableHighlight();
-                    }
-                    searchFromCell = currentCell;
-                    searchFromCell.EnableHighlight(Color.blue);
-                    if (searchToCell)
-                    {
-                        hexGrid.FindPath(searchFromCell, searchToCell, 50);
-                    }
+                    DestroyUnit();
                 }
-            }
-            else if (searchFromCell && searchFromCell != currentCell)
-            {
-                if (searchToCell != currentCell)
+                else
                 {
-                    searchToCell = currentCell;
-                    hexGrid.FindPath(searchFromCell, searchToCell, 50);
+                    CreateUnit();
                 }
+                return;
             }
+        }
+        previousCell = null;
+    }
 
+    HexCell GetCellUnderCursor()
+    {
+        return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+    }
+
+    void HandleInput()
+    {
+        HexCell currentCell = GetCellUnderCursor();
+        if (currentCell)
+        {
+            if (previousCell && previousCell != currentCell)
+            {
+                ValidateDrag(currentCell);
+            }
+            else
+            {
+                isDrag = false;
+            }
+            EditCells(currentCell);
             previousCell = currentCell;
-		}
-		else {
-			previousCell = null;
-		}
+        }
+        else
+            previousCell = null;
 	}
 
-	void ValidateDrag (HexCell currentCell) {
+    void CreateUnit()
+    {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && !cell.Unit)
+        {
+            hexGrid.AddUnit(
+                Instantiate(unitsArray.GetUnit(0)), cell, Random.Range(0f, 360f)
+            );
+        }
+    }
+
+    void DestroyUnit()
+    {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && cell.Unit)
+        {
+            hexGrid.RemoveUnit(cell.Unit);
+        }
+    }
+
+    void ValidateDrag (HexCell currentCell) {
 		for (
 			dragDirection = HexDirection.NE;
 			dragDirection <= HexDirection.NW;
@@ -243,39 +254,6 @@ public class HexMapEditor : MonoBehaviour {
 			}
 		}
 	}
-
-    public void Save()
-    {
-        string path = Path.Combine(Application.persistentDataPath, "test.map");
-        using (
-            BinaryWriter writer =
-                new BinaryWriter(File.Open(path, FileMode.Create))
-        )
-        {
-            writer.Write(1);
-            hexGrid.Save(writer);
-        }
-    }
-
-    public void Load()
-    {
-        string path = Path.Combine(Application.persistentDataPath, "test.map");
-        using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
-        {
-            int header = reader.ReadInt32();
-            if (header == 1)
-            {
-                hexGrid.Load(reader);
-                HexMapCamera.ValidatePosition();
-            }
-            else
-            {
-                Debug.LogWarning("Unknown map format " + header);
-                return;
-            }
-            hexGrid.Load(reader);
-        }
-    }
 
     public void ShowGrid(bool visible)
     {

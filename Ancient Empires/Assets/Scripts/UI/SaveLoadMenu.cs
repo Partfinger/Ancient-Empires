@@ -107,22 +107,25 @@ public class SaveLoadMenu : MonoBehaviour {
 		}
 		using (BinaryReader reader = new BinaryReader(File.OpenRead(path))) {
 			int header = reader.ReadInt32();
-            /*if (header == 1) {
-				hexGrid.Load(reader);
-				HexMapCamera.ValidatePosition();
-                Debug.LogWarning("Old map standart " + header);
-
-            }
-            else*/
             if (header == HexMetrics.EditorVers)
             {
                 hexGrid.Load(reader);
-                HexMapCamera.ValidatePosition();
-                Debug.LogWarning("Current map standart " + header);
+                Debug.LogWarning("Current map format " + header);
             }
-            else {
-				Debug.LogWarning("Unknown map format " + header);
-			}
-		}
+            else
+            {
+                if (header == 1)
+                {
+                    hexGrid.OldLoad(reader);
+                    Debug.LogWarning("Old map format " + header);
+                }
+                else
+                {
+                    Debug.LogWarning("Unknown map format " + header);
+                    return;
+                }
+            }
+            HexMapCamera.ValidatePosition();
+        }
 	}
 }

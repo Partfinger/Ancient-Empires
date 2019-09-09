@@ -5,7 +5,7 @@ public class NewMapMenu : MonoBehaviour {
 
 	public HexGrid hexGrid;
     [SerializeField]
-    Text text1, text2;
+    Text text1 = null, text2 = null;
 
 	public void Open () {
 		gameObject.SetActive(true);

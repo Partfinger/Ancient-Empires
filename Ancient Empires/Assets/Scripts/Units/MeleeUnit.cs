@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class MeleeUnit : Unit
 {
-    public override void Battle(Unit attacking, Unit victim)
+    public override void Battle(Unit victim)
     {
-        attacking.Attack(victim);
-        if (victim.CheckIsDead())
-            victim.Attack(attacking);
-        attacking.CheckIsDead();
+        Attack(victim);
+        if (!victim.unitData.IsDead)
+        {
+            victim.Attack(this);
+            if (!unitData.IsDead)
+                unitData.CheckNextRank();
+            victim.unitData.CheckNextRank();
+        }
+        else
+        {
+            unitData.CheckNextRank();
+        }
     }
 
     public override HexCell[] GetAttackCells()
@@ -17,7 +25,7 @@ public class MeleeUnit : Unit
         List<HexCell> result = new List<HexCell>();
         for(HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
         {
-            result.Add(cell.GetNeighbor(d));
+            result.Add(Location.GetNeighbor(d));
         }
         return result.ToArray();
     }
