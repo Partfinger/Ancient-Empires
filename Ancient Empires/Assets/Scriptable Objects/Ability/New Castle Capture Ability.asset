@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: New Castle Capture Ability
   m_EditorClassIdentifier: 
   carrier: {fileID: 0}
-  aName: New Ability
+  aName: Castle Capturer
   aSprite: {fileID: 0}
   aBaseCoolDown: 1

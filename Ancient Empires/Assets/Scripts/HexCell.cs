@@ -14,15 +14,13 @@ public class HexCell : MonoBehaviour {
 
     public Buff buff = new Buff();
 
-    int distance;
+    int distance, terrainTypeIndex;
 
     byte featureLevel = 1;
     byte activeFeature = 0;
 
     byte buildingLevel = 0;
     byte activeBuilding = 0;
-
-    byte terrainTypeIndex = 1;
 
     sbyte elevation = sbyte.MinValue;
     sbyte waterLevel;
@@ -36,7 +34,27 @@ public class HexCell : MonoBehaviour {
     [SerializeField]
     bool[] roads = new bool[6];
 
+    public int Index { get; set; }
+
+    public HexCellShaderData ShaderData { get; set; }
+
     public Unit Unit { get; set; }
+
+    public byte TerrainTypeIndex
+    {
+        get
+        {
+            return (byte)(terrainTypeIndex - 1);
+        }
+        set
+        {
+            if (terrainTypeIndex != value)
+            {
+                terrainTypeIndex = value;
+                ShaderData.RefreshTerrain(this);
+            }
+        }
+    }
 
     public HexCell PathFrom { get; set; }
     public int SearchHeuristic { get; set; }
@@ -60,22 +78,6 @@ public class HexCell : MonoBehaviour {
         set
         {
             distance = value;
-        }
-    }
-
-    public byte TerrainTypeIndex
-    {
-        get
-        {
-            return (byte)(terrainTypeIndex-1);
-        }
-        set
-        {
-            if (terrainTypeIndex != value)
-            {
-                terrainTypeIndex = value;
-                Refresh();
-            }
         }
     }
 
@@ -526,6 +528,7 @@ public class HexCell : MonoBehaviour {
     public void Load(BinaryReader reader)
     {
         terrainTypeIndex = reader.ReadByte();
+        ShaderData.RefreshTerrain(this);
         elevation = reader.ReadSByte();
         RefreshPosition();
         waterLevel = reader.ReadSByte();

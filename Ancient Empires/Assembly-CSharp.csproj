@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\Features\HexFeatureManager.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
     <Compile Include="Assets\Scripts\HexCellPriorityQueue.cs" />
+    <Compile Include="Assets\Scripts\HexCellShaderData.cs" />
     <Compile Include="Assets\Scripts\HexCoordinates.cs" />
     <Compile Include="Assets\Scripts\HexDirection.cs" />
     <Compile Include="Assets\Scripts\HexEdgeType.cs" />
@@ -86,6 +87,8 @@
     <Compile Include="Assets\Scripts\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\INI.cs" />
     <Compile Include="Assets\Scripts\ListPool.cs" />
+    <Compile Include="Assets\Scripts\Players Scripts\Batch.cs" />
+    <Compile Include="Assets\Scripts\Players Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\UI\HexGameUI.cs" />
     <Compile Include="Assets\Scripts\UI\NewMapMenu.cs" />
     <Compile Include="Assets\Scripts\UI\SaveLoadItem.cs" />
@@ -102,6 +105,7 @@
     <None Include="Assets\Materials\Highlight\Highlight.shader" />
     <None Include="Assets\Materials\Road.shader" />
     <None Include="Assets\Materials\Water.shader" />
+    <None Include="Assets\Materials\HexCellData.cginc" />
     <None Include="Assets\Materials\Water.cginc" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Unity and KO/Ancient-Empires/Ancient Empires/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

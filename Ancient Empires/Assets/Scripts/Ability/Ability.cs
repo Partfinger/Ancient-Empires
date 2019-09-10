@@ -8,6 +8,8 @@ public abstract class Ability : ScriptableObject
     //public AudioClip aSound;
     public float aBaseCoolDown = 1f;
 
+    public abstract bool IsUsable { get; }
+
     public abstract void Initialize();
-    public abstract bool TriggerAbility();
+    public abstract void TriggerAbility();
 }
