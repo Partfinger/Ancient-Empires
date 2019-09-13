@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public enum UnitActions
-{
-    empty, finish, move, attack, mend, capture
-}
-
-public abstract class Unit : MonoBehaviour
+public class Unit : MonoBehaviour
 {
     public UnitData unitData;
     public Buff buff = new Buff();
@@ -16,13 +11,26 @@ public abstract class Unit : MonoBehaviour
     const float travelSpeed = 4f;
     const float rotationSpeed = 180f;
 
+    [SerializeField]
+    protected int unitID;
+
+    private int offenceMin, offenceMax, defence, mobility, health, experience, nextRankExperience, healthMax = 100, rank = 0;
+
+    [SerializeField]
+    Ability[] abilities;
+
     float orientation;
     [SerializeField]
     HexCell location;
 
     private void Awake()
     {
-        unitData.AwakeUnit();
+        offenceMin = unitData.BaseOffenceMin;
+        offenceMax = unitData.BaseOffenceMax;
+        defence = unitData.BaseDefence;
+        mobility = unitData.BaseMobility;
+        GetNextRankExperience();
+        health = healthMax * 1;
     }
 
     void OnEnable()
@@ -46,7 +54,7 @@ public abstract class Unit : MonoBehaviour
                 location.Unit = null;
             }
             location = value;
-            value.Unit = this;
+            location.Unit = this;
             transform.localPosition = value.Position;
         }
     }
@@ -64,11 +72,24 @@ public abstract class Unit : MonoBehaviour
         }
     }
 
+    public int Rank
+    {
+        get
+        {
+            return rank;
+        }
+        set
+        {
+            rank = value;
+            RecountStats();
+        }
+    }
+
     public int Offence
     {
         get
         {
-            return unitData.Offence + buff.Offence;
+            return Random.Range(offenceMin, offenceMax) + buff.Offence;
         }
     }
 
@@ -76,7 +97,7 @@ public abstract class Unit : MonoBehaviour
     {
         get
         {
-            return unitData.Defence + buff.Defence;
+            return defence + buff.Defence;
         }
     }
 
@@ -84,16 +105,33 @@ public abstract class Unit : MonoBehaviour
     {
         get
         {
-            return unitData.Mobility + buff.Mobility;
+            return mobility + buff.Mobility;
+        }
+    }
+
+    public int Health
+    {
+        get
+        {
+            return health;
+        }
+        set
+        {
+            health = value;
         }
     }
 
     public int QualitySum
     {
-        get
-        {
-            return unitData.QualitySum + buff.QualitySum;
-        }
+        get { return offenceMin + offenceMax + defence; }
+    }
+
+    public List<Ability> GetUsableAbility()
+    {
+        List<Ability> res = new List<Ability>();
+        for (int i = 0; i < abilities.Length; i++)
+            if (abilities[i].IsUsable(ref location)) res.Add(abilities[i]);
+        return res;
     }
 
     public void ValidateLocation()
@@ -177,33 +215,54 @@ public abstract class Unit : MonoBehaviour
         pathToTravel = null;
     }
 
-    public void GetMotionSpace()
-    {
-
-    }
-
-    public void Move(HexCell[] path)
-    {
-
-    }
-
     public virtual void Attack(Unit victim)
     {
-        int hit = (Offence - victim.Defence) * unitData.Health / 100;
+        int hit = (Offence - victim.Defence) * health / 100;
 
         if (hit < 0)
         {
             hit = 0;
         }
-        else if (hit > victim.unitData.Health)
+        else if (hit > victim.health)
         {
-            hit = victim.unitData.Health;
+            hit = victim.health;
         }
         victim.Hit(hit);
-        unitData.AddExp(hit * victim.QualitySum);
+        AddExp(hit * victim.QualitySum);
     }
 
-    
+    void RecountStats()
+    {
+        int bonus = (rank - 1) << 1;
+
+        offenceMin = unitData.BaseOffenceMin + bonus;
+        offenceMax = unitData.BaseOffenceMax + bonus;
+        defence = unitData.BaseDefence + bonus;
+        mobility = unitData.BaseMobility + (rank / 6);
+
+        if (rank < 11 && (rank & 1) == 0)
+            name = unitData.Name(rank >> 1);
+    }
+
+    public void CheckNextRank()
+    {
+        while (experience >= nextRankExperience)
+        {
+            rank++;
+            experience -= nextRankExperience;
+            RecountStats();
+        }
+    }
+
+    void GetNextRankExperience()
+    {
+        nextRankExperience = QualitySum * 66;
+    }
+
+    public void AddExp(int exp)
+    {
+        experience += exp;
+    }
 
     public void Die()
     {
@@ -211,18 +270,17 @@ public abstract class Unit : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void Hit(int hit)
+    public bool IsDead
     {
-        unitData.Health -= hit;
+        get
+        {
+            return health == 0;
+        }
     }
 
-    public abstract void Battle(Unit victim);
-
-    public abstract HexCell[] GetAttackCells();
-
-    public virtual UnitActions Skill()
+    public void Hit(int hit)
     {
-        return 0;
+        health -= hit;
     }
 
     public virtual bool IsValidDestination(HexCell cell)
@@ -232,13 +290,30 @@ public abstract class Unit : MonoBehaviour
 
     public void Save(BinaryWriter writer)
     {
+        writer.Write(unitID);
+        writer.Write(health);
+        writer.Write(experience);
+        writer.Write(rank);
+
         location.coordinates.Save(writer);
         writer.Write(orientation);
     }
 
-    public void Load(BinaryReader reader, HexGrid grid)
+    public void LoadOld(BinaryReader reader, HexGrid grid)
     {
         Location = grid.GetCell(HexCoordinates.Load(reader));
         Orientation = reader.ReadSingle();
+    }
+
+    public void Load(BinaryReader reader, HexGrid grid)
+    {
+        health = reader.ReadInt32();
+        experience = reader.ReadInt32();
+        rank = reader.ReadInt32();
+
+        Location = grid.GetCell(HexCoordinates.Load(reader));
+        Orientation = reader.ReadSingle();
+
+        RecountStats();
     }
 }

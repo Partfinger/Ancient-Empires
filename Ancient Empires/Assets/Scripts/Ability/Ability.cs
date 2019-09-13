@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 public abstract class Ability : ScriptableObject
 {
+    public string Name = "New Ability";
+    public string Desc = "Short description";
+    public Sprite Sprite;
     public static HexGrid grid;
-    public Unit carrier;
-    public string aName = "New Ability";
-    public Sprite aSprite;
-    //public AudioClip aSound;
-    public float aBaseCoolDown = 1f;
 
-    public abstract bool IsUsable { get; }
+    public abstract bool IsUsable(ref HexCell cell);
 
-    public abstract void Initialize();
-    public abstract void TriggerAbility();
+    public void Show()
+    {
+
+    }
+
+    public virtual void Selected(ref Unit unit)
+    {
+        return;
+    }
+    public abstract void Canceled();
+    public virtual void TriggerAbility(ref Unit unit, ref HexCell cell)
+    {
+        return;
+    }
+
+    public new abstract string ToString();
 }

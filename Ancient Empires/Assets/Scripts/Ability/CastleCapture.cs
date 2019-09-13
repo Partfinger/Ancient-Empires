@@ -2,29 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Castle Capture Ability", menuName = "Castle Capture Ability", order = 101)]
+[CreateAssetMenu(fileName = "New Castle Capture Ability", menuName = "Castle Capture Ability", order = 53)]
 public class CastleCapture : Ability
 {
-    public override bool IsUsable
+    public override bool IsUsable(ref HexCell location)
     {
-        get
+        if (location.Building)
         {
-            HexCell cell = carrier.Location;
-            if (cell.IsBuilding && cell.ActiveBuilding == 1)
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
+        return false;
     }
 
-    public override void Initialize()
+    public override void Canceled()
     {
-        return;
+        throw new System.NotImplementedException();
     }
 
-    public override void TriggerAbility()
+    public override void Selected(ref Unit unit)
     {
-        carrier.Location.Building.Owner = 2;
+        unit.Location.Building.Owner = 2;
+    }
+
+    public override string ToString()
+    {
+        throw new System.NotImplementedException();
     }
 }

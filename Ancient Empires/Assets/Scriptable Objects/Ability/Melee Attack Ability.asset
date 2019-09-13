@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d7b768fb29b25445972db455bc9f120, type: 3}
-  m_Name: New Castle Capture Ability
+  m_Script: {fileID: 11500000, guid: 8fae0b4bb77e5b4429600293167b5c2d, type: 3}
+  m_Name: Melee Attack Ability
   m_EditorClassIdentifier: 
   Name: New Ability
   Desc: Short description
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: aad0cccd34441a24a815fd82946ba133, type: 3}

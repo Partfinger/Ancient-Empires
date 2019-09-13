@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7571095333529354963}
-  - component: {fileID: 7571095333529354967}
+  - component: {fileID: 8156071877838472633}
   m_Layer: 0
   m_Name: Warrior Variant
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7571095333529354967
+--- !u!114 &8156071877838472633
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,10 +41,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7571095333529354966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3e94733ae5eaf1409a178c2b47bdcf0, type: 3}
+  m_Script: {fileID: 11500000, guid: d1c6f9f8249a7c24ba69bc92f5de9f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unitData: {fileID: 11400000, guid: 37887e3a8c786b44a9e40eca6a3a0eb4, type: 2}
+  abilities:
+  - {fileID: 11400000, guid: 1305d4be575f3cc439a3951e687a9484, type: 2}
+  - {fileID: 11400000, guid: 63568b79e814ef64eaa716dbd3f77eed, type: 2}
   location: {fileID: 0}
 --- !u!1 &8772393431872694100
 GameObject:

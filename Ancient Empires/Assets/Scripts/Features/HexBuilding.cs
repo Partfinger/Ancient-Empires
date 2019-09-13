@@ -26,9 +26,10 @@ public abstract class HexBuilding : MonoBehaviour
         }
     }
 
-    public abstract UnitActions GetUnitActions(ref Unit unit);
-
-    public abstract UserAction GetUserAction();
+    public virtual int GetUserAction()
+    {
+        return 0;
+    }
 
     protected abstract void ApplyBuff();
 

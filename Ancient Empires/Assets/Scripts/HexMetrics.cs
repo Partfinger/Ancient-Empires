@@ -7,7 +7,7 @@ public enum UserAction
 
 public static class HexMetrics {
 
-    public const int EditorVers = 2;
+    public const int EditorVers = 3;
 
 	public const float outerToInner = 0.866025404f;
 	public const float innerToOuter = 1f / outerToInner;

@@ -153,6 +153,11 @@ public class HexGrid : MonoBehaviour {
         return null;
     }
 
+    public HexCell GetCell(int index)
+    {
+        return cells[index];
+    }
+
     public void ShowUI (bool visible) {
 		for (int i = 0; i < chunks.Length; i++) {
 			chunks[i].ShowUI(visible);
@@ -209,16 +214,29 @@ public class HexGrid : MonoBehaviour {
 		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
 	}
 
-    public void FindPath(HexCell fromCell, HexCell toCell, int speed)
+    public void FindAnyPath(HexCell fromCell, HexCell toCell, ref Movement.CalculatHeuristics calculatHeuristics, int speed)
     {
         ClearPath();
         currentPathFrom = fromCell;
         currentPathTo = toCell;
-        currentPathExists = Search(fromCell, toCell, speed);
+        currentPathExists = SearchAny(ref fromCell, ref toCell, ref calculatHeuristics, ref speed);
         if (currentPathExists)
         {
             ShowPath(speed);
         }
+    }
+
+    public void FindPath(HexCell fromCell, HexCell toCell, int speed)
+    {
+        /*
+        ClearPath();
+        currentPathFrom = fromCell;
+        currentPathTo = toCell;
+        currentPathExists = SearchAny(fromCell, toCell, speed);
+        if (currentPathExists)
+        {
+            ShowPath(speed);
+        }*/
     }
 
     public List<HexCell> GetPath()
@@ -236,6 +254,54 @@ public class HexGrid : MonoBehaviour {
         path.Reverse();
         return path;
     }
+    /*
+    public List<HexCell> GetMoveSpace(int index, int speed)
+    {
+        List<HexCell> frontier = new List<HexCell>();
+        List<HexCell> Space = new List<HexCell>();
+        HexCell location = cells[index];
+        location.Distance = 0;
+        frontier.Add(location);
+        while (frontier.Count > 0)
+        {
+            HexCell current = frontier[0];
+            frontier.RemoveAt(0);
+
+            HexCell neighbour = null;
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW && (neighbour = current.GetNeighbor(d)); d++)
+            {
+                HexEdgeType edgeType = current.GetEdgeType(neighbour);
+                if (edgeType == HexEdgeType.Cliff || neighbour.IsUnderwater)
+                    continue;
+                int moveCost = current.Distance;
+                if (current.HasRoadThroughEdge(d))
+                {
+                    moveCost += 7;
+                }
+                else
+                {
+                    moveCost += edgeType == HexEdgeType.Flat ? 10 : 13;
+                    moveCost += neighbour.IsFeature ? neighbour.FeatureLevel : 0;
+                }
+                if (moveCost <= speed)
+                {
+                    if (neighbour.Distance == 0)
+                    {
+                        neighbour.Distance = moveCost;
+                        frontier.Add(neighbour);
+                        Space.Add(neighbour);
+                    }
+                    else
+                    if (neighbour.Distance > moveCost)
+                    {
+                        neighbour.Distance = moveCost;
+                    }
+                    frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+                }
+            }
+        }
+        return Space;
+    }*/
 
     public void ClearPath()
     {
@@ -246,6 +312,7 @@ public class HexGrid : MonoBehaviour {
             {
                 current.SetLabel(null);
                 current.DisableHighlight();
+                current.Distance = 0;
                 current = current.PathFrom;
             }
             current.DisableHighlight();
@@ -280,7 +347,7 @@ public class HexGrid : MonoBehaviour {
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    bool Search(HexCell fromCell, HexCell toCell, int speed)
+    bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref Movement.CalculatHeuristics calculatHeuristics, ref int speed)
     {
         searchFrontierPhase += 2;
         if (searchFrontier == null)
@@ -309,33 +376,8 @@ public class HexGrid : MonoBehaviour {
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
-                HexCell neighbor = current.GetNeighbor(d);
-                if (
-                    neighbor == null ||
-                    neighbor.SearchPhase > searchFrontierPhase
-                )
-                {
-                    continue;
-                }
-                if (neighbor.IsUnderwater)
-                {
-                    continue;
-                }
-                HexEdgeType edgeType = current.GetEdgeType(neighbor);
-                if (edgeType == HexEdgeType.Cliff)
-                {
-                    continue;
-                }
-                int moveCost = 0;
-                if (current.HasRoadThroughEdge(d))
-                {
-                    moveCost += 7;
-                }
-                else
-                {
-                    moveCost += edgeType == HexEdgeType.Flat ? 10 : 13;
-                    moveCost += neighbor.IsFeature ? neighbor.FeatureLevel : 0;
-                }
+                int moveCost = calculatHeuristics(ref current, ref d, ref searchFrontierPhase, out HexCell neighbor);
+                if (moveCost == -1) continue;
 
                 int distance = current.Distance + moveCost;
                 int turn = distance / speed + 1;
@@ -389,6 +431,14 @@ public class HexGrid : MonoBehaviour {
         {
             cells[i].Load(reader);
         }
+        int unitsCount = reader.ReadInt32();
+
+        for (int i = 0; i < unitsCount; i++)
+        {
+            Unit unit = Instantiate(unitsArray.GetUnit(0));
+            unit.LoadOld(reader, this);
+            units.Add(unit);
+        }
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].Refresh();
@@ -405,10 +455,10 @@ public class HexGrid : MonoBehaviour {
             cells[i].Load(reader);
         }
         int unitsCount = reader.ReadInt32();
-
+        
         for(int i = 0; i < unitsCount; i++)
         {
-            Unit unit = Instantiate(unitsArray.GetUnit(0));
+            Unit unit = Instantiate(unitsArray.GetUnit(reader.ReadInt32()));
             unit.Load(reader, this);
             units.Add(unit);
         }

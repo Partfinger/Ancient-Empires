@@ -13,6 +13,7 @@ public class HexCell : MonoBehaviour {
     public HexBuilding Building = null;
 
     public Buff buff = new Buff();
+    public bool InQueue { get; set; }
 
     int distance, terrainTypeIndex;
 
@@ -460,6 +461,7 @@ public class HexCell : MonoBehaviour {
     public void DisableHighlight()
     {
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.color = Color.white;
         highlight.enabled = false;
     }
 
@@ -527,7 +529,7 @@ public class HexCell : MonoBehaviour {
 
     public void Load(BinaryReader reader)
     {
-        terrainTypeIndex = reader.ReadByte();
+        terrainTypeIndex = reader.ReadInt32();
         ShaderData.RefreshTerrain(this);
         elevation = reader.ReadSByte();
         RefreshPosition();

@@ -64,6 +64,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Ability\Ability.cs" />
     <Compile Include="Assets\Scripts\Ability\CastleCapture.cs" />
+    <Compile Include="Assets\Scripts\Ability\MeleeAttack.cs" />
+    <Compile Include="Assets\Scripts\Ability\Movement.cs" />
     <Compile Include="Assets\Scripts\Bezier.cs" />
     <Compile Include="Assets\Scripts\Buffs\Buff.cs" />
     <Compile Include="Assets\Scripts\Buffs\Buffs.cs" />
@@ -89,11 +91,11 @@
     <Compile Include="Assets\Scripts\ListPool.cs" />
     <Compile Include="Assets\Scripts\Players Scripts\Batch.cs" />
     <Compile Include="Assets\Scripts\Players Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\UI\AbilityLogicUI.cs" />
     <Compile Include="Assets\Scripts\UI\HexGameUI.cs" />
     <Compile Include="Assets\Scripts\UI\NewMapMenu.cs" />
     <Compile Include="Assets\Scripts\UI\SaveLoadItem.cs" />
     <Compile Include="Assets\Scripts\UI\SaveLoadMenu.cs" />
-    <Compile Include="Assets\Scripts\Units\MeleeUnit.cs" />
     <Compile Include="Assets\Scripts\Units\RangedUnit.cs" />
     <Compile Include="Assets\Scripts\Units\Unit.cs" />
     <Compile Include="Assets\Scripts\Units\UnitData.cs" />

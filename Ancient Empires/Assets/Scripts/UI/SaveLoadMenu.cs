@@ -109,15 +109,15 @@ public class SaveLoadMenu : MonoBehaviour {
 			int header = reader.ReadInt32();
             if (header == HexMetrics.EditorVers)
             {
-                hexGrid.Load(reader);
                 Debug.LogWarning("Current map format " + header);
+                hexGrid.Load(reader);
             }
             else
             {
-                if (header == 1)
+                if (header == 2)
                 {
-                    hexGrid.OldLoad(reader);
                     Debug.LogWarning("Old map format " + header);
+                    hexGrid.OldLoad(reader);
                 }
                 else
                 {
