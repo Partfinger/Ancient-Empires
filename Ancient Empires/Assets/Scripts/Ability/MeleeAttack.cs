@@ -45,6 +45,6 @@ public class MeleeAttack : Ability
 
     public override string ToString()
     {
-        throw new System.NotImplementedException();
+        return "This unit can attack enemy in melee battle";
     }
 }

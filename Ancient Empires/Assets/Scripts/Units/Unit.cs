@@ -238,7 +238,7 @@ public class Unit : MonoBehaviour
         offenceMin = unitData.BaseOffenceMin + bonus;
         offenceMax = unitData.BaseOffenceMax + bonus;
         defence = unitData.BaseDefence + bonus;
-        mobility = unitData.BaseMobility + (rank / 6);
+        mobility = unitData.BaseMobility + ( 10 * rank ) / 6;
 
         if (rank < 11 && (rank & 1) == 0)
             name = unitData.Name(rank >> 1);

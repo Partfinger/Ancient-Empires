@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,27 +31,34 @@ public class Movement : Ability
     public int defMovement(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase, out HexCell neighbor)
     {
         neighbor = current.GetNeighbor(d);
-        HexEdgeType edgeType = current.GetEdgeType(neighbor);
-        if (
-            neighbor == null ||
-            neighbor.SearchPhase > searchFrontierPhase ||
-            neighbor.IsUnderwater ||
-            edgeType == HexEdgeType.Cliff
-        )
+        if (neighbor)
         {
-            return -1;
-        }
-        int moveCost = 0;
-        if (current.HasRoadThroughEdge(d))
-        {
-            moveCost += 7;
+            HexEdgeType edgeType = current.GetEdgeType(neighbor);
+            if (
+                neighbor == null ||
+                neighbor.SearchPhase > searchFrontierPhase ||
+                neighbor.IsUnderwater ||
+                edgeType == HexEdgeType.Cliff
+            )
+            {
+                return -1;
+            }
+            int moveCost = 0;
+            if (current.HasRoadThroughEdge(d))
+            {
+                moveCost += 7;
+            }
+            else
+            {
+                moveCost += edgeType == HexEdgeType.Flat ? 10 : 13;
+                moveCost += neighbor.IsFeature ? neighbor.FeatureLevel : 0;
+            }
+            return moveCost;
         }
         else
         {
-            moveCost += edgeType == HexEdgeType.Flat ? 10 : 13;
-            moveCost += neighbor.IsFeature ? neighbor.FeatureLevel : 0;
+            return -1;
         }
-        return moveCost;
     }
 
     public int heavyMovement(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase)

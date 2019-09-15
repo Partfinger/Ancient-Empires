@@ -14,6 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   names:
   - Archer
+  - Corporal
+  - Ranger
+  - Senior Ranger
+  - Major Ranger
+  - Legolas
   description: 
   icon: {fileID: 0}
   cost: 250

@@ -13,8 +13,5 @@ MonoBehaviour:
   m_Name: Unit Array
   m_EditorClassIdentifier: 
   array:
-  - {fileID: 7571095333529354967, guid: 6ba7416b2b519784c93ce37860ec1def, type: 3}
-  - {fileID: 7571095333529354967, guid: 6ba7416b2b519784c93ce37860ec1def, type: 3}
-  - {fileID: 7571095333529354967, guid: 6ba7416b2b519784c93ce37860ec1def, type: 3}
-  - {fileID: 7571095333529354967, guid: 6ba7416b2b519784c93ce37860ec1def, type: 3}
-  - {fileID: 7571095333529354967, guid: 6ba7416b2b519784c93ce37860ec1def, type: 3}
+  - {fileID: 8156071877838472633, guid: 6ba7416b2b519784c93ce37860ec1def, type: 3}
+  - {fileID: 4702822171673499185, guid: 0a7c74465a35e3744a5047e8a9a657fc, type: 3}
