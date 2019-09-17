@@ -6,28 +6,54 @@ using UnityEngine.UI;
 public class HexGameUI : MonoBehaviour
 {
     public HexGrid grid;
-    HexCell currentCell;
-    Unit selectedUnit;
-    List<Ability> usableAbility;
+    public HexCell currentCell;
+    public Unit selectedUnit;
+    List<Ability> usableAbility = new List<Ability>();
     Ability selectedAbility;
     public Image AbilitySelectPanel;
     public AbilityLogicUI AbilitySelectorPrefub;
+    public UnitMarket Market;
     public Image AbilitySelectPanelPrefub;
+    public Image MarketPanel;
+    public RectTransform MarketContent;
     public Canvas childCanvas;
+    [SerializeField]
+    bool abilityCompleted = false;
+
+    delegate void _Update();
+
+    _Update currentUpdate;
 
     private void Awake()
     {
         Ability.grid = grid;
-        AbilityLogicUI.UI = this;
+        grid.gui = Ability.gui = AbilityLogicUI.UI = Unit.gui = this;
+        Market._Awake();
+        currentUpdate = DefUpdate;
     }
 
     void Update()
+    {
+        currentUpdate();
+    }
+
+    public void AbilityCompleted()
+    {
+        abilityCompleted = true;
+        selectedAbility = null;
+        usableAbility.Clear();
+    }
+
+    void DefUpdate()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (Input.GetMouseButtonDown(0))
             {
+                if (selectedAbility is UnitMarket)
+                    MarketPanel.gameObject.SetActive(false);
                 selectedAbility = null;
+
                 DoSelection();
             }
             if (Input.GetMouseButtonDown(1))
@@ -36,46 +62,90 @@ public class HexGameUI : MonoBehaviour
                 {
                     UpdateCurrentCell();
                     selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
-                    selectedAbility = null;
+                    if (abilityCompleted)
+                    {
+                        abilityCompleted = false;
+                    }
                 }
             }
         }
     }
 
+    void SelectUnitMove()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            UpdateCurrentCell();
+            selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
+            if (abilityCompleted)
+            {
+                abilityCompleted = false;
+            }
+        }
+    }
+
+    void SelectAbilityAfterMove()
+    {
+        if (abilityCompleted)
+        {
+            abilityCompleted = false;
+            currentUpdate = DefUpdate;
+        }
+        else if (selectedAbility)
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+
+                UpdateCurrentCell();
+                selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
+                if (abilityCompleted)
+                {
+                    abilityCompleted = false;
+                    currentUpdate = DefUpdate;
+                }
+            }
+            else if (Input.GetMouseButtonDown(0))
+            {
+                selectedAbility = null;
+                usableAbility.AddRange(selectedUnit.GetUsableAbilityAfterTravel());
+                ShowAbilityPanel();
+            }
+        }
+
+    }
+
+    public void WaitForEndOfTravel()
+    {
+        enabled = false;
+    }
+
+    public void SelectUnitAfterMove()
+    {
+        enabled = true;
+        selectedAbility = null;
+        usableAbility.AddRange(selectedUnit.GetUsableAbilityAfterTravel());
+        ShowAbilityPanel();
+        abilityCompleted = false;
+        currentUpdate = SelectAbilityAfterMove;
+    }
+
+    public void NewUnitMove(ref Unit unit)
+    {
+        selectedUnit = unit;
+        selectedAbility = unit.GetOnlyMove();
+        currentUpdate = SelectUnitMove;
+    }
+
     public void SelectedAbility(ref Ability ab)
     {
-        ab.Selected(ref selectedUnit);
         selectedAbility = ab;
+        ab.Selected();
         HideAbilityPanel();
     }
 
     public void ClearSelectedAbility()
     {
         selectedAbility = null;
-    }
-
-    void DoPathfinding()
-    {
-        if (UpdateCurrentCell())
-        {
-            if (currentCell && selectedUnit.IsValidDestination(currentCell))
-            {
-                grid.FindPath(selectedUnit.Location, currentCell, selectedUnit.Speed);
-            }
-            else
-            {
-                grid.ClearPath();
-            }
-        }
-    }
-
-    void DoMove()
-    {
-        if (grid.HasPath)
-        {
-            selectedUnit.Travel(grid.GetPath());
-            grid.ClearPath();
-        }
     }
 
     void ShowAbilityPanel()
@@ -106,7 +176,6 @@ public class HexGameUI : MonoBehaviour
 
     void DoSelection()
     {
-        //grid.ClearPath();
         HideAbilityPanel();
         UpdateCurrentCell();
         if (currentCell)
@@ -114,10 +183,24 @@ public class HexGameUI : MonoBehaviour
             selectedUnit = currentCell.Unit;
             if (selectedUnit)
             {
-                usableAbility = selectedUnit.GetUsableAbility();
-                ShowAbilityPanel();
+                usableAbility.AddRange(selectedUnit.GetUsableAbility());
             }
+            if (currentCell.Building is HexCastle && Market.IsUsable())
+            {
+                usableAbility.Add(Market);
+            }
+            if (usableAbility.Count > 0)
+                ShowAbilityPanel();
         }
+    }
+
+    public void SelectedUnit(ref Unit unit)
+    {
+        selectedUnit = unit;
+        currentCell = unit.Location;
+        usableAbility.Clear();
+        usableAbility.AddRange(selectedUnit.GetUsableAbility());
+        ShowAbilityPanel();
     }
 
     bool UpdateCurrentCell()

@@ -9,10 +9,4 @@ public class HexCastle : HexBuilding
         cell.buff = Buffs.Castle();
     }
 
-    public override int GetUserAction(/*Player p*/)
-    {
-        // if this.owner == p.id them return UserAction.BuyOnCastle;
-        return 0;
-    }
-
 }

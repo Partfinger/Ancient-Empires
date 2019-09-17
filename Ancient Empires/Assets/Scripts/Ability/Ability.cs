@@ -5,22 +5,28 @@ public abstract class Ability : ScriptableObject
     public string Desc = "Short description";
     public Sprite Sprite;
     public static HexGrid grid;
+    public static HexGameUI gui;
 
-    public abstract bool IsUsable(ref HexCell cell);
+    public abstract bool IsUsable();
 
-    public void Show()
-    {
-
-    }
-
-    public virtual void Selected(ref Unit unit)
+    public virtual void Selected()
     {
         return;
     }
-    public abstract void Canceled();
+
+    public virtual void Canceled()
+    {
+        return;
+    }
+
     public virtual void TriggerAbility(ref Unit unit, ref HexCell cell)
     {
         return;
+    }
+
+    public static Ability GetCastleAbility()
+    {
+        return new UnitMarket();
     }
 
     public new abstract string ToString();

@@ -20,7 +20,7 @@ MonoBehaviour:
   - Major
   - Colonel
   description: Desc
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 4abb542affa60d1488c86b03446f4db9, type: 3}
   cost: 150
   baseOffenceMin: 50
   baseOffenceMax: 55

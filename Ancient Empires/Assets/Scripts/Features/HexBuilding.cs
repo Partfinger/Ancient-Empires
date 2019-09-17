@@ -8,7 +8,7 @@ public abstract class HexBuilding : MonoBehaviour
     protected bool isCaption;
 
     [SerializeField]
-    protected int owner;
+    protected int owner = 0;
 
     public HexCell cell;
 
@@ -24,11 +24,6 @@ public abstract class HexBuilding : MonoBehaviour
         {
             owner = value;
         }
-    }
-
-    public virtual int GetUserAction()
-    {
-        return 0;
     }
 
     protected abstract void ApplyBuff();

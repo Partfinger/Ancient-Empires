@@ -5,12 +5,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Melee Attack Ability", menuName = "Melee Attack Ability", order = 55)]
 public class MeleeAttack : Ability
 {
-    public override bool IsUsable(ref HexCell l)
+    public override bool IsUsable()
     {
+        HexCell n;
         for (HexDirection d = HexDirection.NE; d<= HexDirection.NW; d++)
         {
-            HexCell n;
-            if ( (n = l.GetNeighbor(d)) && n.Unit )
+            if ( (n = gui.currentCell.GetNeighbor(d)) && n.Unit )
             {
                 return true;
             }
@@ -21,26 +21,25 @@ public class MeleeAttack : Ability
     public override void TriggerAbility(ref Unit unit, ref HexCell cell)
     {
         Unit victim = cell.Unit;
-        unit.Attack(victim);
-        if (!victim.IsDead)
+        if (victim)
         {
-            victim.Attack(unit);
-            if (!unit.IsDead)
-                unit.CheckNextRank();
+            unit.Attack(victim);
+            if (!victim.IsDead)
+            {
+                victim.Attack(unit);
+                if (!unit.IsDead)
+                    unit.CheckNextRank();
+                else
+                    unit.Die();
+                victim.CheckNextRank();
+            }
             else
-                unit.Die();
-            victim.CheckNextRank();
+            {
+                victim.Die();
+                unit.CheckNextRank();
+            }
+            gui.AbilityCompleted();
         }
-        else
-        {
-            victim.Die();
-            unit.CheckNextRank();
-        }
-    }
-
-    public override void Canceled()
-    {
-        throw new System.NotImplementedException();
     }
 
     public override string ToString()

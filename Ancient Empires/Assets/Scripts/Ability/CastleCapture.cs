@@ -5,23 +5,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Castle Capture Ability", menuName = "Castle Capture Ability", order = 53)]
 public class CastleCapture : Ability
 {
-    public override bool IsUsable(ref HexCell location)
+    public override bool IsUsable()
     {
-        if (location.Building)
+        if (gui.currentCell.Building is HexCastle)
         {
             return true;
         }
         return false;
     }
 
-    public override void Canceled()
+    public override void Selected()
     {
-        throw new System.NotImplementedException();
-    }
-
-    public override void Selected(ref Unit unit)
-    {
-        unit.Location.Building.Owner = 2;
+        gui.currentCell.Building.Owner = 0;
+        gui.AbilityCompleted();
     }
 
     public override string ToString()

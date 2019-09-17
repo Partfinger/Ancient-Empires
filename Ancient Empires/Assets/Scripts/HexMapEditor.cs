@@ -11,7 +11,7 @@ public class HexMapEditor : MonoBehaviour {
 
     sbyte activeElevation;
     sbyte activeWaterLevel;
-    byte activeTerrainTypeIndex = 1;
+    int activeTerrainTypeIndex = 0;
     byte activeFeatureLevel = 1, activeFeature, activeBuildingLevel = 0, activeBuilding;
 
     int brushSize;
@@ -161,7 +161,7 @@ public class HexMapEditor : MonoBehaviour {
         if (cell && !cell.Unit)
         {
             hexGrid.AddUnit(
-                Instantiate(unitsArray.GetUnit(0)), cell, Random.Range(0f, 360f)
+                Instantiate(unitsArray.GetUnit(1)), cell, Random.Range(0f, 360f)
             );
         }
     }
@@ -207,9 +207,9 @@ public class HexMapEditor : MonoBehaviour {
 
 	void EditCell (HexCell cell) {
 		if (cell) {
-            if (activeTerrainTypeIndex > 0)
+            if (activeTerrainTypeIndex > -1)
             {
-                cell.Index = activeTerrainTypeIndex;
+                cell.TerrainTypeIndex = activeTerrainTypeIndex;
             }
             if (applyElevation) {
 				cell.Elevation = activeElevation;

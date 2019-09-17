@@ -7,13 +7,13 @@ using UnityEngine;
 public class UnitData : ScriptableObject
 {
     [SerializeField]
-    private string[] names;
+    protected string[] names;
     [SerializeField]
-    private string description;
+    protected string description;
     [SerializeField]
-    private Sprite icon;
+    protected Sprite icon;
     [SerializeField]
-    private int cost, baseOffenceMin, baseOffenceMax, baseDefence, baseMobility;
+    protected int cost, baseOffenceMin, baseOffenceMax, baseDefence, baseMobility;
 
     public string Name(int id)
     {

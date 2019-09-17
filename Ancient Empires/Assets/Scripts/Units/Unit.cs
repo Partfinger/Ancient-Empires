@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    public static HexGameUI gui;
     public UnitData unitData;
     public Buff buff = new Buff();
     List<HexCell> pathToTravel;
@@ -12,9 +13,9 @@ public class Unit : MonoBehaviour
     const float rotationSpeed = 180f;
 
     [SerializeField]
-    protected int unitID;
+    protected int unitID, health;
 
-    private int offenceMin, offenceMax, defence, mobility, health, experience, nextRankExperience, healthMax = 100, rank = 0;
+    private int offenceMin, offenceMax, defence, mobility, experience, nextRankExperience, healthMax = 100, rank = 0;
 
     [SerializeField]
     Ability[] abilities;
@@ -29,8 +30,27 @@ public class Unit : MonoBehaviour
         offenceMax = unitData.BaseOffenceMax;
         defence = unitData.BaseDefence;
         mobility = unitData.BaseMobility;
-        GetNextRankExperience();
         health = healthMax * 1;
+        GetNextRankExperience();
+    }
+
+    public void SetLocation(ref HexCell l)
+    {
+        location = l;
+        transform.localPosition = l.Position;
+    }
+
+    public Ability GetOnlyMove()
+    {
+        return abilities[1];
+    }
+
+    public int ID
+    {
+        get
+        {
+            return unitID;
+        }
     }
 
     void OnEnable()
@@ -130,7 +150,15 @@ public class Unit : MonoBehaviour
     {
         List<Ability> res = new List<Ability>();
         for (int i = 0; i < abilities.Length; i++)
-            if (abilities[i].IsUsable(ref location)) res.Add(abilities[i]);
+            if (abilities[i].IsUsable()) res.Add(abilities[i]);
+        return res;
+    }
+
+    public List<Ability> GetUsableAbilityAfterTravel()
+    {
+        List<Ability> res = new List<Ability>();
+        for (int i = 0; i < abilities.Length; i++)
+            if (i != 1 && abilities[i].IsUsable()) res.Add(abilities[i]);
         return res;
     }
 
@@ -139,10 +167,27 @@ public class Unit : MonoBehaviour
         transform.localPosition = location.Position;
     }
 
+    public void SetLocationQuiet(HexCell value)
+    {
+        location = value;
+        transform.localPosition = value.Position;
+    }
+
+    void TravelLok(HexCell value)
+    {
+        location = value;
+        location.Unit = this;
+        transform.localPosition = value.Position;
+    }
+
     public void Travel(List<HexCell> path)
     {
-        Location = path[path.Count - 1];
+        if (location.Unit != this)
+            TravelLok(path[path.Count - 1]);
+        else
+            Location = path[path.Count - 1];
         pathToTravel = path;
+        gui.WaitForEndOfTravel();
         StopAllCoroutines();
         StartCoroutine(TravelPath());
     }
@@ -213,6 +258,7 @@ public class Unit : MonoBehaviour
 
         ListPool<HexCell>.Add(pathToTravel);
         pathToTravel = null;
+        gui.SelectUnitAfterMove();
     }
 
     public virtual void Attack(Unit victim)
@@ -231,14 +277,16 @@ public class Unit : MonoBehaviour
         AddExp(hit * victim.QualitySum);
     }
 
-    void RecountStats()
+    protected void RecountStats()
     {
-        int bonus = (rank - 1) << 1;
+        int bonus = rank << 1;
 
         offenceMin = unitData.BaseOffenceMin + bonus;
         offenceMax = unitData.BaseOffenceMax + bonus;
         defence = unitData.BaseDefence + bonus;
         mobility = unitData.BaseMobility + ( 10 * rank ) / 6;
+
+        GetNextRankExperience();
 
         if (rank < 11 && (rank & 1) == 0)
             name = unitData.Name(rank >> 1);

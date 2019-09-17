@@ -15,7 +15,7 @@ MonoBehaviour:
   names:
   - Golem
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 99c683d5b5bd23a49a2f8fa3543fe758, type: 3}
   cost: 600
   baseOffenceMin: 60
   baseOffenceMax: 70

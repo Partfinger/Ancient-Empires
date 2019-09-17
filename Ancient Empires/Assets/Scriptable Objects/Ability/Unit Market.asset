@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d11cb274a5d7a149aea6d25c095b33b, type: 3}
+  m_Name: Unit Market
+  m_EditorClassIdentifier: 
+  Name: New Ability
+  Desc: Short description
+  Sprite: {fileID: 21300000, guid: 623c9f6a844d4574b9c471ae6fc57329, type: 3}
+  unitsArrayForMarket: {fileID: 11400000, guid: fb582cfa964e147488c040a14e1dbd5a,
+    type: 2}
+  UnitInMarketPrefab: {fileID: 6111155885076775197, guid: f686eb0732e4f8c4593af515c71f24f2,
+    type: 3}
+  units:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

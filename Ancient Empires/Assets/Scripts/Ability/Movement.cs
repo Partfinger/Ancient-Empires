@@ -12,20 +12,34 @@ public class Movement : Ability
     CalculatHeuristics currentMovement;
 
     List<int> Space;
-    public override bool IsUsable(ref HexCell cell)
+    public override bool IsUsable()
     {
         return true;
     }
 
     public override void TriggerAbility(ref Unit unit, ref HexCell cell)
     {
-        if (unit.Location != cell)
+        if (unit.Location != cell && !cell.Unit)
         {
             currentMovement = defMovement;
             grid.FindAnyPath(unit.Location, cell, ref currentMovement, unit.Speed);
             unit.Travel(grid.GetPath());
             grid.ClearPath();
         }
+        gui.AbilityCompleted();
+    }
+
+    public bool SpecTrigget(ref Unit unit, ref HexCell cell)
+    {
+        if (unit.Location != cell && !cell.Unit)
+        {
+            currentMovement = defMovement;
+            grid.FindAnyPath(unit.Location, cell, ref currentMovement, unit.Speed);
+            unit.Travel(grid.GetPath());
+            grid.ClearPath();
+            return true;
+        }
+        return false;
     }
 
     public int defMovement(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase, out HexCell neighbor)

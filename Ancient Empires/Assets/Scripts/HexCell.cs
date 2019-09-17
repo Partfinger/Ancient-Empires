@@ -15,7 +15,7 @@ public class HexCell : MonoBehaviour {
     public Buff buff = new Buff();
     public bool InQueue { get; set; }
 
-    int distance, terrainTypeIndex;
+    int distance, terrainTypeIndex = 0;
 
     byte featureLevel = 1;
     byte activeFeature = 0;
@@ -38,14 +38,26 @@ public class HexCell : MonoBehaviour {
     public int Index { get; set; }
 
     public HexCellShaderData ShaderData { get; set; }
+    [SerializeField]
+    Unit unit;
 
-    public Unit Unit { get; set; }
-
-    public byte TerrainTypeIndex
+    public Unit Unit
     {
         get
         {
-            return (byte)(terrainTypeIndex - 1);
+            return unit;
+        }
+        set
+        {
+            unit = value;
+        }
+    }
+
+    public int TerrainTypeIndex
+    {
+        get
+        {
+            return terrainTypeIndex - 1;
         }
         set
         {
@@ -454,7 +466,7 @@ public class HexCell : MonoBehaviour {
 
     public void SetLabel(string text)
     {
-        UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
+        Text label = uiRect.GetComponent<Text>();
         label.text = text;
     }
 

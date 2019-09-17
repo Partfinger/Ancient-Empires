@@ -8,14 +8,15 @@ public class HexGrid : MonoBehaviour {
 
     public int cellCountX, cellCountZ;
 
+    public HexGameUI gui;
+
     public HexCell cellPrefab;
 	public Text cellLabelPrefab;
 	public HexGridChunk chunkPrefab;
 
 	public Texture2D noiseSource;
 
-    [SerializeField]
-    UnitsArray unitsArray;
+    public UnitsArray unitsArray;
 
     List<Unit> units = new List<Unit>();
 
@@ -55,6 +56,24 @@ public class HexGrid : MonoBehaviour {
         unit.Location = location;
         unit.Orientation = orientation;
     }
+
+    public void AddBoughtUnit(int id, HexCell location, float orientation)
+    {
+        Unit unit = Instantiate(unitsArray.GetUnit(id), transform, false);
+        units.Add(unit);
+        if (location.Unit)
+        {
+            unit.SetLocationQuiet(location);
+            gui.NewUnitMove(ref unit);
+        }
+        else
+        {
+            unit.Location = location;
+            gui.SelectedUnit(ref unit);
+        }
+        unit.Orientation = orientation;
+    }
+
     public void RemoveUnit(Unit unit)
     {
         units.Remove(unit);
@@ -226,19 +245,6 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    public void FindPath(HexCell fromCell, HexCell toCell, int speed)
-    {
-        /*
-        ClearPath();
-        currentPathFrom = fromCell;
-        currentPathTo = toCell;
-        currentPathExists = SearchAny(fromCell, toCell, speed);
-        if (currentPathExists)
-        {
-            ShowPath(speed);
-        }*/
-    }
-
     public List<HexCell> GetPath()
     {
         if (!currentPathExists)
@@ -254,54 +260,6 @@ public class HexGrid : MonoBehaviour {
         path.Reverse();
         return path;
     }
-    /*
-    public List<HexCell> GetMoveSpace(int index, int speed)
-    {
-        List<HexCell> frontier = new List<HexCell>();
-        List<HexCell> Space = new List<HexCell>();
-        HexCell location = cells[index];
-        location.Distance = 0;
-        frontier.Add(location);
-        while (frontier.Count > 0)
-        {
-            HexCell current = frontier[0];
-            frontier.RemoveAt(0);
-
-            HexCell neighbour = null;
-            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW && (neighbour = current.GetNeighbor(d)); d++)
-            {
-                HexEdgeType edgeType = current.GetEdgeType(neighbour);
-                if (edgeType == HexEdgeType.Cliff || neighbour.IsUnderwater)
-                    continue;
-                int moveCost = current.Distance;
-                if (current.HasRoadThroughEdge(d))
-                {
-                    moveCost += 7;
-                }
-                else
-                {
-                    moveCost += edgeType == HexEdgeType.Flat ? 10 : 13;
-                    moveCost += neighbour.IsFeature ? neighbour.FeatureLevel : 0;
-                }
-                if (moveCost <= speed)
-                {
-                    if (neighbour.Distance == 0)
-                    {
-                        neighbour.Distance = moveCost;
-                        frontier.Add(neighbour);
-                        Space.Add(neighbour);
-                    }
-                    else
-                    if (neighbour.Distance > moveCost)
-                    {
-                        neighbour.Distance = moveCost;
-                    }
-                    frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
-                }
-            }
-        }
-        return Space;
-    }*/
 
     public void ClearPath()
     {
@@ -460,6 +418,7 @@ public class HexGrid : MonoBehaviour {
         {
             Unit unit = Instantiate(unitsArray.GetUnit(reader.ReadInt32()));
             unit.Load(reader, this);
+            unit.transform.SetParent(transform, false);
             units.Add(unit);
         }
         for (int i = 0; i < chunks.Length; i++)
