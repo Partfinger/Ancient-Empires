@@ -3,6 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MovementType
+{
+    medium, light, heavy, flying, amphibian, aquatic, special
+}
+
 [CreateAssetMenu(fileName = "New UnitData", menuName = "Unit Data", order = 51)]
 public class UnitData : ScriptableObject
 {
@@ -14,6 +19,8 @@ public class UnitData : ScriptableObject
     protected Sprite icon;
     [SerializeField]
     protected int cost, baseOffenceMin, baseOffenceMax, baseDefence, baseMobility;
+    [SerializeField]
+    MovementType movementType;
 
     public string Name(int id)
     {
@@ -73,6 +80,14 @@ public class UnitData : ScriptableObject
         get
         {
             return baseMobility;
+        }
+    }
+
+    public MovementType MovementType
+    {
+        get
+        {
+            return movementType;
         }
     }
 }

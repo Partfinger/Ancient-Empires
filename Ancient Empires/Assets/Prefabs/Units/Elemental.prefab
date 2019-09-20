@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitData: {fileID: 11400000, guid: 00f6a5fd1f106284e9294d804207b07d, type: 2}
-  unitID: 0
+  unitID: 3
+  health: 0
   abilities:
   - {fileID: 11400000, guid: a4eabbfd258f5874596f252a60bfb8fb, type: 2}
   - {fileID: 11400000, guid: 1305d4be575f3cc439a3951e687a9484, type: 2}

@@ -233,12 +233,12 @@ public class HexGrid : MonoBehaviour {
 		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
 	}
 
-    public void FindAnyPath(HexCell fromCell, HexCell toCell, ref Movement.CalculatHeuristics calculatHeuristics, int speed)
+    public void FindAnyPath(HexCell fromCell, HexCell toCell, ref PathCostCalculator.Calculate calculate, int speed)
     {
         ClearPath();
         currentPathFrom = fromCell;
         currentPathTo = toCell;
-        currentPathExists = SearchAny(ref fromCell, ref toCell, ref calculatHeuristics, ref speed);
+        currentPathExists = SearchAny(ref fromCell, ref toCell, ref calculate, ref speed);
         if (currentPathExists)
         {
             ShowPath(speed);
@@ -305,7 +305,7 @@ public class HexGrid : MonoBehaviour {
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref Movement.CalculatHeuristics calculatHeuristics, ref int speed)
+    bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref PathCostCalculator.Calculate calculate, ref int speed)
     {
         searchFrontierPhase += 2;
         if (searchFrontier == null)
@@ -334,7 +334,7 @@ public class HexGrid : MonoBehaviour {
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
-                int moveCost = calculatHeuristics(ref current, ref d, ref searchFrontierPhase, out HexCell neighbor);
+                int moveCost = calculate(ref current, ref d, ref searchFrontierPhase, out HexCell neighbor);
                 if (moveCost == -1) continue;
 
                 int distance = current.Distance + moveCost;

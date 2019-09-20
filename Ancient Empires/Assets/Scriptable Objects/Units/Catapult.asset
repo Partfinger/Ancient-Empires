@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b278a72b1e54d640a10c6eb9cb66b84, type: 3}
   m_Name: Catapult
   m_EditorClassIdentifier: 
-  names: []
+  names:
+  - Catapult
   description: 
-  icon: {fileID: 0}
-  cost: 0
-  baseOffenceMin: 0
-  baseOffenceMax: 0
-  baseDefence: 0
-  baseMobility: 0
-  attackDistanceMin: 0
-  attackDistanceMax: 0
+  icon: {fileID: 21300000, guid: 6a98c6ab59143964bb311a0cbb4c9dc5, type: 3}
+  cost: 700
+  baseOffenceMin: 50
+  baseOffenceMax: 70
+  baseDefence: 10
+  baseMobility: 40
+  movementType: 2
+  attackDistanceMin: 2
+  attackDistanceMax: 4

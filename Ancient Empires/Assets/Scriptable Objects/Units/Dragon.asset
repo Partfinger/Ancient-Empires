@@ -21,3 +21,4 @@ MonoBehaviour:
   baseOffenceMax: 80
   baseDefence: 25
   baseMobility: 70
+  movementType: 3

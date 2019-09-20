@@ -5,12 +5,15 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    public Player Owner;
     public static HexGameUI gui;
     public UnitData unitData;
     public Buff buff = new Buff();
     List<HexCell> pathToTravel;
-    const float travelSpeed = 4f;
+    const float travelSpeed = 7f;
     const float rotationSpeed = 180f;
+    const float coldDownTime = 10f;
+    float coldDown = 0f;
 
     [SerializeField]
     protected int unitID, health;
@@ -32,6 +35,18 @@ public class Unit : MonoBehaviour
         mobility = unitData.BaseMobility;
         health = healthMax * 1;
         GetNextRankExperience();
+        enabled = false;
+    }
+
+    private void Update()
+    {
+        if (coldDown > coldDownTime)
+        {
+            coldDown = 0f;
+            enabled = false;
+            return;
+        }
+        coldDown += Time.deltaTime;
     }
 
     public void SetLocation(ref HexCell l)

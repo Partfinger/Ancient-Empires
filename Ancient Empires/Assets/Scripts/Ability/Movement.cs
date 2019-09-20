@@ -7,9 +7,7 @@ using UnityEngine;
 public class Movement : Ability
 {
 
-    public delegate int CalculatHeuristics(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase, out HexCell neighbour);
-
-    CalculatHeuristics currentMovement;
+    PathCostCalculator.Calculate calculate;
 
     List<int> Space;
     public override bool IsUsable()
@@ -21,85 +19,14 @@ public class Movement : Ability
     {
         if (unit.Location != cell && !cell.Unit)
         {
-            currentMovement = defMovement;
-            grid.FindAnyPath(unit.Location, cell, ref currentMovement, unit.Speed);
+            calculate = PathCostCalculator.GetMovement(unit.unitData.MovementType);
+            grid.FindAnyPath(unit.Location, cell, ref calculate, unit.Speed);
             unit.Travel(grid.GetPath());
             grid.ClearPath();
-        }
-        gui.AbilityCompleted();
-    }
-
-    public bool SpecTrigget(ref Unit unit, ref HexCell cell)
-    {
-        if (unit.Location != cell && !cell.Unit)
-        {
-            currentMovement = defMovement;
-            grid.FindAnyPath(unit.Location, cell, ref currentMovement, unit.Speed);
-            unit.Travel(grid.GetPath());
-            grid.ClearPath();
-            return true;
-        }
-        return false;
-    }
-
-    public int defMovement(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase, out HexCell neighbor)
-    {
-        neighbor = current.GetNeighbor(d);
-        if (neighbor)
-        {
-            HexEdgeType edgeType = current.GetEdgeType(neighbor);
-            if (
-                neighbor == null ||
-                neighbor.SearchPhase > searchFrontierPhase ||
-                neighbor.IsUnderwater ||
-                edgeType == HexEdgeType.Cliff
-            )
-            {
-                return -1;
-            }
-            int moveCost = 0;
-            if (current.HasRoadThroughEdge(d))
-            {
-                moveCost += 7;
-            }
-            else
-            {
-                moveCost += edgeType == HexEdgeType.Flat ? 10 : 13;
-                moveCost += neighbor.IsFeature ? neighbor.FeatureLevel : 0;
-            }
-            return moveCost;
-        }
-        else
-        {
-            return -1;
+            gui.AbilityCompleted();
         }
     }
 
-    public int heavyMovement(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase)
-    {
-        HexCell neighbor = current.GetNeighbor(d);
-        HexEdgeType edgeType = current.GetEdgeType(neighbor);
-        if (
-            neighbor == null ||
-            neighbor.SearchPhase > searchFrontierPhase ||
-            neighbor.IsUnderwater ||
-            edgeType == HexEdgeType.Cliff
-        )
-        {
-            return -1;
-        }
-        int moveCost = 0;
-        if (current.HasRoadThroughEdge(d))
-        {
-            moveCost += 8;
-        }
-        else
-        {
-            moveCost += edgeType == HexEdgeType.Flat ? 10 : 15;
-            moveCost += neighbor.IsFeature ? neighbor.FeatureLevel : 0;
-        }
-        return moveCost;
-    }
 
     ////public int rep tile
 

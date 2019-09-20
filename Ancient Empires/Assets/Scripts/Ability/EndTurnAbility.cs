@@ -16,6 +16,7 @@ public class EndTurnAbility : Ability
 
     public override void Selected()
     {
+        gui.selectedUnit.enabled = true;
         gui.AbilityCompleted();
     }
 

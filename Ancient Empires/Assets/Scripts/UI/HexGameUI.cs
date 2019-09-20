@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HexGameUI : MonoBehaviour
+public class HexGameUI : MonoBehaviour, IPlayerInterface
 {
     public HexGrid grid;
     public HexCell currentCell;
@@ -80,6 +80,7 @@ public class HexGameUI : MonoBehaviour
             if (abilityCompleted)
             {
                 abilityCompleted = false;
+                currentUpdate = DefUpdate;
             }
         }
     }
@@ -183,7 +184,14 @@ public class HexGameUI : MonoBehaviour
             selectedUnit = currentCell.Unit;
             if (selectedUnit)
             {
-                usableAbility.AddRange(selectedUnit.GetUsableAbility());
+                if (!selectedUnit.enabled)
+                {
+                    usableAbility.AddRange(selectedUnit.GetUsableAbility());
+                }
+                else
+                {
+                    selectedUnit = null;
+                }
             }
             if (currentCell.Building is HexCastle && Market.IsUsable())
             {
