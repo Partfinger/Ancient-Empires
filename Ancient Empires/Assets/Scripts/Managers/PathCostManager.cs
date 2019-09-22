@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class PathCostCalculator
+public static class PathCostManager
 {
 
     public delegate int Calculate(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase, out HexCell neighbour);
@@ -26,7 +26,6 @@ public static class PathCostCalculator
         }
         return null;
     }
-
 
     static int Medium(ref HexCell current, ref HexDirection d, ref int searchFrontierPhase, out HexCell neighbor)
     {

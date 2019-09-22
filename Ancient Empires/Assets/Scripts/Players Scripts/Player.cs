@@ -12,6 +12,15 @@ public class Player : MonoBehaviour
     protected int Gold;
     protected int goldIncome;
     protected int commanderCounter = 1;
+    public IPlayerInterface ui;
+
+    public Unit Commander
+    {
+        get
+        {
+            return commander;
+        }
+    }
 
     public bool UnitLimit
     {
@@ -32,6 +41,11 @@ public class Player : MonoBehaviour
     public void AddUnit(ref Unit newUnit)
     {
         units.Add(newUnit);
+    }
+
+    public void RemoveUnit(Unit unit)
+    {
+        units.Remove(unit);
     }
 
     public void CommanderDie()

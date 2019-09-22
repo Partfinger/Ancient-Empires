@@ -24,6 +24,36 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
 
     _Update currentUpdate;
 
+    public Unit SelectedUnit
+    {
+        get
+        {
+            return selectedUnit;
+        }
+        set
+        {
+            selectedUnit = value;
+            currentCell = selectedUnit.Location;
+            usableAbility.Clear();
+            usableAbility.AddRange(selectedUnit.GetUsableAbility());
+            ShowAbilityPanel();
+        }
+    }
+
+    public Ability SelectedAbility
+    {
+        get
+        {
+            return selectedAbility;
+        }
+        set
+        {
+            selectedAbility = value;
+            selectedAbility.Selected();
+            HideAbilityPanel();
+        }
+    }
+
     private void Awake()
     {
         Ability.grid = grid;
@@ -130,25 +160,6 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         currentUpdate = SelectAbilityAfterMove;
     }
 
-    public void NewUnitMove(ref Unit unit)
-    {
-        selectedUnit = unit;
-        selectedAbility = unit.GetOnlyMove();
-        currentUpdate = SelectUnitMove;
-    }
-
-    public void SelectedAbility(ref Ability ab)
-    {
-        selectedAbility = ab;
-        ab.Selected();
-        HideAbilityPanel();
-    }
-
-    public void ClearSelectedAbility()
-    {
-        selectedAbility = null;
-    }
-
     void ShowAbilityPanel()
     {
         AbilitySelectPanel = Instantiate(AbilitySelectPanelPrefub, childCanvas.transform);
@@ -202,15 +213,6 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         }
     }
 
-    public void SelectedUnit(ref Unit unit)
-    {
-        selectedUnit = unit;
-        currentCell = unit.Location;
-        usableAbility.Clear();
-        usableAbility.AddRange(selectedUnit.GetUsableAbility());
-        ShowAbilityPanel();
-    }
-
     bool UpdateCurrentCell()
     {
         HexCell cell =
@@ -228,5 +230,12 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         enabled = !toggle;
         grid.ShowUI(!toggle);
         grid.ClearPath();
+    }
+
+    public void MovementInt(ref Unit unit)
+    {
+        selectedUnit = unit;
+        selectedAbility = unit.GetOnlyMove();
+        currentUpdate = SelectUnitMove;
     }
 }

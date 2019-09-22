@@ -7,7 +7,7 @@ using UnityEngine;
 public class Movement : Ability
 {
 
-    PathCostCalculator.Calculate calculate;
+    PathCostManager.Calculate calculate;
 
     List<int> Space;
     public override bool IsUsable()
@@ -19,7 +19,7 @@ public class Movement : Ability
     {
         if (unit.Location != cell && !cell.Unit)
         {
-            calculate = PathCostCalculator.GetMovement(unit.unitData.MovementType);
+            calculate = PathCostManager.GetMovement(unit.unitData.MovementType);
             grid.FindAnyPath(unit.Location, cell, ref calculate, unit.Speed);
             unit.Travel(grid.GetPath());
             grid.ClearPath();

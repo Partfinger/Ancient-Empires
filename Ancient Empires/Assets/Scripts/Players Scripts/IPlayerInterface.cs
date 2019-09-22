@@ -4,7 +4,9 @@ using UnityEngine;
 
 public interface IPlayerInterface
 {
-    void SelectedAbility(ref Ability ab);
+    Unit SelectedUnit { get; set; }
 
-    void SelectedUnit(ref Unit unit);
+    Ability SelectedAbility { get; set; }
+
+    void MovementInt(ref Unit unit);
 }

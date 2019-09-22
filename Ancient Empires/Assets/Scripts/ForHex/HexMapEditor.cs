@@ -160,9 +160,9 @@ public class HexMapEditor : MonoBehaviour {
         HexCell cell = GetCellUnderCursor();
         if (cell && !cell.Unit)
         {
-            hexGrid.AddUnit(
+            /*hexGrid.AddUnit(
                 Instantiate(unitsArray.GetUnit(1)), cell, Random.Range(0f, 360f)
-            );
+            );*/
         }
     }
 
@@ -171,7 +171,7 @@ public class HexMapEditor : MonoBehaviour {
         HexCell cell = GetCellUnderCursor();
         if (cell && cell.Unit)
         {
-            hexGrid.RemoveUnit(cell.Unit);
+            //hexGrid.RemoveUnit(cell.Unit);
         }
     }
 

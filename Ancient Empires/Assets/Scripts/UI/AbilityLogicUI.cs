@@ -19,6 +19,6 @@ public class AbilityLogicUI : MonoBehaviour
 
     public void OnClick()
     {
-        UI.SelectedAbility(ref ability);
+        //UI.SelectedAbility(ref ability);
     }
 }

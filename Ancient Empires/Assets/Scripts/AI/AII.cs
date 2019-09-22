@@ -7,12 +7,10 @@ public class AII : IPlayerInterface
 
     AIPlayer bot;
 
-    public void SelectedAbility(ref Ability ab)
-    {
-        ab.Selected();
-    }
+    Unit IPlayerInterface.SelectedUnit { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    Ability IPlayerInterface.SelectedAbility { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
-    public void SelectedUnit(ref Unit unit)
+    public void MovementInt(ref Unit unit)
     {
         throw new System.NotImplementedException();
     }

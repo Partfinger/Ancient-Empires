@@ -18,14 +18,14 @@ public class Unit : MonoBehaviour
     [SerializeField]
     protected int unitID, health;
 
-    private int offenceMin, offenceMax, defence, mobility, experience, nextRankExperience, healthMax = 100, rank = 0;
+    protected int offenceMin, offenceMax, defence, mobility, experience, nextRankExperience, healthMax = 100, rank = 0;
 
     [SerializeField]
     Ability[] abilities;
 
     float orientation;
     [SerializeField]
-    HexCell location;
+    protected HexCell location;
 
     private void Awake()
     {
@@ -327,9 +327,10 @@ public class Unit : MonoBehaviour
         experience += exp;
     }
 
-    public void Die()
+    public virtual void Die()
     {
         location.Unit = null;
+        Owner.RemoveUnit(this);
         Destroy(gameObject);
     }
 

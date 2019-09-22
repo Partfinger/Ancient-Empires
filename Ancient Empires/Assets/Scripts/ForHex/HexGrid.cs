@@ -49,37 +49,6 @@ public class HexGrid : MonoBehaviour {
         CreateMap(cellCountX, cellCountZ);
     }
 
-    public void AddUnit(Unit unit, HexCell location, float orientation)
-    {
-        units.Add(unit);
-        unit.transform.SetParent(transform, false);
-        unit.Location = location;
-        unit.Orientation = orientation;
-    }
-
-    public void AddBoughtUnit(int id, HexCell location, float orientation)
-    {
-        Unit unit = Instantiate(unitsArray.GetUnit(id), transform, false);
-        units.Add(unit);
-        if (location.Unit)
-        {
-            unit.SetLocationQuiet(location);
-            gui.NewUnitMove(ref unit);
-        }
-        else
-        {
-            unit.Location = location;
-            gui.SelectedUnit(ref unit);
-        }
-        unit.Orientation = orientation;
-    }
-
-    public void RemoveUnit(Unit unit)
-    {
-        units.Remove(unit);
-        unit.Die();
-    }
-
     public void CreateMap(int x, int z)
     {
 
@@ -233,7 +202,7 @@ public class HexGrid : MonoBehaviour {
 		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
 	}
 
-    public void FindAnyPath(HexCell fromCell, HexCell toCell, ref PathCostCalculator.Calculate calculate, int speed)
+    public void FindAnyPath(HexCell fromCell, HexCell toCell, ref PathCostManager.Calculate calculate, int speed)
     {
         ClearPath();
         currentPathFrom = fromCell;
@@ -305,7 +274,7 @@ public class HexGrid : MonoBehaviour {
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref PathCostCalculator.Calculate calculate, ref int speed)
+    bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref PathCostManager.Calculate calculate, ref int speed)
     {
         searchFrontierPhase += 2;
         if (searchFrontier == null)

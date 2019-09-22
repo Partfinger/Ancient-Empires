@@ -31,7 +31,7 @@ public class UnitMarket : Ability
     public void BuyUnit(ref int id)
     {
         Canceled();
-        grid.AddBoughtUnit(id, gui.currentCell, 360f);
+        //grid.AddBoughtUnit(id, gui.currentCell, 360f);
     }
 
     public override void Selected()
