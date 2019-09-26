@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     {
         get
         {
-            return commander != null;
+            return commander.IsDead;
         }
     }
 

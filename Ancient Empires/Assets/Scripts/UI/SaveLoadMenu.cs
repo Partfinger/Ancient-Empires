@@ -82,7 +82,7 @@ public class SaveLoadMenu : MonoBehaviour {
 		}
 	}
 
-	string GetSelectedPath () {
+	string GetSelectedPath () { 
 		string mapName = nameInput.text;
 		if (mapName.Length == 0) {
 			return null;
