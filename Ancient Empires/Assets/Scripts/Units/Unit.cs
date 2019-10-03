@@ -334,6 +334,14 @@ public class Unit : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Only clear map!!!!!
+    /// </summary>
+    public void Remove()
+    {
+        Destroy(gameObject);
+    }
+
     public bool IsDead
     {
         get

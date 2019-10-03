@@ -10,6 +10,9 @@ public abstract class HexBuilding : MonoBehaviour
     [SerializeField]
     protected int owner = 0;
 
+    [SerializeField]
+    public Material material;
+
     public HexCell cell;
 
     public bool IsCaption { get { return IsCaption; } }

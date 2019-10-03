@@ -252,7 +252,7 @@ public class HexGrid : MonoBehaviour {
     {
         for (int i = 0; i < units.Count; i++)
         {
-            units[i].Die();
+            units[i].Remove();
         }
         units.Clear();
     }
@@ -272,6 +272,14 @@ public class HexGrid : MonoBehaviour {
         }
         currentPathFrom.EnableHighlight(Color.blue);
         currentPathTo.EnableHighlight(Color.red);
+    }
+
+    public int CellCount
+    {
+        get
+        {
+            return cells.Length;
+        }
     }
 
     bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref PathCostManager.Calculate calculate, ref int speed)

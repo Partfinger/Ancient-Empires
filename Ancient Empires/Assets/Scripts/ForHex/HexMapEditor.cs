@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System.IO;
+using UnityEngine.UI;
 
 public class HexMapEditor : MonoBehaviour {
 
     public HexGrid hexGrid;
     public Material terrainMaterial;
+    public MapSettingMenu mapSettingMenu;
+
+    public MapManager ActiveMap;
 
     public UnitsArray unitsArray;
 
@@ -34,7 +38,7 @@ public class HexMapEditor : MonoBehaviour {
 
     public void SetTerrainTypeIndex(int index)
     {
-        activeTerrainTypeIndex = (byte)index;
+        activeTerrainTypeIndex = index - 1;
     }
 
     public void SetActiveFeature(int num)
@@ -103,6 +107,13 @@ public class HexMapEditor : MonoBehaviour {
     {
         terrainMaterial.DisableKeyword("GRID_ON");
         SetEditMode(false);
+        MapManager.UpdatePath();
+        ActiveMap = new MapManager
+        {
+            X = hexGrid.cellCountX,
+            Z = hexGrid.cellCountZ,
+            EditorVer = HexMetrics.EditorVers
+        };
     }
 
     void Update()
@@ -222,7 +233,7 @@ public class HexMapEditor : MonoBehaviour {
                 if (applyBuilding)
                 {
                     cell.BuildingLevel = activeBuildingLevel;
-                    cell.ActiveBuilding = activeBuilding;
+                    cell.ActiveBuilding = (BuildingType)activeBuilding;
                     if (cell.IsFeature)
                     {
                         cell.FeatureLevel = 0;

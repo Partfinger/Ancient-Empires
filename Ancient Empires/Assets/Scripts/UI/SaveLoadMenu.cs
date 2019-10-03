@@ -2,10 +2,14 @@
 using UnityEngine.UI;
 using System;
 using System.IO;
+using UnityEditor;
 
 public class SaveLoadMenu : MonoBehaviour {
 
-	public Text menuLabel, actionButtonLabel;
+
+    public Text menuLabel, actionButtonLabel;
+
+    public HexMapEditor editor;
 
 	public InputField nameInput;
 
@@ -15,7 +19,9 @@ public class SaveLoadMenu : MonoBehaviour {
 
 	public HexGrid hexGrid;
 
-	bool saveMode;
+    public HexMiniMapGenerator miniMapGenerator;
+
+    bool saveMode;
 
 	public void Open (bool saveMode) {
 		this.saveMode = saveMode;
@@ -38,15 +44,24 @@ public class SaveLoadMenu : MonoBehaviour {
 	}
 
 	public void Action () {
-		string path = GetSelectedPath();
-		if (path == null) {
-			return;
-		}
 		if (saveMode) {
-			Save(path);
+            string mapName = nameInput.text;
+            if (mapName.Length == 0)
+            {
+                Close();
+                return;
+            }
+            editor.ActiveMap.Name = mapName;
+            Save(mapName);
 		}
 		else {
-			Load(path);
+            string mapName = nameInput.text;
+            if (mapName.Length == 0)
+            {
+                Close();
+                return;
+            }
+            Load(mapName);
 		}
 		Close();
 	}
@@ -56,14 +71,22 @@ public class SaveLoadMenu : MonoBehaviour {
 	}
 
 	public void Delete () {
-		string path = GetSelectedPath();
-		if (path == null) {
+        string mapName = nameInput.text;
+        string pathData = Path.Combine(Application.persistentDataPath, "Levels/LevelsData/" + mapName + ".bin");
+        string pathJSON = Path.Combine(Application.persistentDataPath, "Levels/" + mapName + ".mapd");
+        string pathImage = Path.Combine(Application.persistentDataPath, "Levels/LevelsMinimap/" + mapName + ".png");
+        if (mapName == "") {
 			return;
 		}
-		if (File.Exists(path)) {
-			File.Delete(path);
+		if (File.Exists(pathData)) {
+			File.Delete(pathData);
 		}
-		nameInput.text = "";
+        if (File.Exists(pathImage))
+        {
+            File.Delete(pathImage);
+        }
+        File.Delete(pathJSON);
+        nameInput.text = "";
 		FillList();
 	}
 
@@ -72,7 +95,7 @@ public class SaveLoadMenu : MonoBehaviour {
 			Destroy(listContent.GetChild(i).gameObject);
 		}
 		string[] paths =
-			Directory.GetFiles(Application.persistentDataPath, "*.map");
+			Directory.GetFiles(MapManager.GetPath(), "*.mapd");
 		Array.Sort(paths);
 		for (int i = 0; i < paths.Length; i++) {
 			SaveLoadItem item = Instantiate(itemPrefab);
@@ -82,25 +105,46 @@ public class SaveLoadMenu : MonoBehaviour {
 		}
 	}
 
-	string GetSelectedPath () { 
-		string mapName = nameInput.text;
-		if (mapName.Length == 0) {
-			return null;
-		}
-		return Path.Combine(Application.persistentDataPath, mapName + ".map");
-	}
+    void Save (string mapName) {
 
-	void Save (string path) {
-		using (
+        string pathData = Path.Combine(Application.persistentDataPath, "Levels/LevelsData/" + mapName + ".bin");
+        string pathImage = Path.Combine(Application.persistentDataPath, "Levels/LevelsMinimap/" + mapName + ".png");
+
+        editor.ActiveMap.Save();
+        miniMapGenerator.Generate(pathImage);
+
+        using (
 			BinaryWriter writer =
-			new BinaryWriter(File.Open(path, FileMode.Create))
+			new BinaryWriter(File.Open(pathData, FileMode.Create))
 		) {
-			writer.Write(HexMetrics.EditorVers);
 			hexGrid.Save(writer);
 		}
 	}
+    
+    void Load(string mapName)
+    {
+        MapManager NewMapManager = new MapManager(mapName);
+        
+        using (BinaryReader reader = new BinaryReader(File.OpenRead(Path.Combine(Application.persistentDataPath, "Levels/LevelsData/" + NewMapManager.Name + ".bin"))))
+        {
+            if (NewMapManager.EditorVer == HexMetrics.EditorVers)
+            {
+                Debug.LogWarning("Current map format " + NewMapManager.EditorVer);
+                editor.ActiveMap = NewMapManager;
+                hexGrid.Load(reader);
+            }
+            else
+            {
+                if (NewMapManager.EditorVer == 3)
+                {
+                    Debug.LogWarning("Old map format " + NewMapManager.EditorVer);
+                }
+            }
+            HexMapCamera.ValidatePosition();
+        }
+    }
 
-	void Load (string path) {
+	/*void Load (string path) {
 		if (!File.Exists(path)) {
 			Debug.LogError("File does not exist " + path);
 			return;
@@ -111,6 +155,14 @@ public class SaveLoadMenu : MonoBehaviour {
             {
                 Debug.LogWarning("Current map format " + header);
                 hexGrid.Load(reader);
+                MapManager NewMapManager = new MapManager()
+                {
+                    Name = "",
+                    X = hexGrid.cellCountX,
+                    Z = hexGrid.cellCountZ,
+                    EditorVer = header
+                };
+                editor.ActiveMap = NewMapManager;
             }
             else
             {
@@ -127,5 +179,5 @@ public class SaveLoadMenu : MonoBehaviour {
             }
             HexMapCamera.ValidatePosition();
         }
-	}
+	}*/
 }

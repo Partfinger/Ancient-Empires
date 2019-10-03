@@ -77,6 +77,7 @@
     <Compile Include="Assets\Scripts\Features\HexCastle.cs" />
     <Compile Include="Assets\Scripts\Features\HexFeatureCollection.cs" />
     <Compile Include="Assets\Scripts\Features\HexFeatureManager.cs" />
+    <Compile Include="Assets\Scripts\Features\HexVillage.cs" />
     <Compile Include="Assets\Scripts\ForHex\Bezier.cs" />
     <Compile Include="Assets\Scripts\ForHex\EdgeVertices.cs" />
     <Compile Include="Assets\Scripts\ForHex\HexCell.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Assets\Scripts\ForHex\HexMapEditor.cs" />
     <Compile Include="Assets\Scripts\ForHex\HexMesh.cs" />
     <Compile Include="Assets\Scripts\ForHex\HexMetrics.cs" />
+    <Compile Include="Assets\Scripts\ForHex\HexMiniMapGenerator.cs" />
     <Compile Include="Assets\Scripts\ForHex\ListPool.cs" />
     <Compile Include="Assets\Scripts\MainMenu\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Managers\AbilityManager.cs" />
@@ -102,9 +104,11 @@
     <Compile Include="Assets\Scripts\MP\MPlayer.cs" />
     <Compile Include="Assets\Scripts\Players Scripts\Batch.cs" />
     <Compile Include="Assets\Scripts\Players Scripts\IPlayerInterface.cs" />
+    <Compile Include="Assets\Scripts\Players Scripts\LocalPlayer.cs" />
     <Compile Include="Assets\Scripts\Players Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\UI\AbilityLogicUI.cs" />
     <Compile Include="Assets\Scripts\UI\HexGameUI.cs" />
+    <Compile Include="Assets\Scripts\UI\MapSettingMenu.cs" />
     <Compile Include="Assets\Scripts\UI\NewMapMenu.cs" />
     <Compile Include="Assets\Scripts\UI\SaveLoadItem.cs" />
     <Compile Include="Assets\Scripts\UI\SaveLoadMenu.cs" />

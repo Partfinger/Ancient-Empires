@@ -2,6 +2,11 @@
 using System.IO;
 using UnityEngine.UI;
 
+public enum BuildingType
+{
+    none, castle, village
+};
+
 public class HexCell : MonoBehaviour {
 
 	public HexCoordinates coordinates;
@@ -21,7 +26,7 @@ public class HexCell : MonoBehaviour {
     byte activeFeature = 0;
 
     byte buildingLevel = 0;
-    byte activeBuilding = 0;
+    BuildingType activeBuilding = 0;
 
     sbyte elevation = sbyte.MinValue;
     sbyte waterLevel;
@@ -57,7 +62,7 @@ public class HexCell : MonoBehaviour {
     {
         get
         {
-            return terrainTypeIndex - 1;
+            return terrainTypeIndex;
         }
         set
         {
@@ -165,7 +170,7 @@ public class HexCell : MonoBehaviour {
         }
     }
 
-    public byte ActiveBuilding
+    public BuildingType ActiveBuilding
     {
         get
         {
@@ -507,7 +512,7 @@ public class HexCell : MonoBehaviour {
         writer.Write(featureLevel);
         writer.Write(activeFeature);
         writer.Write(buildingLevel);
-        writer.Write(activeBuilding);
+        writer.Write((byte)activeBuilding);
 
         int roadFlags = 0;
         for(int i =0; i < roads.Length; i++)
@@ -549,7 +554,7 @@ public class HexCell : MonoBehaviour {
         featureLevel = reader.ReadByte();
         activeFeature = reader.ReadByte();
         buildingLevel = reader.ReadByte();
-        activeBuilding = reader.ReadByte();
+        activeBuilding = (BuildingType)reader.ReadByte();
 
         int roadFlags = reader.ReadByte();
         for (int i = 0; i < roads.Length; i++)

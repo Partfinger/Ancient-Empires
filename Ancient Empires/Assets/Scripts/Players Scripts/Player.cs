@@ -5,13 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public UnitsArray setup;
+    [SerializeField]
     protected List<Unit> units = new List<Unit>();
+    [SerializeField]
     protected Unit commander;
-    protected int ID;
-    protected int fractionID;
-    protected int Gold;
-    protected int goldIncome;
-    protected int commanderCounter = 1;
+    [SerializeField]
+    protected int ID, fractionID, Gold, goldIncome, commanderCounter = 1;
     public IPlayerInterface ui;
 
     public Unit Commander
