@@ -11,13 +11,10 @@ public class MapManager
     public int EditorVer, MaxPlayers, X,Z;
     public List<Vector2Int> SpawnPositions;
     public float mapVer = 1.0f;
-    static string path;
+    public static string path;
+    [NonSerialized]
+    public string toHead, toData, toMini;
     string hash;
-
-    public static string GetPath()
-    {
-        return path;
-    }
 
     public static void UpdatePath()
     {
@@ -27,25 +24,35 @@ public class MapManager
 
     public MapManager(string name)
     {
-        string json = File.ReadAllText(path + name + ".mapd");
+        toHead = path + name + ".mapd";
+        toData = Path.Combine(path, $"LevelsData/{name}.bin");
+        toMini = Path.Combine(path, $"LevelsMinimap/{name}.png");
+        string json = File.ReadAllText(toHead);
         JsonUtility.FromJsonOverwrite(json, this);
-    }
-
-    public static MapManager ApplyJSON(string name)
-    {
-        string json = File.ReadAllText(path + name + ".mapd");
-        MapManager manager = new MapManager();
-        JsonUtility.FromJsonOverwrite(json, manager);
-        return manager;
     }
 
     public MapManager()
     {
     }
 
+    public static MapManager GetFirstMap()
+    {
+        string[] paths =
+            Directory.GetFiles(path, "*.mapd");
+        return new MapManager(Path.GetFileNameWithoutExtension(paths[0]));
+    }
+
+    public void GetMinimap(ref UnityEngine.UI.Image minimap)
+    {
+        Texture2D mini = new Texture2D(512,512);
+        mini.LoadImage(File.ReadAllBytes(toMini));
+        minimap.sprite = Sprite.Create(mini, new Rect(0,0, mini.width, mini.height),Vector2.zero);
+    }
+
     public void Save()
     {
-        File.WriteAllText(path + Name + ".mapd", JsonUtility.ToJson(this));
+        File.WriteAllText(toHead, JsonUtility.ToJson(this));
+
     }
 
     public void Delete()

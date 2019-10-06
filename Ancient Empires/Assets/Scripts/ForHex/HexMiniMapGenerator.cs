@@ -16,7 +16,7 @@ public class HexMiniMapGenerator : MonoBehaviour
         float max = Mathf.Max(delta.x, delta.z) / 2;
         camera.orthographicSize = max;
 
-        camera.transform.position = delta / 2 + new Vector3(0, 50);
+        camera.transform.position = delta / 2 + new Vector3(2, 50);
         RenderTexture tempRT = new RenderTexture(scale, scale, 24);
         camera.targetTexture = tempRT;
         camera.Render();
