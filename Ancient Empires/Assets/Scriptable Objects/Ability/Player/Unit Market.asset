@@ -15,8 +15,6 @@ MonoBehaviour:
   Name: New Ability
   Desc: Short description
   Sprite: {fileID: 21300000, guid: 623c9f6a844d4574b9c471ae6fc57329, type: 3}
-  unitsArrayForMarket: {fileID: 11400000, guid: fb582cfa964e147488c040a14e1dbd5a,
-    type: 2}
   UnitInMarketPrefab: {fileID: 6111155885076775197, guid: f686eb0732e4f8c4593af515c71f24f2,
     type: 3}
   units:

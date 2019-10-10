@@ -61,6 +61,7 @@ MonoBehaviour:
   - prefabs:
     - {fileID: 8521192520661808922, guid: c115154ceaaeb7042b89491f7a28d7a8, type: 3}
     - {fileID: 5955784580390079179, guid: 224a2ddc0745d72479f45f1c09b80e4c, type: 3}
+  cellAbilities: 0500
   BrigdePrefab: {fileID: 4000012598710820, guid: 234387bb7219042168570e127fbd5b58,
     type: 3}
 --- !u!1 &1000010636493760

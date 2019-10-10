@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7571095333529354963}
   - component: {fileID: 8156071877838472633}
   m_Layer: 0
-  m_Name: Soldier Variant
+  m_Name: Soldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,12 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c6f9f8249a7c24ba69bc92f5de9f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Owner: {fileID: 0}
   unitData: {fileID: 11400000, guid: 37887e3a8c786b44a9e40eca6a3a0eb4, type: 2}
   unitID: 1
-  abilities:
-  - {fileID: 11400000, guid: a4eabbfd258f5874596f252a60bfb8fb, type: 2}
-  - {fileID: 11400000, guid: 1305d4be575f3cc439a3951e687a9484, type: 2}
-  - {fileID: 11400000, guid: 63568b79e814ef64eaa716dbd3f77eed, type: 2}
+  health: 0
+  abilities: 000102
   location: {fileID: 0}
 --- !u!1 &8772393431872694100
 GameObject:

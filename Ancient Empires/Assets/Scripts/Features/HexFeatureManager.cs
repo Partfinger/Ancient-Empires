@@ -4,6 +4,8 @@ public class HexFeatureManager : MonoBehaviour {
 
 	public HexFeatureCollection[] hexFeatureCollection, hexBuildingCollections;
 
+    public AbilityType[] cellAbilities;
+
     public Transform BrigdePrefab;
 
 	Transform container;
@@ -40,6 +42,7 @@ public class HexFeatureManager : MonoBehaviour {
     {
         Transform instance = Instantiate(hexBuildingCollections[(int)cell.ActiveBuilding - 1].Pick(cell.BuildingLevel));
         cell.Building = instance.gameObject.GetComponent<HexBuilding>();
+        cell.ability = AbilityType.unitMarket;
         cell.Building.AppointCell(ref cell);
         instance.localPosition = HexMetrics.Perturb(cell.Position);
         instance.SetParent(container, false);
@@ -50,6 +53,8 @@ public class HexFeatureManager : MonoBehaviour {
         Transform instance = Instantiate(hexBuildingCollections[(int)cell.ActiveBuilding - 1].Pick(0));
         cell.Building = instance.gameObject.GetComponent<HexBuilding>();
         cell.Building.AppointCell(ref cell);
+        cell.ability = AbilityType.unitMarket;
+
         /*for (int i = container.childCount - num; i < container.childCount; i++)
         {
             container.GetChild(i).GetChild(2).gameObject.re// = ;

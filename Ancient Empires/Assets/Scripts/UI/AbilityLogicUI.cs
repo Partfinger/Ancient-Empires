@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class AbilityLogicUI : MonoBehaviour
 {
-    [SerializeField]
     public static HexGameUI UI;
+    [SerializeField]
     Ability ability;
+
     public Ability Ability
     {
         set
@@ -19,6 +20,6 @@ public class AbilityLogicUI : MonoBehaviour
 
     public void OnClick()
     {
-        //UI.SelectedAbility(ref ability);
+        UI.SelectedAbility = ability;
     }
 }

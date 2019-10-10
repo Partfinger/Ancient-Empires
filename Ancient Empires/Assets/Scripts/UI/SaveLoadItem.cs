@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class SaveLoadItem : MonoBehaviour {
 
-	public SaveLoadMenu menu;
+	public ILevelSelector menu;
 
 	public string MapName {
 		get {

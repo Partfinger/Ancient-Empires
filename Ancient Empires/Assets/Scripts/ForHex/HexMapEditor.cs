@@ -114,6 +114,7 @@ public class HexMapEditor : MonoBehaviour {
             Z = hexGrid.cellCountZ,
             EditorVer = HexMetrics.EditorVers
         };
+        hexGrid.Initialize();
     }
 
     void Update()

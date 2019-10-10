@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UnitMarketLogic : MonoBehaviour
 {
     public static UnitMarket market;
+    public static HexGameUI ui;
 
     int id, cost;
 
@@ -33,6 +34,7 @@ public class UnitMarketLogic : MonoBehaviour
 
     public void OnClick()
     {
-        market.BuyUnit(ref id);
+        ui.HideUnitMarket();
+        ui.Player.AddBoughtUnit(id);
     }
 }

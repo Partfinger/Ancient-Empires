@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBuilder : MonoBehaviour
+public abstract class PlayerBuilder : MonoBehaviour
 {
-    int teamID = -1;
-    Color color;
-    string name;
-    int botID;
+    protected int teamID = -1;
+    protected Color color;
+    protected int ID;
+    protected string Name;
+
+    public void SetID(int id)
+    {
+        ID = id;
+    }
 
     public void SetTeam(int id)
     {
@@ -19,20 +24,15 @@ public class PlayerBuilder : MonoBehaviour
         color = c;
     }
 
-    public void SetName(string n)
+    public virtual void SetName(string n)
     {
-        name = n;
+        Name = n;
     }
 
-    public Player Construct()
+    public void MakeCurrentPlayer()
     {
-        if (botID > 0)
-        {
-            return new AIPlayer();
-        }
-        else
-        {
-            return new Player();
-        }
+        //GetComponent<>
     }
+
+    public abstract Player Construct();
 }

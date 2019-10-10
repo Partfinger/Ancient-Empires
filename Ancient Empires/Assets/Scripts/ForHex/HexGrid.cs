@@ -41,10 +41,21 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    void Awake () {
+    public void Initialize(MapManager manager)
+    {
+        using (BinaryReader reader = new BinaryReader(File.OpenRead(manager.toData)))
+        {
+            cellShaderData = gameObject.AddComponent<HexCellShaderData>();
+            Load(reader);
+            HexMapCamera.ValidatePosition();
+        }
+    }
+
+    public void Initialize()
+    {
         Application.targetFrameRate = 60;
         HexMetrics.noiseSource = noiseSource;
-		HexMetrics.InitializeHashGrid(seed);
+        HexMetrics.InitializeHashGrid(seed);
         cellShaderData = gameObject.AddComponent<HexCellShaderData>();
         CreateMap(cellCountX, cellCountZ);
     }

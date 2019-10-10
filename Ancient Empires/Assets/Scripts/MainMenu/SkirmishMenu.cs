@@ -1,18 +1,43 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class SkirmishMenu : MonoBehaviour
+public class SkirmishMenu : MonoBehaviour, ILevelSelector
 {
     public MainMenu mainMenu;
-    public MapManager map;
+    public MapManager CurrentMap;
+    MapManager selectedMapInList;
     [SerializeField]
-    Image minimap, playersPanel;
+    RectTransform playersPanel, mapListPanel, playersListContent;
+    [SerializeField]
+    Image minimap;
     [SerializeField]
     Text mapName;
     [SerializeField]
-    Button SetMap, ApplyMap; 
+    Button SetMap, CancelButton;
+    [SerializeField]
+    Sprite emptyMini;
+    bool notMap = true;
+    List<PlayerBuilder> playerBuilders = new List<PlayerBuilder>();
+    public PlayerBuilder userBuilderPrefab, botBuilderPrefab;
+
+    public SaveLoadItem itemPrefab;
+
+    public RectTransform listContent;
+
+    private void Start()
+    {
+        FillList();
+        MapManager.EmptyMiniMap = emptyMini;
+        PlayerBuilder currentPlayer = Instantiate(userBuilderPrefab);
+        currentPlayer.transform.SetParent(playersListContent.transform, false);
+        currentPlayer.SetName("Grand Father");
+        playerBuilders.Add(currentPlayer);
+    }
 
     public void ExitToMain()
     {
@@ -20,17 +45,76 @@ public class SkirmishMenu : MonoBehaviour
         mainMenu.gameObject.SetActive(true);
     }
 
-    public void SelectMapOnclick()
+    public void OpenMapListClick()
     {
         SetMap.gameObject.SetActive(false);
-        ApplyMap.gameObject.SetActive(true);
-        playersPanel.rectTransform.sizeDelta = new Vector2(560, 260); //840
+        CancelButton.gameObject.SetActive(true);
+        playersPanel.sizeDelta = new Vector2(730, 260); //840
+        mapListPanel.gameObject.SetActive(true);
+    }
+
+    public void CancelMapListClick()
+    {
+        CancelMapList();
+        CurrentMap.GetMinimap(ref minimap);
+    }
+
+    void CancelMapList()
+    {
+        SetMap.gameObject.SetActive(true);
+        CancelButton.gameObject.SetActive(false);
+        mapListPanel.gameObject.SetActive(false);
+        playersPanel.sizeDelta = new Vector2(985, 260);
     }
 
     public void SelectNewMap()
     {
-        SetMap.gameObject.SetActive(true);
-        ApplyMap.gameObject.SetActive(false);
-        playersPanel.rectTransform.sizeDelta = new Vector2(840, 260);
+        CancelMapList();
+        CurrentMap = selectedMapInList;
+        CurrentMap.GetMinimap(ref minimap);
+        mapName.text = CurrentMap.Name;
+        notMap = false;
+    }
+
+    void FillList()
+    {
+        for (int i = 0; i < listContent.childCount; i++)
+        {
+            Destroy(listContent.GetChild(i).gameObject);
+        }
+        string[] paths =
+            Directory.GetFiles(MapManager.path, "*.mapd");
+        Array.Sort(paths);
+        for (int i = 0; i < paths.Length; i++)
+        {
+            SaveLoadItem item = Instantiate(itemPrefab);
+            item.menu = this;
+            item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
+            item.transform.SetParent(listContent, false);
+        }
+    }
+
+    public void SelectItem(string name)
+    {
+        selectedMapInList = new MapManager(name);
+        selectedMapInList.GetMinimap(ref minimap);
+    }
+
+    public void PlayClick()
+    {
+        if (!notMap)
+        {
+            BatchData.manager = CurrentMap;
+            BatchData.players = new List<Player>();
+            for (int i =0; i < playerBuilders.Count; i++)
+            {
+                BatchData.players.Add(playerBuilders[i].Construct());
+            }
+            SceneManager.LoadScene("Scenes/GameScene");
+        }
+        else
+            {
+            Debug.LogWarning("You should select any map in order to start game.");
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class MapManager
@@ -15,6 +16,7 @@ public class MapManager
     [NonSerialized]
     public string toHead, toData, toMini;
     string hash;
+    public static Sprite EmptyMiniMap;
 
     public static void UpdatePath()
     {
@@ -31,6 +33,13 @@ public class MapManager
         JsonUtility.FromJsonOverwrite(json, this);
     }
 
+    void UpdateLinks()
+    {
+        toHead = path + Name + ".mapd";
+        toData = Path.Combine(path, $"LevelsData/{Name}.bin");
+        toMini = Path.Combine(path, $"LevelsMinimap/{Name}.png");
+    }
+
     public MapManager()
     {
     }
@@ -42,16 +51,29 @@ public class MapManager
         return new MapManager(Path.GetFileNameWithoutExtension(paths[0]));
     }
 
-    public void GetMinimap(ref UnityEngine.UI.Image minimap)
+    public void GetMinimap(ref Image minimap)
     {
         Texture2D mini = new Texture2D(512,512);
-        mini.LoadImage(File.ReadAllBytes(toMini));
-        minimap.sprite = Sprite.Create(mini, new Rect(0,0, mini.width, mini.height),Vector2.zero);
+        if (File.Exists(toMini))
+        {
+            mini.LoadImage(File.ReadAllBytes(toMini));
+            minimap.sprite = Sprite.Create(mini, new Rect(0, 0, mini.width, mini.height), Vector2.zero);
+        }
+        else
+        {
+            minimap.sprite = EmptyMiniMap;
+        }
     }
 
     public void Save()
     {
-        File.WriteAllText(toHead, JsonUtility.ToJson(this));
+        if (toHead == null)
+        {
+            UpdateLinks();
+            File.WriteAllText(toHead, JsonUtility.ToJson(this));
+        }
+        else
+            File.WriteAllText(toHead, JsonUtility.ToJson(this));
 
     }
 

@@ -15,6 +15,8 @@ public class HexCell : MonoBehaviour {
 
 	public HexGridChunk chunk;
 
+    public AbilityType ability;
+
     public HexBuilding Building = null;
 
     public Buff buff = new Buff();

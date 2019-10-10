@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Movement Ability", menuName = "Movement Ability", order = 54)]
-public class Movement : Ability
+public class Movement : UnitAbility
 {
 
     PathCostManager.Calculate calculate;
 
     List<int> Space;
-    public override bool IsUsable()
+    public override bool IsUsable(ref Unit unit)
     {
         return true;
     }
@@ -23,7 +23,6 @@ public class Movement : Ability
             grid.FindAnyPath(unit.Location, cell, ref calculate, unit.Speed);
             unit.Travel(grid.GetPath());
             grid.ClearPath();
-            gui.AbilityCompleted();
         }
     }
 

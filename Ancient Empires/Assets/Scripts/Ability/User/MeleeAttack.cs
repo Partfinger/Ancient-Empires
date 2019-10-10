@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Melee Attack Ability", menuName = "Melee Attack Ability", order = 55)]
-public class MeleeAttack : Ability
+public class MeleeAttack : UnitAbility
 {
-    public override bool IsUsable()
+    public override bool IsUsable(ref Unit unit)
     {
+        HexCell location = unit.Location;
         HexCell n;
         for (HexDirection d = HexDirection.NE; d<= HexDirection.NW; d++)
         {
-            if ( (n = gui.currentCell.GetNeighbor(d)) && n.Unit )
+            if ( (n = location.GetNeighbor(d)) && n.Unit )
             {
                 return true;
             }
@@ -28,7 +29,10 @@ public class MeleeAttack : Ability
             {
                 victim.Attack(unit);
                 if (!unit.IsDead)
+                {
                     unit.CheckNextRank();
+                    unit.enabled = true;
+                }
                 else
                     unit.Die();
                 victim.CheckNextRank();
@@ -37,8 +41,8 @@ public class MeleeAttack : Ability
             {
                 victim.Die();
                 unit.CheckNextRank();
+                unit.enabled = true;
             }
-            gui.AbilityCompleted();
         }
     }
 

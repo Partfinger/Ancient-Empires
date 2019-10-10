@@ -7,15 +7,12 @@ public abstract class HexBuilding : MonoBehaviour
     [SerializeField]
     protected bool isCaption;
 
-    [SerializeField]
-    protected int owner = 0;
+    int owner = 0;
 
     [SerializeField]
     public Material material;
 
     public HexCell cell;
-
-    public bool IsCaption { get { return IsCaption; } }
 
     public int Owner
     {
@@ -28,6 +25,8 @@ public abstract class HexBuilding : MonoBehaviour
             owner = value;
         }
     }
+
+    public bool IsCaption { get { return IsCaption; } set { isCaption = true; } }
 
     protected abstract void ApplyBuff();
 

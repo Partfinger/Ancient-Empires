@@ -4,7 +4,8 @@ using System;
 using System.IO;
 using UnityEditor;
 
-public class SaveLoadMenu : MonoBehaviour {
+public class SaveLoadMenu : MonoBehaviour, ILevelSelector
+{
 
 
     public Text menuLabel, actionButtonLabel;

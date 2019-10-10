@@ -44,12 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c6f9f8249a7c24ba69bc92f5de9f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Owner: {fileID: 0}
   unitData: {fileID: 11400000, guid: 220e9f28538927342997029feba96c65, type: 2}
   unitID: 7
-  abilities:
-  - {fileID: 11400000, guid: a4eabbfd258f5874596f252a60bfb8fb, type: 2}
-  - {fileID: 11400000, guid: 1305d4be575f3cc439a3951e687a9484, type: 2}
-  - {fileID: 11400000, guid: 63568b79e814ef64eaa716dbd3f77eed, type: 2}
+  health: 0
+  abilities: 000102
   location: {fileID: 0}
 --- !u!1 &8116125941565305279
 GameObject:

@@ -122,10 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c6f9f8249a7c24ba69bc92f5de9f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Owner: {fileID: 0}
   unitData: {fileID: 11400000, guid: ffe0a6c6db8df60418b8631d0349714e, type: 2}
   unitID: 8
-  abilities:
-  - {fileID: 11400000, guid: a4eabbfd258f5874596f252a60bfb8fb, type: 2}
-  - {fileID: 11400000, guid: 1305d4be575f3cc439a3951e687a9484, type: 2}
-  - {fileID: 11400000, guid: 4daab61161a80414294551e09fa522be, type: 2}
+  health: 0
+  abilities: 000103
   location: {fileID: 0}

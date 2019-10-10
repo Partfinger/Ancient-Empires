@@ -4,20 +4,20 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New EndTurn Ability", menuName = "EndTurn Ability", order = 58)]
 
-public class EndTurnAbility : Ability
+public class EndTurnAbility : UnitAbility
 {
-    public override bool IsUsable()
+    public override bool IsUsable(ref Unit unit)
     {
-        if (gui.currentCell.Building is HexCastle && gui.currentCell.Unit != gui.selectedUnit)
+        HexCell cell = unit.Location;
+        if (cell.Building is HexCastle && (cell.Unit != unit))
             return false;
         else
             return true;
     }
 
-    public override void Selected()
+    public override void Selected(ref Unit unit)
     {
-        gui.selectedUnit.enabled = true;
-        gui.AbilityCompleted();
+        unit.enabled = true;
     }
 
     public override string ToString()

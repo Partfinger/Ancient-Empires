@@ -1,20 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 public abstract class Ability : ScriptableObject
 {
     public string Name = "New Ability";
     public string Desc = "Short description";
     public Sprite Sprite;
     public static HexGrid grid;
-    public static HexGameUI gui;
 
-    public abstract bool IsUsable();
+    public virtual bool IsUsable(ref Unit unit)
+    {
+        return false;
+    }
 
-    public virtual void Selected()
+    public virtual bool IsUsable(IPlayerInterface @interface, ref HexCell cell)
+    {
+        return false;
+    }
+
+    public virtual void Selected(IPlayerInterface @interface)
     {
         return;
     }
 
-    public virtual void Canceled()
+    public virtual void Selected(ref Unit unit)
     {
         return;
     }
@@ -24,9 +34,19 @@ public abstract class Ability : ScriptableObject
         return;
     }
 
-    public static Ability GetCastleAbility()
+    public virtual void TriggerAbility(IPlayerInterface @interface, dynamic data)
     {
-        return new UnitMarket();
+        return;
+    }
+
+    public virtual void Canceled(IPlayerInterface @interface)
+    {
+        return;
+    }
+
+    public virtual void Canceled()
+    {
+        return;
     }
 
     public new abstract string ToString();

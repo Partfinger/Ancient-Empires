@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public Player Owner;
+    public int Owner;
     public static HexGameUI gui;
     public UnitData unitData;
     public Buff buff = new Buff();
@@ -21,7 +21,7 @@ public class Unit : MonoBehaviour
     protected int offenceMin, offenceMax, defence, mobility, experience, nextRankExperience, healthMax = 100, rank = 0;
 
     [SerializeField]
-    Ability[] abilities;
+    AbilityType[] abilities;
 
     float orientation;
     [SerializeField]
@@ -55,7 +55,7 @@ public class Unit : MonoBehaviour
         transform.localPosition = l.Position;
     }
 
-    public Ability GetOnlyMove()
+    public AbilityType GetOnlyMove()
     {
         return abilities[1];
     }
@@ -161,20 +161,9 @@ public class Unit : MonoBehaviour
         get { return offenceMin + offenceMax + defence; }
     }
 
-    public List<Ability> GetUsableAbility()
+    public AbilityType[] GetAbilities()
     {
-        List<Ability> res = new List<Ability>();
-        for (int i = 0; i < abilities.Length; i++)
-            if (abilities[i].IsUsable()) res.Add(abilities[i]);
-        return res;
-    }
-
-    public List<Ability> GetUsableAbilityAfterTravel()
-    {
-        List<Ability> res = new List<Ability>();
-        for (int i = 0; i < abilities.Length; i++)
-            if (i != 1 && abilities[i].IsUsable()) res.Add(abilities[i]);
-        return res;
+        return abilities;
     }
 
     public void ValidateLocation()
@@ -330,7 +319,7 @@ public class Unit : MonoBehaviour
     public virtual void Die()
     {
         location.Unit = null;
-        Owner.RemoveUnit(this);
+        BatchData.players[Owner].RemoveUnit(this);
         Destroy(gameObject);
     }
 

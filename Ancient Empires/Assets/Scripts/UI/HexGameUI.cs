@@ -12,11 +12,13 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     Ability selectedAbility;
     public Image AbilitySelectPanel;
     public AbilityLogicUI AbilitySelectorPrefub;
-    public UnitMarket Market;
     public Image AbilitySelectPanelPrefub;
     public Image MarketPanel;
     public RectTransform MarketContent;
-    public Canvas childCanvas;
+    public GameObject abilityContent;
+    public GameObject abilityContentPrefub;
+    public AbilityManager abilityManager;
+    public UnitMarket market;
     [SerializeField]
     bool abilityCompleted = false;
 
@@ -34,9 +36,6 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         {
             selectedUnit = value;
             currentCell = selectedUnit.Location;
-            usableAbility.Clear();
-            usableAbility.AddRange(selectedUnit.GetUsableAbility());
-            ShowAbilityPanel();
         }
     }
 
@@ -49,16 +48,27 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         set
         {
             selectedAbility = value;
-            selectedAbility.Selected();
+            if (selectedAbility is UnitAbility)
+            {
+                selectedAbility.Selected(ref selectedUnit);
+                if (selectedAbility is EndTurnAbility)
+                {
+                    abilityCompleted = true;
+                    selectedAbility = null;
+                }
+            }
+            else
+                selectedAbility.Selected(this);
             HideAbilityPanel();
         }
     }
 
+    public Player Player { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
     private void Awake()
     {
         Ability.grid = grid;
-        grid.gui = Ability.gui = AbilityLogicUI.UI = Unit.gui = this;
-        Market._Awake();
+        grid.gui = Unit.gui = AbilityLogicUI.UI = this;
         currentUpdate = DefUpdate;
     }
 
@@ -82,7 +92,6 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
             {
                 if (selectedAbility is UnitMarket)
                     MarketPanel.gameObject.SetActive(false);
-                selectedAbility = null;
 
                 DoSelection();
             }
@@ -93,9 +102,7 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
                     UpdateCurrentCell();
                     selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
                     if (abilityCompleted)
-                    {
                         abilityCompleted = false;
-                    }
                 }
             }
         }
@@ -126,19 +133,15 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         {
             if (Input.GetMouseButtonDown(1))
             {
-
                 UpdateCurrentCell();
                 selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
-                if (abilityCompleted)
-                {
-                    abilityCompleted = false;
-                    currentUpdate = DefUpdate;
-                }
+                abilityCompleted = false;
+                currentUpdate = DefUpdate;
             }
             else if (Input.GetMouseButtonDown(0))
             {
                 selectedAbility = null;
-                usableAbility.AddRange(selectedUnit.GetUsableAbilityAfterTravel());
+                usableAbility = abilityManager.GetAbilitiesAfterTravel(this, ref selectedUnit);
                 ShowAbilityPanel();
             }
         }
@@ -154,7 +157,7 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     {
         enabled = true;
         selectedAbility = null;
-        usableAbility.AddRange(selectedUnit.GetUsableAbilityAfterTravel());
+        usableAbility = abilityManager.GetAbilitiesAfterTravel(this, ref selectedUnit);
         ShowAbilityPanel();
         abilityCompleted = false;
         currentUpdate = SelectAbilityAfterMove;
@@ -162,15 +165,15 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
 
     void ShowAbilityPanel()
     {
-        AbilitySelectPanel = Instantiate(AbilitySelectPanelPrefub, childCanvas.transform);
         int count;
         if ((count = usableAbility.Count) > 0)
         {
             AbilitySelectPanel.gameObject.SetActive(true);
             AbilitySelectPanel.rectTransform.sizeDelta = new Vector2(65 * count + 15, 65);
+            abilityContent = Instantiate(abilityContentPrefub, AbilitySelectPanel.transform);
             for (int i = 0; i < count; i++)
             {
-                AbilityLogicUI abilityLogic = Instantiate(AbilitySelectorPrefub, AbilitySelectPanel.transform);
+                AbilityLogicUI abilityLogic = Instantiate(AbilitySelectorPrefub, abilityContent.transform);
                 abilityLogic.transform.localPosition = new Vector3(-(15 + i * 65), 32.5f);
                 abilityLogic.Ability = usableAbility[i];
             }
@@ -179,11 +182,9 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
 
     void HideAbilityPanel()
     {
-        if (AbilitySelectPanel)
-        {
-            Destroy(AbilitySelectPanel.gameObject);
-            usableAbility.Clear();
-        }
+        AbilitySelectPanel.gameObject.SetActive(false);
+        Destroy(abilityContent);
+        usableAbility.Clear();
     }
 
     void DoSelection()
@@ -197,16 +198,12 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
             {
                 if (!selectedUnit.enabled)
                 {
-                    usableAbility.AddRange(selectedUnit.GetUsableAbility());
+                    usableAbility = abilityManager.GetAbilitiesForCell(this, ref currentCell);
                 }
                 else
                 {
                     selectedUnit = null;
                 }
-            }
-            if (currentCell.Building is HexCastle && Market.IsUsable())
-            {
-                usableAbility.Add(Market);
             }
             if (usableAbility.Count > 0)
                 ShowAbilityPanel();
@@ -235,7 +232,17 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     public void MovementInt(ref Unit unit)
     {
         selectedUnit = unit;
-        selectedAbility = unit.GetOnlyMove();
+        selectedAbility = abilityManager.GetMovement();
         currentUpdate = SelectUnitMove;
+    }
+
+    public void OpenUnitMarket()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void HideUnitMarket()
+    {
+        throw new System.NotImplementedException();
     }
 }
