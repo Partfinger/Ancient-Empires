@@ -8,12 +8,12 @@ public class HexInitiator : MonoBehaviour
     public HexGameUI ui;
     private void Start()
     {
-        if (BatchData.manager == null)
+        if (Partie.manager == null)
             grid.Initialize();
         else
         {
-            grid.Initialize(BatchData.manager);
-            ui.Player = BatchData.players[0];
+            grid.Initialize(Partie.manager);
+            ui.Player = Partie.players[0];
         }
         Destroy(gameObject);
     }

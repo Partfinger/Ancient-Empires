@@ -5,46 +5,66 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class HexMapScriptEditor : MonoBehaviour
+public class HexMapStuffEditor : MonoBehaviour
 {
     [SerializeField]
+    List<Vector2Int> playerSpawnPoints = new List<Vector2Int>();
     Dictionary<int, int> playerBuildings = new Dictionary<int, int>();
     Dictionary<int, Vector2Int> playerUnits = new Dictionary<int, Vector2Int>();
+    public HexMapEditor editor;
     Unit selectedUnit;
     HexCell selectedCell;
     HexBuilding selectedBuilding;
+    [SerializeField]
+    int ActivePlayer = 0;
+
+    [SerializeField]
+    Text cellIndexText;
+
+    [SerializeField]
+    Dropdown players;
+
+    public HexCell SelectedCell
+    {
+        set
+        {
+            selectedCell = value;
+            _Update();
+        }
+    }
 
     [SerializeField]
     Image unitPanel, buildingPanel;
 
-    [SerializeField]
-    Dropdown dropdownOwner;
-
     public HexGrid hexGrid;
 
-    void Update()
+    void _Update()
     {
-        if (!EventSystem.current.IsPointerOverGameObject())
+        selectedUnit = selectedCell.Unit;
+        selectedBuilding = selectedCell.Building;
+        UpdateBuildingPanel();
+        UpdateUnitPanel();
+    }
+
+    public void UpdateOwnerDropdown()
+    {
+        if (players.options.Count > 0)
         {
-            if (Input.GetMouseButton(0))
-            {
-                HandleInput();
-                return;
-            }
-            if (Input.GetKeyDown(KeyCode.U))
-            {
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    DestroyUnit();
-                }
-                else
-                {
-                    CreateUnit();
-                }
-                return;
-            }
+            players.options.Clear();
         }
-        selectedCell = null;
+
+        List<string> owners = new List<string>();
+        for (int i =1; i < editor.ActiveMap.MaxPlayers + 1; i++)
+        {
+            owners.Add($"Player {i}");
+        }
+        players.AddOptions(owners);
+    }
+
+    public void SetEditMode(bool toggle)
+    {
+        gameObject.SetActive(toggle);
+        enabled = toggle;
     }
 
     public void SetBuildingCaptured(bool toggle)
@@ -77,21 +97,25 @@ public class HexMapScriptEditor : MonoBehaviour
 
     }
 
-    void HandleInput()
+    public void UpdateBuildingSettings(Toggle toggle)
     {
-        selectedCell = hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-        selectedUnit = selectedCell.Unit;
-        if (selectedUnit)
-            UpdateUnitPanel();
-        selectedBuilding = selectedCell.Building;
         if (selectedBuilding)
-            UpdateBuildingPanel();
+        {
+            selectedBuilding.IsCaption = toggle.isOn;
+            selectedBuilding.Owner = ActivePlayer;
+        }
+    }
+
+    public void UpdateUnitSettings()
+    {
+        if (selectedUnit)
+        {
+        }
     }
 
     private void UpdateBuildingPanel()
     {
-        buildingPanel.gameObject.SetActive(true);
-
+        cellIndexText.text = selectedCell.Index.ToString();
     }
 
     private void UpdateUnitPanel()

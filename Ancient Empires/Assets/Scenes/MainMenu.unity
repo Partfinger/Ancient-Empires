@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -508,7 +508,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 906033536}
+      - m_Target: {fileID: 0}
         m_MethodName: ExitToMain
         m_Mode: 1
         m_Arguments:
@@ -641,7 +641,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 906033536}
+      - m_Target: {fileID: 0}
         m_MethodName: CancelMapListClick
         m_Mode: 1
         m_Arguments:
@@ -762,7 +762,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Skirmish
+  m_Text: Combat
 --- !u!222 &273803257
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1063,7 +1063,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1522389914}
-        m_MethodName: OpenSkirmishMenu
+        m_MethodName: OpenCombatMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2188,7 +2188,7 @@ GameObject:
   - component: {fileID: 906033534}
   - component: {fileID: 906033536}
   m_Layer: 5
-  m_Name: SkirmishPanel
+  m_Name: CombatPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2267,11 +2267,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36e514accd614ea4e9384d16b5c4127d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenu: {fileID: 1522389914}
+  mainMenu: {fileID: 0}
   CurrentMap:
     IsSpecific: 0
     Name: 
     Desc: Map desc
+    "Versio\u0442": 
     EditorVer: 0
     MaxPlayers: 0
     X: 0
@@ -4169,7 +4170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuContent: {fileID: 2098360172}
   singlePlayerContent: {fileID: 1311439124}
-  skirmishMenu: {fileID: 906033536}
+  combatMenu: {fileID: 906033536}
 --- !u!1 &1575122092
 GameObject:
   m_ObjectHideFlags: 0
@@ -4240,7 +4241,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Skirmish
+  m_Text: Combat
 --- !u!222 &1575122095
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4726,7 +4727,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 906033536}
+      - m_Target: {fileID: 0}
         m_MethodName: PlayClick
         m_Mode: 1
         m_Arguments:

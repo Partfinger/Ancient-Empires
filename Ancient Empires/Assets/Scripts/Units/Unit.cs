@@ -319,7 +319,7 @@ public class Unit : MonoBehaviour
     public virtual void Die()
     {
         location.Unit = null;
-        BatchData.players[Owner].RemoveUnit(this);
+        Partie.players[Owner].RemoveUnit(this);
         Destroy(gameObject);
     }
 

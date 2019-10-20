@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class MapManager
 {
     public bool IsSpecific;
-    public string Name = "", Desc = "Map desc";
+    public string Name = "", Desc = "Map desc", Versioт;
     public int EditorVer, MaxPlayers, X,Z;
     public List<Vector2Int> SpawnPositions;
     public float mapVer = 1.0f;
@@ -21,7 +21,6 @@ public class MapManager
     public static void UpdatePath()
     {
         path = Path.Combine(Application.persistentDataPath, "Levels/");
-        Debug.Log(path);
     }
 
     public MapManager(string name)

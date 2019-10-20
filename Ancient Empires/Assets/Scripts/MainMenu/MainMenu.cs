@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public GameObject mainMenuContent, singlePlayerContent;
-    public SkirmishMenu skirmishMenu;
+    public CombatMenu combatMenu;
 
     private void Awake()
     {
@@ -18,10 +18,10 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Scenes/EditorScene");
     }
 
-    public void OpenSkirmishMenu()
+    public void OpenCombatMenu()
     {
         gameObject.SetActive(false);
-        skirmishMenu.gameObject.SetActive(true);
+        combatMenu.gameObject.SetActive(true);
     }
 
     public void SingleClick()

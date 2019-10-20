@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class SkirmishMenu : MonoBehaviour, ILevelSelector
+public class CombatMenu : MonoBehaviour, ILevelSelector
 {
     public MainMenu mainMenu;
     public MapManager CurrentMap;
@@ -104,11 +104,11 @@ public class SkirmishMenu : MonoBehaviour, ILevelSelector
     {
         if (!notMap)
         {
-            BatchData.manager = CurrentMap;
-            BatchData.players = new List<Player>();
+            Partie.manager = CurrentMap;
+            Partie.players = new List<Player>();
             for (int i =0; i < playerBuilders.Count; i++)
             {
-                BatchData.players.Add(playerBuilders[i].Construct());
+                Partie.players.Add(playerBuilders[i].Construct());
             }
             SceneManager.LoadScene("Scenes/GameScene");
         }

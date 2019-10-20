@@ -8,8 +8,22 @@ public class HexMapEditor : MonoBehaviour {
     public HexGrid hexGrid;
     public Material terrainMaterial;
     public MapSettingMenu mapSettingMenu;
+    public HexMapStuffEditor stuffEditor;
 
-    public MapManager ActiveMap;
+    MapManager activeMap;
+
+    public MapManager ActiveMap
+    {
+        get
+        {
+            return activeMap;
+        }
+        set
+        {
+            activeMap = value;
+            stuffEditor.UpdateOwnerDropdown();
+        }
+    }
 
     public UnitsArray unitsArray;
 
@@ -25,7 +39,10 @@ public class HexMapEditor : MonoBehaviour {
     bool applyFeature = false;
     bool applyBuilding = false;
 
-    HexCell previousCell;
+    HexCell previousCell, oldCell;
+
+    delegate void _Update();
+    _Update currentUpdate;
 
     enum OptionalToggle {
         Ignore, Yes, No
@@ -100,7 +117,11 @@ public class HexMapEditor : MonoBehaviour {
 
     public void SetEditMode(bool toggle)
     {
-        enabled = toggle;
+        if (toggle)
+            currentUpdate = defUpdate;
+        else
+            currentUpdate = NotEditUpdate;
+        //enabled = toggle;
     }
 
     void Awake()
@@ -115,31 +136,53 @@ public class HexMapEditor : MonoBehaviour {
             EditorVer = HexMetrics.EditorVers
         };
         hexGrid.Initialize();
+        currentUpdate = NotEditUpdate;
     }
 
     void Update()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
         {
-            if (Input.GetMouseButton(0))
+            currentUpdate();
+        }
+    }
+
+    void defUpdate()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            HandleInput();
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
             {
-                HandleInput();
-                return;
+                DestroyUnit();
             }
-            if (Input.GetKeyDown(KeyCode.U))
+            else
             {
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    DestroyUnit();
-                }
-                else
-                {
-                    CreateUnit();
-                }
-                return;
+                CreateUnit();
             }
+            return;
         }
         previousCell = null;
+    }
+
+    void NotEditUpdate()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            HexCell currentCell = GetCellUnderCursor();
+            if (oldCell)
+                oldCell.DisableHighlight();
+            if (currentCell)
+            {
+                stuffEditor.SelectedCell = currentCell;
+                oldCell = currentCell;
+                oldCell.EnableHighlight(Color.red);
+            }
+        }
     }
 
     HexCell GetCellUnderCursor()
@@ -150,10 +193,13 @@ public class HexMapEditor : MonoBehaviour {
     void HandleInput()
     {
         HexCell currentCell = GetCellUnderCursor();
+        if (oldCell)
+            oldCell.DisableHighlight();
         if (currentCell)
         {
             if (previousCell && previousCell != currentCell)
             {
+                previousCell.DisableHighlight();
                 ValidateDrag(currentCell);
             }
             else
@@ -161,10 +207,16 @@ public class HexMapEditor : MonoBehaviour {
                 isDrag = false;
             }
             EditCells(currentCell);
+            stuffEditor.SelectedCell = currentCell;
             previousCell = currentCell;
+            oldCell = currentCell;
+            oldCell.EnableHighlight(Color.red);
         }
         else
+        {
             previousCell = null;
+        }
+            
 	}
 
     void CreateUnit()

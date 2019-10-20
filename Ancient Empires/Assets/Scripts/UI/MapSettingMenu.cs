@@ -13,9 +13,9 @@ public class MapSettingMenu : MonoBehaviour
 
     public void Apply()
     {
-        editor.ActiveMap.Name = name.text;
         editor.ActiveMap.Desc = desc.text;
         editor.ActiveMap.MaxPlayers = (int)slider.value;
+        editor.stuffEditor.UpdateOwnerDropdown();
         Close();
     }
 

@@ -11,7 +11,7 @@ public class CastleCapture : UnitAbility
         if (castle)
         {
             if (castle.Owner == 0)
-                return !BatchData.players[unit.Owner].IsAlly(BatchData.players[castle.Owner]);
+                return !Partie.players[unit.Owner].IsAlly(Partie.players[castle.Owner]);
             else
                 return true;
         }
