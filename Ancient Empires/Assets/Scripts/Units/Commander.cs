@@ -10,7 +10,7 @@ public class Commander : Unit
     {
         location.Unit = null;
         location = null;
-        Partie.players[Owner].CommanderDie();
+        Owner.CommanderDie();
         IsBuyable = true;
         gameObject.SetActive(false);
     }

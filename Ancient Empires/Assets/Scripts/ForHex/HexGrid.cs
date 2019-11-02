@@ -16,10 +16,6 @@ public class HexGrid : MonoBehaviour {
 
 	public Texture2D noiseSource;
 
-    public UnitsArray unitsArray;
-
-    List<Unit> units = new List<Unit>();
-
     HexCell currentPathFrom, currentPathTo;
     bool currentPathExists;
     HexCellShaderData cellShaderData;
@@ -43,12 +39,16 @@ public class HexGrid : MonoBehaviour {
 
     public void Initialize(MapManager manager)
     {
-        using (BinaryReader reader = new BinaryReader(File.OpenRead(manager.toData)))
+        CreateMap(manager.X, manager.Z);
+        if (!cellShaderData)
         {
             cellShaderData = gameObject.AddComponent<HexCellShaderData>();
-            Load(reader);
-            HexMapCamera.ValidatePosition();
         }
+        using (BinaryReader reader = new BinaryReader(File.OpenRead(manager.toData)))
+        {
+            Load(reader);
+        }
+        HexMapCamera.ValidatePosition();
     }
 
     public void Initialize()
@@ -261,11 +261,7 @@ public class HexGrid : MonoBehaviour {
 
     void ClearUnits()
     {
-        for (int i = 0; i < units.Count; i++)
-        {
-            units[i].Remove();
-        }
-        units.Clear();
+
     }
 
     void ShowPath(int speed)
@@ -355,16 +351,9 @@ public class HexGrid : MonoBehaviour {
 
     public void Save(BinaryWriter writer)
     {
-        writer.Write(cellCountX);
-        writer.Write(cellCountZ);
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Save(writer);
-        }
-        writer.Write(units.Count);
-        for (int i = 0; i < units.Count; i++)
-        {
-            units[i].Save(writer);
         }
     }
 
@@ -378,13 +367,14 @@ public class HexGrid : MonoBehaviour {
             cells[i].Load(reader);
         }
         int unitsCount = reader.ReadInt32();
-
+        /*
         for (int i = 0; i < unitsCount; i++)
         {
-            Unit unit = Instantiate(unitsArray.GetUnit(0));
-            unit.LoadOld(reader, this);
+            Unit unit = Instantiate(unitsArray.GetUnit(reader.ReadInt32()));
+            unit.Load(reader, this);
+            unit.transform.SetParent(transform, false);
             units.Add(unit);
-        }
+        }*/
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].Refresh();
@@ -393,22 +383,11 @@ public class HexGrid : MonoBehaviour {
 
     public void Load(BinaryReader reader)
     {
-        ClearPath();
-        ClearUnits();
-        CreateMap(reader.ReadInt32(), reader.ReadInt32());
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Load(reader);
         }
-        int unitsCount = reader.ReadInt32();
         
-        for(int i = 0; i < unitsCount; i++)
-        {
-            Unit unit = Instantiate(unitsArray.GetUnit(reader.ReadInt32()));
-            unit.Load(reader, this);
-            unit.transform.SetParent(transform, false);
-            units.Add(unit);
-        }
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].Refresh();

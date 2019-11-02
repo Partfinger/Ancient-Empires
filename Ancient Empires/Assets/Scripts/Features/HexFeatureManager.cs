@@ -10,6 +10,8 @@ public class HexFeatureManager : MonoBehaviour {
 
 	Transform container;
 
+    public HexGrid grid;
+
     static int[] defence =
     {
         2, 1, 3
@@ -48,28 +50,23 @@ public class HexFeatureManager : MonoBehaviour {
         instance.SetParent(container, false);
     }
 
-    public void AddMoreBuildingLogic(ref HexCell cell, ref int num)
+    public void AddMoreBuildingLogic(int index, int num, int owner = 0)
     {
-        Transform instance = Instantiate(hexBuildingCollections[(int)cell.ActiveBuilding - 1].Pick(0));
+        HexCell cell = grid.GetCell(index);
+        Transform instance = Instantiate(hexBuildingCollections[num].Pick(0));
         cell.Building = instance.gameObject.GetComponent<HexBuilding>();
         cell.Building.AppointCell(ref cell);
+        cell.Building.Owner = Partie.players[owner];
         cell.ability = AbilityType.unitMarket;
-
-        /*for (int i = container.childCount - num; i < container.childCount; i++)
-        {
-            container.GetChild(i).GetChild(2).gameObject.re// = ;
-            mat = cell.Building.material;
-        }*/
         instance.localPosition = HexMetrics.Perturb(cell.Position);
         instance.SetParent(container, false);
     }
 
-    public void AddMoreBuilding(ref HexCell cell, Vector3 position)
+    public void AddMoreBuilding(int index, int num, int stat)
     {
-        int active = (int)cell.ActiveBuilding - 1;
-        Transform instance = Instantiate(hexBuildingCollections[active].Pick(cell.BuildingLevel + 1));
-        //cell.buff.AddDef(defence[activeFeature]);
-        instance.localPosition = HexMetrics.Perturb(position);
+        HexCell cell = grid.GetCell(index);
+        Transform instance = Instantiate(hexBuildingCollections[num].Pick(stat));
+        instance.localPosition = HexMetrics.Perturb(cell.Position);
         instance.localRotation = Quaternion.FromToRotation(Vector3.right,cell.Position - instance.localPosition);
         instance.SetParent(container, false);
     }

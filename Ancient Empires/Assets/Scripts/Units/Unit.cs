@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public int Owner;
+    public Player Owner;
     public static HexGameUI gui;
     public UnitData unitData;
     public Buff buff = new Buff();
@@ -319,7 +319,7 @@ public class Unit : MonoBehaviour
     public virtual void Die()
     {
         location.Unit = null;
-        Partie.players[Owner].RemoveUnit(this);
+        Owner.RemoveUnit(this);
         Destroy(gameObject);
     }
 

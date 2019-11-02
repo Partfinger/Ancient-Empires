@@ -32,7 +32,12 @@ public class MapManager
         JsonUtility.FromJsonOverwrite(json, this);
     }
 
-    void UpdateLinks()
+    public string UpdateToHead()
+    {
+        return path + Name + ".mapd";
+    }
+
+    public void UpdateLinks()
     {
         toHead = path + Name + ".mapd";
         toData = Path.Combine(path, $"LevelsData/{Name}.bin");
@@ -66,14 +71,7 @@ public class MapManager
 
     public void Save()
     {
-        if (toHead == null)
-        {
-            UpdateLinks();
-            File.WriteAllText(toHead, JsonUtility.ToJson(this));
-        }
-        else
-            File.WriteAllText(toHead, JsonUtility.ToJson(this));
-
+        File.WriteAllText(toHead, JsonUtility.ToJson(this));
     }
 
     public void Delete()

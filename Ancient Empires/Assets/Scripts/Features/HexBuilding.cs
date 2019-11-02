@@ -7,14 +7,14 @@ public abstract class HexBuilding : MonoBehaviour
     [SerializeField]
     protected bool isCaption;
 
-    int owner = 0;
+    Player owner;
 
     [SerializeField]
     public Material material;
 
     public HexCell cell;
 
-    public int Owner
+    public Player Owner
     {
         get
         {

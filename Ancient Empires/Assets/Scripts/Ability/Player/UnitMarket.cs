@@ -21,7 +21,7 @@ public class UnitMarket : PlayerAbility
     public override bool IsUsable(IPlayerInterface @interface, ref HexCell cell)
     {
         HexCastle castle = cell.Building as HexCastle;
-        return castle && castle.Owner == @interface.Player.ID;
+        return castle && castle.Owner == @interface.Player;
     }
 
     public override void Canceled(IPlayerInterface @interface)

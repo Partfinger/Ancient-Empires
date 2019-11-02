@@ -4,61 +4,107 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.IO;
 
 public class HexMapStuffEditor : MonoBehaviour
 {
-    [SerializeField]
-    List<Vector2Int> playerSpawnPoints = new List<Vector2Int>();
-    Dictionary<int, int> playerBuildings = new Dictionary<int, int>();
-    Dictionary<int, Vector2Int> playerUnits = new Dictionary<int, Vector2Int>();
+    public List<Vector2Int> playerSpawnPoints = new List<Vector2Int>();
+    List<BuildingSpawner> playerBuildings = new List<BuildingSpawner>();
+    List<UnitSpawner> unitSpawners = new List<UnitSpawner>();
     public HexMapEditor editor;
-    Unit selectedUnit;
     HexCell selectedCell;
-    HexBuilding selectedBuilding;
-    [SerializeField]
-    int ActivePlayer = 0;
+    public int ActivePlayer = 0;
+    public Text cellIndexText;
+    public Dropdown players;
 
-    [SerializeField]
-    Text cellIndexText;
 
-    [SerializeField]
-    Dropdown players;
+    bool BuildingMode = false, UnitMode = false, buildingCapture;
+    int unitStartHP = 100, unitStartRank, activeUnit, activeBuilding, activeBuildingLevel;
+
+    public UnitSpawner unitSpawnerPrefab;
 
     public HexCell SelectedCell
     {
         set
         {
             selectedCell = value;
-            _Update();
+            UpdateBuildingPanel();
         }
     }
 
-    [SerializeField]
-    Image unitPanel, buildingPanel;
-
     public HexGrid hexGrid;
 
-    void _Update()
+    private void Start()
     {
-        selectedUnit = selectedCell.Unit;
-        selectedBuilding = selectedCell.Building;
-        UpdateBuildingPanel();
-        UpdateUnitPanel();
+        UpdateOwnerDropdown();
+        enabled = false;
+    }
+
+    private void Update()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Input.GetMouseButton(0))
+            {
+                HexCell currentCell = GetCellUnderCursor();
+                if (!currentCell)
+                    return;
+                else if (currentCell != selectedCell)
+                    SelectedCell = currentCell;
+                EditCell();
+            }
+        }
+    }
+
+    private void EditCell()
+    {
+        if (BuildingMode)
+        {
+            selectedCell.BuildingLevel = (byte)activeBuildingLevel;
+            selectedCell.ActiveBuilding = (BuildingType)activeBuilding;
+            selectedCell.Building.IsCaption = buildingCapture;
+            //
+            if (selectedCell.IsFeature)
+            {
+                selectedCell.FeatureLevel = 0;
+                selectedCell.ActiveFeature = 0;
+            }
+        }
+        if (UnitMode)
+        {
+            if (selectedCell.Unit)
+                selectedCell.Unit.Remove();
+            UnitSpawner newUnit = Instantiate(unitSpawnerPrefab);
+            newUnit.unitID = activeUnit;
+            newUnit.owner = ActivePlayer;
+            newUnit.health = unitStartHP;
+            newUnit.experience = 0;
+            newUnit.rank = unitStartRank;
+            newUnit.indexCell = selectedCell.Index;
+        }
+    }
+
+    HexCell GetCellUnderCursor()
+    {
+        return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 
     public void UpdateOwnerDropdown()
     {
-        if (players.options.Count > 0)
+        if (players)
         {
-            players.options.Clear();
-        }
+            if (players.options.Count > 0)
+            {
+                players.options.Clear();
+            }
 
-        List<string> owners = new List<string>();
-        for (int i =1; i < editor.ActiveMap.MaxPlayers + 1; i++)
-        {
-            owners.Add($"Player {i}");
+            List<string> owners = new List<string>();
+            for (int i = 1; i < editor.ActiveMap.MaxPlayers + 1; i++)
+            {
+                owners.Add($"Player {i}");
+            }
+            players.AddOptions(owners);
         }
-        players.AddOptions(owners);
     }
 
     public void SetEditMode(bool toggle)
@@ -69,27 +115,17 @@ public class HexMapStuffEditor : MonoBehaviour
 
     public void SetBuildingCaptured(bool toggle)
     {
-        selectedBuilding.IsCaption = toggle;
-    }
-
-    public void SetBuildingOwner(bool toggle)
-    {
-        selectedBuilding.IsCaption = toggle;
-    }
-
-    public void SetUnitOwner(int id)
-    {
-        selectedUnit.Owner = id;
+        buildingCapture = toggle;
     }
 
     public void SetUnitStartHP(int newHP)
     {
-        selectedUnit.Health = newHP;
+        unitStartHP = newHP;
     }
 
     public void SetUnitStartRank(int rank)
     {
-        selectedUnit.Rank = rank;
+        unitStartRank = rank;
     }
 
     public void SetUnitSpawnID(int id)
@@ -97,67 +133,44 @@ public class HexMapStuffEditor : MonoBehaviour
 
     }
 
-    public void UpdateBuildingSettings(Toggle toggle)
-    {
-        if (selectedBuilding)
-        {
-            selectedBuilding.IsCaption = toggle.isOn;
-            selectedBuilding.Owner = ActivePlayer;
-        }
-    }
-
-    public void UpdateUnitSettings()
-    {
-        if (selectedUnit)
-        {
-        }
-    }
-
     private void UpdateBuildingPanel()
     {
         cellIndexText.text = selectedCell.Index.ToString();
     }
 
-    private void UpdateUnitPanel()
+    public void Save(BinaryWriter writer)
     {
-        unitPanel.gameObject.SetActive(true);
+        editor.ActiveMap.SpawnPositions = playerSpawnPoints;
+        SaveUnitSpawner(writer);
+        SaveBuildingSpawner(writer);
     }
 
-    void CreateUnit()
+    void SaveUnitSpawner(BinaryWriter writer)
     {
-        if (selectedCell && !selectedCell.Unit)
+        writer.Write(unitSpawners.Count);
+        for (int i =0; i < unitSpawners.Count; i++)
         {
-            /*hexGrid.AddUnit(
-                Instantiate(unitsArray.GetUnit(1)), cell, Random.Range(0f, 360f)
-            );*/
+            //public int unitID, owner, health, experience, rank, indexCell;
+            writer.Write(unitSpawners[i].indexCell);
+            writer.Write(unitSpawners[i].owner);
+            writer.Write(unitSpawners[i].unitID);
+            writer.Write(unitSpawners[i].health);
+            writer.Write(unitSpawners[i].rank);
+            writer.Write(unitSpawners[i].experience);
         }
     }
 
-    void DestroyUnit()
+    public void SaveBuildingSpawner(BinaryWriter writer)
     {
-        if (selectedCell && selectedCell.Unit)
+        //public int buildingID, owner, number, status, indexCell;
+        writer.Write(playerBuildings.Count);
+        for (int i = 0; i < unitSpawners.Count; i++)
         {
-            //hexGrid.RemoveUnit(cell.Unit);
+            writer.Write(playerBuildings[i].indexCell);
+            writer.Write(playerBuildings[i].owner);
+            writer.Write(playerBuildings[i].buildingID);
+            writer.Write(playerBuildings[i].number);
+            writer.Write(playerBuildings[i].status);
         }
-    }
-
-    public void SetPlayerBuilding(int index, int player)
-    {
-        playerBuildings.Add(index, player);
-    }
-
-    public void RemovePlayerBuilding(int index)
-    {
-        playerBuildings.Remove(index);
-    }
-
-    public void SetSpawnUnitPos(int index, int player, int unitID)
-    {
-        playerUnits.Add(index, new Vector2Int(player, unitID));
-    }
-
-    public void RemoveSpawnPos(int index)
-    {
-        playerUnits.Remove(index);
     }
 }

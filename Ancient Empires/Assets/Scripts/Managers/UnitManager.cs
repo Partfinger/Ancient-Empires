@@ -7,7 +7,7 @@ public class UnitManager : Manager
     public void AddUnit(Player player, int id, HexCell cell, float orientation)
     {
         Unit unit = Object.Instantiate(player.setup.GetUnit(id), grid.transform, false);
-        unit.Owner = player.ID;
+        unit.Owner = player;
         player.AddUnit(ref unit);
         unit.Location = cell;
         unit.Orientation = orientation;
@@ -16,7 +16,7 @@ public class UnitManager : Manager
     public void AddBoughtUnit(Player player, int id, HexCell castle, float orientation)
     {
         Unit unit = Object.Instantiate(player.setup.GetUnit(id), grid.transform, false);
-        unit.Owner = player.ID;
+        unit.Owner = player;
         player.AddUnit(ref unit);
         unit.Orientation = orientation;
         if (castle.Unit)

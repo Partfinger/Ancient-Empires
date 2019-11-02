@@ -12,6 +12,8 @@ public class HexMapEditor : MonoBehaviour {
 
     MapManager activeMap;
 
+    public Player editor;
+
     public MapManager ActiveMap
     {
         get
@@ -44,7 +46,7 @@ public class HexMapEditor : MonoBehaviour {
     delegate void _Update();
     _Update currentUpdate;
 
-    enum OptionalToggle {
+    public enum OptionalToggle {
         Ignore, Yes, No
     }
 
@@ -117,11 +119,11 @@ public class HexMapEditor : MonoBehaviour {
 
     public void SetEditMode(bool toggle)
     {
-        if (toggle)
+        /*if (toggle)
             currentUpdate = defUpdate;
         else
-            currentUpdate = NotEditUpdate;
-        //enabled = toggle;
+            currentUpdate = NotEditUpdate;*/
+        enabled = !toggle;
     }
 
     void Awake()
@@ -133,6 +135,7 @@ public class HexMapEditor : MonoBehaviour {
         {
             X = hexGrid.cellCountX,
             Z = hexGrid.cellCountZ,
+            MaxPlayers = 2,
             EditorVer = HexMetrics.EditorVers
         };
         hexGrid.Initialize();
@@ -143,7 +146,25 @@ public class HexMapEditor : MonoBehaviour {
     {
         if (!EventSystem.current.IsPointerOverGameObject())
         {
-            currentUpdate();
+            //currentUpdate();
+            if (Input.GetMouseButton(0))
+            {
+                HandleInput();
+                return;
+            }
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    DestroyUnit();
+                }
+                else
+                {
+                    CreateUnit();
+                }
+                return;
+            }
+            previousCell = null;
         }
     }
 

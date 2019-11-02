@@ -67,20 +67,9 @@ public class HexGridChunk : MonoBehaviour {
 		for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 			Triangulate(d, cell);
 		}
-        if (!cell.IsUnderwater && !cell.HasRiver)
+        if (!cell.IsUnderwater && !cell.HasRiver && !cell.HasRoads && cell.IsFeature)
         {
-            if (!cell.HasRoads && cell.IsFeature)
-            {
-                features.AddFeature(ref cell, cell.Position);
-            }
-            else if (cell.IsBuilding)
-            {
-                if (cell.ActiveBuilding == BuildingType.castle)
-                    features.AddAloneBuilding(ref cell);
-                else
-                    if (cell.ActiveBuilding == BuildingType.village && childNum > 0)
-                    features.AddMoreBuildingLogic(ref cell, ref childNum);
-            }
+            features.AddFeature(ref cell, cell.Position);
         }
     }
 
@@ -108,15 +97,15 @@ public class HexGridChunk : MonoBehaviour {
 		else {
 			TriangulateWithoutRiver(direction, cell, center, e);
 
-            if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction))
+            if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction) && cell.IsFeature)
             {
-                if (cell.IsBuilding && cell.ActiveBuilding == BuildingType.village)
+                features.AddFeature(ref cell, (center + e.v1 + e.v5) * (1f / 3f));
+                /*if (cell.IsBuilding && cell.ActiveBuilding == BuildingType.village)
                 {
                     features.AddMoreBuilding(ref cell, (center + e.v1 + e.v5) * (1f / 3f));
                     childNum++;
                 }
-                else if (cell.IsFeature)
-                    features.AddFeature(ref cell, (center + e.v1 + e.v5) * (1f / 3f));
+                else if ()*/
             }
         }
 

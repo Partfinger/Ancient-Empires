@@ -24,7 +24,14 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
 
     bool saveMode;
 
-	public void Open (bool saveMode) {
+    public delegate void MethodAction();
+
+    public MethodAction method;
+
+    [SerializeField]
+    DialogMenu dialogMenu;
+
+    public void Open (bool saveMode) {
 		this.saveMode = saveMode;
 		if (saveMode) {
 			menuLabel.text = "Save Map";
@@ -53,7 +60,15 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
                 return;
             }
             editor.ActiveMap.Name = mapName;
-            Save();
+            if (File.Exists(editor.ActiveMap.UpdateToHead()))
+            {
+                dialogMenu.Show(0);
+                method = Save;
+            }
+            else
+            {
+                Save();
+            }
 		}
 		else {
             string mapName = nameInput.text;
@@ -71,7 +86,14 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
 		nameInput.text = name;
 	}
 
-	public void Delete () {
+    public void Delete()
+    {
+        dialogMenu.Show(1);
+        method = DeleteMap;
+    }
+
+
+    public void DeleteMap () {
         string mapName = nameInput.text;
         string pathData = Path.Combine(Application.persistentDataPath, $"Levels/LevelsData/{mapName}.bin");
         string pathJSON = Path.Combine(Application.persistentDataPath, $"Levels/{mapName}.mapd");
@@ -108,7 +130,7 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
 
     void Save () {
 
-        editor.ActiveMap.Save();
+        editor.ActiveMap.UpdateLinks();
         miniMapGenerator.Generate(editor.ActiveMap.toMini);
 
         using (
@@ -116,29 +138,49 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
 			new BinaryWriter(File.Open(editor.ActiveMap.toData, FileMode.Create))
 		) {
 			hexGrid.Save(writer);
-		}
+            editor.stuffEditor.Save(writer);
+
+        }
+        editor.ActiveMap.Save();
 	}
     
     void Load(string mapName)
     {
         MapManager NewMapManager = new MapManager(mapName);
-        
+        Debug.LogWarning("Map var " + NewMapManager.EditorVer);
+        if (NewMapManager.EditorVer == HexMetrics.EditorVers)
+        {
+            hexGrid.Initialize(NewMapManager);
+            editor.ActiveMap = NewMapManager;
+        }
+        else if (NewMapManager.EditorVer == 4)
+        {
+            Debug.LogWarning("Old map format");
+
+        }
+        else
+        {
+            Debug.LogWarning("This map format is not supported.");
+        }
+        /*
         using (BinaryReader reader = new BinaryReader(File.OpenRead(NewMapManager.toData)))
         {
+            Debug.LogWarning("Map var " + NewMapManager.EditorVer);
             if (NewMapManager.EditorVer == HexMetrics.EditorVers)
             {
-                Debug.LogWarning("Current map format " + NewMapManager.EditorVer);
                 editor.ActiveMap = NewMapManager;
                 hexGrid.Load(reader);
             }
             else
             {
-                if (NewMapManager.EditorVer == 3)
+                if (NewMapManager.EditorVer == 4)
                 {
-                    Debug.LogWarning("Old map format " + NewMapManager.EditorVer);
+                    editor.ActiveMap = NewMapManager;
+                    hexGrid.OldLoad(reader);
+                    Debug.LogWarning("Old map format");
                 }
             }
             HexMapCamera.ValidatePosition();
-        }
+        }*/
     }
 }
