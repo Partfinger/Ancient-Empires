@@ -360,12 +360,6 @@ public class Unit : MonoBehaviour
         writer.Write(orientation);
     }
 
-    public void LoadOld(BinaryReader reader, HexGrid grid)
-    {
-        Location = grid.GetCell(HexCoordinates.Load(reader));
-        Orientation = reader.ReadSingle();
-    }
-
     public void Load(BinaryReader reader, HexGrid grid)
     {
         health = reader.ReadInt32();

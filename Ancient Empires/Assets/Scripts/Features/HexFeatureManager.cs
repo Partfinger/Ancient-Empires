@@ -62,11 +62,10 @@ public class HexFeatureManager : MonoBehaviour {
         instance.SetParent(container, false);
     }
 
-    public void AddMoreBuilding(int index, int num, int stat)
+    public void AddMoreBuilding(ref HexCell cell, Vector3 position)
     {
-        HexCell cell = grid.GetCell(index);
-        Transform instance = Instantiate(hexBuildingCollections[num].Pick(stat));
-        instance.localPosition = HexMetrics.Perturb(cell.Position);
+        Transform instance = Instantiate(hexBuildingCollections[(int)cell.ActiveBuilding - 1].Pick(1));
+        instance.localPosition = HexMetrics.Perturb(position);
         instance.localRotation = Quaternion.FromToRotation(Vector3.right,cell.Position - instance.localPosition);
         instance.SetParent(container, false);
     }

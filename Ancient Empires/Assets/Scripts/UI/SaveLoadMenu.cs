@@ -18,7 +18,7 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
 
 	public SaveLoadItem itemPrefab;
 
-	public HexGrid hexGrid;
+	public HexEditorGrid hexGrid;
 
     public HexMiniMapGenerator miniMapGenerator;
 
@@ -132,7 +132,7 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
 
         editor.ActiveMap.UpdateLinks();
         miniMapGenerator.Generate(editor.ActiveMap.toMini);
-
+        editor.ActiveMap.EditorVer = HexMetrics.EditorVers;
         using (
 			BinaryWriter writer =
 			new BinaryWriter(File.Open(editor.ActiveMap.toData, FileMode.Create))
@@ -150,13 +150,22 @@ public class SaveLoadMenu : MonoBehaviour, ILevelSelector
         Debug.LogWarning("Map var " + NewMapManager.EditorVer);
         if (NewMapManager.EditorVer == HexMetrics.EditorVers)
         {
-            hexGrid.Initialize(NewMapManager);
-            editor.ActiveMap = NewMapManager;
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(NewMapManager.toData)))
+            {
+                hexGrid.Initialize(NewMapManager, reader);
+                editor.ActiveMap = NewMapManager;
+                editor.stuffEditor.Load(reader);
+            }
         }
         else if (NewMapManager.EditorVer == 4)
         {
             Debug.LogWarning("Old map format");
-
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(NewMapManager.toData)))
+            {
+                hexGrid.OldInitialize(NewMapManager, reader);
+                editor.ActiveMap = NewMapManager;
+                editor.stuffEditor.OldLoad(reader);
+            }
         }
         else
         {

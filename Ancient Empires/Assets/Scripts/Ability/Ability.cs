@@ -7,7 +7,7 @@ public abstract class Ability : ScriptableObject
     public string Name = "New Ability";
     public string Desc = "Short description";
     public Sprite Sprite;
-    public static HexGrid grid;
+    public static HexGameGrid grid;
 
     public virtual bool IsUsable(ref Unit unit)
     {

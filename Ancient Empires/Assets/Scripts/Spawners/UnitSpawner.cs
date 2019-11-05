@@ -14,6 +14,21 @@ public class UnitSpawner
         this.indexCell = indexCell;
     }
 
+    public UnitSpawner(BinaryReader reader)
+    {
+        indexCell = reader.ReadInt32();
+        owner = reader.ReadInt32();
+        unitID = reader.ReadInt32();
+        health = reader.ReadInt32();
+        rank = reader.ReadInt32();
+        experience = reader.ReadInt32();
+    }
+
+    public UnitSpawner()
+    {
+
+    }
+
     public void Save(BinaryWriter writer)
     {
         writer.Write(indexCell);

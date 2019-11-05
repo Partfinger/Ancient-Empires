@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class HexMapEditor : MonoBehaviour {
 
-    public HexGrid hexGrid;
+    public HexEditorGrid hexGrid;
     public Material terrainMaterial;
     public MapSettingMenu mapSettingMenu;
     public HexMapStuffEditor stuffEditor;

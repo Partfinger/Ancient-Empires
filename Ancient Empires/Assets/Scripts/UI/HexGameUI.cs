@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class HexGameUI : MonoBehaviour, IPlayerInterface
 {
-    public HexGrid grid;
+    public HexGameGrid grid;
     public HexCell currentCell;
     public Unit selectedUnit;
     List<Ability> usableAbility = new List<Ability>();

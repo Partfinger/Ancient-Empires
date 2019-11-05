@@ -1,25 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.IO;
 
-public class BuildingSpawner : MonoBehaviour
+public class BuildingSpawner
 {
-    public int buildingID, owner, number, status, indexCell;
+    public int owner, indexCell;
+    public bool isCaptured;
 
-    public static HexFeatureManager featureManager;
-
-    public void SpawnBuilding(int buildID, int ownerID, int num, int stat, int index  )
+    public BuildingSpawner(int ow, int index, bool cpt)
     {
-        if (Partie.players.Count < ownerID + 1)
-        {
-            return;
-        }
-        else
-        {
-            if (buildID > 1)
-            {
-                featureManager.AddMoreBuilding(index, num, stat);
-            }
-        }
+        owner = ow;
+        indexCell = index;
+        isCaptured = cpt;
+    }
+
+    public BuildingSpawner(BinaryReader reader)
+    {
+        owner = reader.ReadInt32();
+        indexCell = reader.ReadInt32();
+        isCaptured = reader.ReadBoolean();
+    }
+
+    public void Save(BinaryWriter writer)
+    {
+        writer.Write(owner);
+        writer.Write(indexCell);
+        writer.Write(isCaptured);
     }
 }

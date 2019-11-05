@@ -9,8 +9,8 @@ using System.IO;
 public class HexMapStuffEditor : MonoBehaviour
 {
     public List<Vector2Int> playerSpawnPoints = new List<Vector2Int>();
-    List<BuildingSpawner> playerBuildings = new List<BuildingSpawner>();
-    Dictionary<int,UnitSpawner> unitSpawners = new Dictionary<int, UnitSpawner>();
+    public Dictionary<int, BuildingSpawner> playerBuildings = new Dictionary<int, BuildingSpawner>();
+    public Dictionary<int,UnitSpawner> unitSpawners = new Dictionary<int, UnitSpawner>();
     public HexMapEditor editor;
     HexCell selectedCell;
     public int ActivePlayer = 0;
@@ -18,11 +18,10 @@ public class HexMapStuffEditor : MonoBehaviour
     public Dropdown players, unitsDrop;
     public UnitsArray unitsArray;
 
+    public HexEditorGrid hexGrid;
 
     bool BuildingMode = false, UnitMode = false, buildingCapture;
-    int unitStartHP = 100, unitStartRank, activeUnit, activeBuilding, activeBuildingLevel;
-
-    public UnitSpawner unitSpawnerPrefab;
+    int unitStartHP = 100, unitStartRank, activeUnit, activeBuilding = -1, activeBuildingLevel;
 
     public HexCell SelectedCell
     {
@@ -32,8 +31,6 @@ public class HexMapStuffEditor : MonoBehaviour
             UpdateBuildingPanel();
         }
     }
-
-    public HexGrid hexGrid;
 
     private void Start()
     {
@@ -70,21 +67,26 @@ public class HexMapStuffEditor : MonoBehaviour
 
     private void EditCell()
     {
+        int index = selectedCell.Index;
         if (BuildingMode)
         {
+            if (playerBuildings.ContainsKey(index))
+            {
+                playerBuildings.Remove(index);
+            }
+            BuildingSpawner spawner = new BuildingSpawner(ActivePlayer, index, buildingCapture);
             selectedCell.BuildingLevel = (byte)activeBuildingLevel;
             selectedCell.ActiveBuilding = (BuildingType)activeBuilding;
-            selectedCell.Building.IsCaption = buildingCapture;
             //
             if (selectedCell.IsFeature)
             {
                 selectedCell.FeatureLevel = 0;
                 selectedCell.ActiveFeature = 0;
             }
+            selectedCell.chunk.Refresh();
         }
         if (UnitMode)
         {
-            int index = selectedCell.Index;
             if (activeUnit > -1)
             {
                 if (selectedCell.Unit)
@@ -113,7 +115,6 @@ public class HexMapStuffEditor : MonoBehaviour
 
     void RenderUnit(ref int id)
     {
-        Debug.Log("Unit");
         Unit unit = Instantiate(unitsArray.GetUnit(id), hexGrid.transform);
         selectedCell.Unit = unit;
         unit.Location = selectedCell;
@@ -173,6 +174,11 @@ public class HexMapStuffEditor : MonoBehaviour
         activeUnit = id - 1;
     }
 
+    public void SetActiveBuilding(int id)
+    {
+        activeBuilding = id;
+    }
+
     private void UpdateBuildingPanel()
     {
         cellIndexText.text = selectedCell.Index.ToString();
@@ -181,8 +187,31 @@ public class HexMapStuffEditor : MonoBehaviour
     public void Save(BinaryWriter writer)
     {
         editor.ActiveMap.SpawnPositions = playerSpawnPoints;
-        SaveUnitSpawner(writer);
         SaveBuildingSpawner(writer);
+        SaveUnitSpawner(writer);
+    }
+
+    public void Load(BinaryReader reader)
+    {
+        LoadBuildingSpawner(reader);
+        LoadUnitSpawner(reader);
+        selectedCell = null;
+    }
+
+    private void LoadBuildingSpawner(BinaryReader reader)
+    {
+        unitSpawners.Clear();
+        int count = reader.ReadInt32();
+        for (int i = 0; i < count; i++)
+        {
+            BuildingSpawner newUnitSpawner = new BuildingSpawner(reader);
+            playerBuildings.Add(newUnitSpawner.indexCell, newUnitSpawner);
+        }
+    }
+
+    public void OldLoad(BinaryReader reader)
+    {
+        OldLoadUnitSpawner(reader);
     }
 
     void SaveUnitSpawner(BinaryWriter writer)
@@ -197,13 +226,43 @@ public class HexMapStuffEditor : MonoBehaviour
     public void SaveBuildingSpawner(BinaryWriter writer)
     {
         writer.Write(playerBuildings.Count);
-        for (int i = 0; i < playerBuildings.Count; i++)
+        foreach (KeyValuePair<int, BuildingSpawner> keyValuePair in playerBuildings)
         {
-            writer.Write(playerBuildings[i].indexCell);
-            writer.Write(playerBuildings[i].owner);
-            writer.Write(playerBuildings[i].buildingID);
-            writer.Write(playerBuildings[i].number);
-            writer.Write(playerBuildings[i].status);
+            keyValuePair.Value.Save(writer);
+        }
+    }
+
+    public void OldLoadUnitSpawner(BinaryReader reader)
+    {
+        unitSpawners.Clear();
+        int unitCount = reader.ReadInt32();
+        for (int i = 0; i < unitCount; i++)
+        {
+            UnitSpawner newUnitSpawner = new UnitSpawner
+            {
+                indexCell = reader.ReadInt32(),
+                health = reader.ReadInt32(),
+                experience = reader.ReadInt32(),
+                rank = reader.ReadInt32()
+            };
+            HexCoordinates.Load(reader);
+            reader.ReadSingle();
+            unitSpawners.Add(newUnitSpawner.indexCell, newUnitSpawner);
+            selectedCell = hexGrid.GetCell(newUnitSpawner.indexCell);
+            RenderUnit(ref newUnitSpawner.unitID);
+        }
+    }
+
+    public void LoadUnitSpawner(BinaryReader reader)
+    {
+        unitSpawners.Clear();
+        int unitCount = reader.ReadInt32();
+        for (int i =0; i < unitCount; i++)
+        {
+            UnitSpawner newUnitSpawner = new UnitSpawner(reader);
+            unitSpawners.Add(newUnitSpawner.indexCell, newUnitSpawner);
+            selectedCell = hexGrid.GetCell(newUnitSpawner.indexCell);
+            RenderUnit(ref newUnitSpawner.unitID);
         }
     }
 }

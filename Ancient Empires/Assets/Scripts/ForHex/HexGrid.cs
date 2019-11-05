@@ -4,38 +4,22 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-public class HexGrid : MonoBehaviour {
+public abstract class HexGrid : MonoBehaviour {
 
     public int cellCountX, cellCountZ;
-
-    public HexGameUI gui;
 
     public HexCell cellPrefab;
 	public Text cellLabelPrefab;
 	public HexGridChunk chunkPrefab;
-
 	public Texture2D noiseSource;
 
-    HexCell currentPathFrom, currentPathTo;
-    bool currentPathExists;
     HexCellShaderData cellShaderData;
 
     public int seed;
-    int searchFrontierPhase;
 
-    HexGridChunk[] chunks;
+    public HexGridChunk[] chunks;
     int chunkCountX, chunkCountZ;
-	HexCell[] cells;
-
-    HexCellPriorityQueue searchFrontier;
-
-    public bool HasPath
-    {
-        get
-        {
-            return currentPathExists;
-        }
-    }
+	protected HexCell[] cells;
 
     public void Initialize(MapManager manager)
     {
@@ -44,11 +28,13 @@ public class HexGrid : MonoBehaviour {
         {
             cellShaderData = gameObject.AddComponent<HexCellShaderData>();
         }
-        using (BinaryReader reader = new BinaryReader(File.OpenRead(manager.toData)))
-        {
-            Load(reader);
-        }
         HexMapCamera.ValidatePosition();
+    }
+
+    public void Initialize(MapManager manager, BinaryReader reader)
+    {
+        Initialize(manager);
+        Load(reader);
     }
 
     public void Initialize()
@@ -72,8 +58,6 @@ public class HexGrid : MonoBehaviour {
             return;
         }
 
-        ClearPath();
-        ClearUnits();
         if (chunks != null)
         {
             for (int i = 0; i < chunks.Length; i++)
@@ -212,172 +196,12 @@ public class HexGrid : MonoBehaviour {
 		int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
 		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
 	}
-
-    public void FindAnyPath(HexCell fromCell, HexCell toCell, ref PathCostManager.Calculate calculate, int speed)
-    {
-        ClearPath();
-        currentPathFrom = fromCell;
-        currentPathTo = toCell;
-        currentPathExists = SearchAny(ref fromCell, ref toCell, ref calculate, ref speed);
-        if (currentPathExists)
-        {
-            ShowPath(speed);
-        }
-    }
-
-    public List<HexCell> GetPath()
-    {
-        if (!currentPathExists)
-        {
-            return null;
-        }
-        List<HexCell> path = ListPool<HexCell>.Get();
-        for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
-        {
-            path.Add(c);
-        }
-        path.Add(currentPathFrom);
-        path.Reverse();
-        return path;
-    }
-
-    public void ClearPath()
-    {
-        if (currentPathExists)
-        {
-            HexCell current = currentPathTo;
-            while (current != currentPathFrom)
-            {
-                current.SetLabel(null);
-                current.DisableHighlight();
-                current.Distance = 0;
-                current = current.PathFrom;
-            }
-            current.DisableHighlight();
-            currentPathExists = false;
-        }
-        currentPathFrom = currentPathTo = null;
-    }
-
-    void ClearUnits()
-    {
-
-    }
-
-    void ShowPath(int speed)
-    {
-        if (currentPathExists)
-        {
-            HexCell current = currentPathTo;
-            while (current != currentPathFrom)
-            {
-                int turn = (current.Distance - 1) / speed;
-                current.SetLabel(turn.ToString());
-                current.EnableHighlight(Color.white);
-                current = current.PathFrom;
-            }
-        }
-        currentPathFrom.EnableHighlight(Color.blue);
-        currentPathTo.EnableHighlight(Color.red);
-    }
-
+    
     public int CellCount
     {
         get
         {
             return cells.Length;
-        }
-    }
-
-    bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref PathCostManager.Calculate calculate, ref int speed)
-    {
-        searchFrontierPhase += 2;
-        if (searchFrontier == null)
-        {
-            searchFrontier = new HexCellPriorityQueue();
-        }
-        else
-        {
-            searchFrontier.Clear();
-        }
-
-        fromCell.SearchPhase = searchFrontierPhase;
-        fromCell.Distance = 0;
-        searchFrontier.Enqueue(fromCell);
-        while (searchFrontier.Count > 0)
-        {
-            HexCell current = searchFrontier.Dequeue();
-            current.SearchPhase += 1;
-
-            if (current == toCell)
-            {
-                return true;
-            }
-
-            int currentTurn = current.Distance - 1 / speed;
-
-            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-            {
-                int moveCost = calculate(ref current, ref d, ref searchFrontierPhase, out HexCell neighbor);
-                if (moveCost == -1) continue;
-
-                int distance = current.Distance + moveCost;
-                int turn = distance / speed + 1;
-                if (turn > currentTurn)
-                {
-                    distance = turn * speed + moveCost;
-                }
-
-                if (neighbor.SearchPhase < searchFrontierPhase)
-                {
-                    neighbor.SearchPhase = searchFrontierPhase;
-                    neighbor.Distance = distance;
-                    neighbor.PathFrom = current;
-                    neighbor.SearchHeuristic =
-                        neighbor.coordinates.DistanceTo(toCell.coordinates);
-                    searchFrontier.Enqueue(neighbor);
-                }
-                else if (distance < neighbor.Distance)
-                {
-                    int oldPriority = neighbor.SearchPriority;
-                    neighbor.Distance = distance;
-                    neighbor.PathFrom = current;
-                    searchFrontier.Change(neighbor, oldPriority);
-                }
-            }
-        }
-        return false;
-    }
-
-    public void Save(BinaryWriter writer)
-    {
-        for (int i = 0; i < cells.Length; i++)
-        {
-            cells[i].Save(writer);
-        }
-    }
-
-    public void OldLoad(BinaryReader reader)
-    {
-        ClearPath();
-        ClearUnits();
-        CreateMap(reader.ReadInt32(), reader.ReadInt32());
-        for (int i = 0; i < cells.Length; i++)
-        {
-            cells[i].Load(reader);
-        }
-        int unitsCount = reader.ReadInt32();
-        /*
-        for (int i = 0; i < unitsCount; i++)
-        {
-            Unit unit = Instantiate(unitsArray.GetUnit(reader.ReadInt32()));
-            unit.Load(reader, this);
-            unit.transform.SetParent(transform, false);
-            units.Add(unit);
-        }*/
-        for (int i = 0; i < chunks.Length; i++)
-        {
-            chunks[i].Refresh();
         }
     }
 
