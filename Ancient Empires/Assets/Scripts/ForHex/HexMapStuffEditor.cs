@@ -8,7 +8,7 @@ using System.IO;
 
 public class HexMapStuffEditor : MonoBehaviour
 {
-    public List<Vector2Int> playerSpawnPoints = new List<Vector2Int>();
+    public List<int> playerSpawnPoints = new List<int>();
     public Dictionary<int, BuildingSpawner> playerBuildings = new Dictionary<int, BuildingSpawner>();
     public Dictionary<int,UnitSpawner> unitSpawners = new Dictionary<int, UnitSpawner>();
     public HexMapEditor editor;
@@ -20,8 +20,8 @@ public class HexMapStuffEditor : MonoBehaviour
 
     public HexEditorGrid hexGrid;
 
-    bool BuildingMode = false, UnitMode = false, buildingCapture;
-    int unitStartHP = 100, unitStartRank, activeUnit, activeBuilding = -1, activeBuildingLevel;
+    bool BuildingMode = false, UnitMode = false, buildingCapture, withCommander = true;
+    int unitStartHP = 100, unitStartRank, activeUnit, activeBuilding = -1, activeBuildingLevel, spawnPointMode = -1;
 
     public HexCell SelectedCell
     {
@@ -85,7 +85,7 @@ public class HexMapStuffEditor : MonoBehaviour
             }
             selectedCell.chunk.Refresh();
         }
-        if (UnitMode)
+        if (UnitMode && spawnPointMode == -1)
         {
             if (activeUnit > -1)
             {
@@ -106,6 +106,23 @@ public class HexMapStuffEditor : MonoBehaviour
                 }
             }
         }
+        if (spawnPointMode > -1)
+        {
+            if (selectedCell.Unit)
+                selectedCell.Unit.Remove();
+            if (!playerSpawnPoints.Contains(index))
+                playerSpawnPoints.Add(index);
+            if (unitSpawners.ContainsKey(index))
+                unitSpawners.Remove(index);
+            if (spawnPointMode == 0)
+            {
+                UnitSpawner newUnit = new UnitSpawner(0, ActivePlayer, unitStartHP, 0, unitStartRank, index);
+                unitSpawners.Add(selectedCell.Index, newUnit);
+                playerSpawnPoints.Add(index);
+                RenderUnit(ref activeUnit);
+            }
+            
+        }
     }
 
     HexCell GetCellUnderCursor()
@@ -118,6 +135,16 @@ public class HexMapStuffEditor : MonoBehaviour
         Unit unit = Instantiate(unitsArray.GetUnit(id), hexGrid.transform);
         selectedCell.Unit = unit;
         unit.Location = selectedCell;
+    }
+
+    public void SetSpawnPointMode(int newMode)
+    {
+        spawnPointMode = newMode;
+    }
+
+    public void SetCommandSpawner(bool toggle)
+    {
+        withCommander = toggle;
     }
 
     public void SetUnitMode(bool toggle)
@@ -186,7 +213,14 @@ public class HexMapStuffEditor : MonoBehaviour
 
     public void Save(BinaryWriter writer)
     {
-        editor.ActiveMap.SpawnPositions = playerSpawnPoints;
+        List<Vector2Int> spPos = new List<Vector2Int>();
+        Vector3 realPos;
+        for (int i = 0; i < playerSpawnPoints.Count; i++)
+        {
+            realPos = hexGrid.GetCell(playerSpawnPoints[i]).Position;
+            spPos.Add(new Vector2Int((int)realPos.x, (int)realPos.z));
+        }
+        editor.ActiveMap.SpawnPositions = spPos;
         SaveBuildingSpawner(writer);
         SaveUnitSpawner(writer);
     }

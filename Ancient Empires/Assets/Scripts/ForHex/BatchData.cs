@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Partie
+public static class PartieBridge
 {
     public static MapManager manager;
-    public static List<Player> players = new List<Player>();
+    public static List<PlayerSpawner> players = new List<PlayerSpawner>();
 }

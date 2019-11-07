@@ -22,8 +22,9 @@ public class CombatMenu : MonoBehaviour, ILevelSelector
     [SerializeField]
     Sprite emptyMini;
     bool notMap = true;
-    List<PlayerBuilder> playerBuilders = new List<PlayerBuilder>();
-    public PlayerBuilder userBuilderPrefab, botBuilderPrefab;
+    List<PlayerForm> playerBuilders = new List<PlayerForm>();
+    public PlayerForm playerFormBuilder;
+    public Color[] colors;
 
     public SaveLoadItem itemPrefab;
 
@@ -33,10 +34,16 @@ public class CombatMenu : MonoBehaviour, ILevelSelector
     {
         FillList();
         MapManager.EmptyMiniMap = emptyMini;
-        PlayerBuilder currentPlayer = Instantiate(userBuilderPrefab);
+        PlayerForm currentPlayer = Instantiate(playerFormBuilder);
         currentPlayer.transform.SetParent(playersListContent.transform, false);
-        currentPlayer.SetName("Grand Father");
+        currentPlayer.SetName("Pathfinder");
         playerBuilders.Add(currentPlayer);
+        for (int i=0; i< 7; i++)
+        {
+            PlayerForm anyPlayer = Instantiate(playerFormBuilder);
+            playerBuilders.Add(anyPlayer);
+            anyPlayer.transform.SetParent(playersListContent.transform, false);
+        }
     }
 
     public void ExitToMain()
@@ -104,11 +111,11 @@ public class CombatMenu : MonoBehaviour, ILevelSelector
     {
         if (!notMap)
         {
-            Partie.manager = CurrentMap;
-            Partie.players = new List<Player>();
+            PartieBridge.manager = CurrentMap;
+            PartieBridge.players = new List<PlayerSpawner>();
             for (int i =0; i < playerBuilders.Count; i++)
             {
-                Partie.players.Add(playerBuilders[i].Construct());
+                PartieBridge.players.Add(playerBuilders[i].GetSpawner());
             }
             SceneManager.LoadScene("Scenes/GameScene");
         }

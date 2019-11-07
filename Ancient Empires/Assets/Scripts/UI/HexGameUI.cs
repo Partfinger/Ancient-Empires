@@ -21,6 +21,8 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     public UnitMarket market;
     [SerializeField]
     bool abilityCompleted = false;
+    [SerializeField]
+    Player currentPlayer;
 
     delegate void _Update();
 
@@ -63,7 +65,17 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         }
     }
 
-    public Player Player { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public Player Player
+    {
+        get
+        {
+            return currentPlayer;
+        }
+        set
+        {
+            currentPlayer = value;
+        }
+    }
 
     private void Awake()
     {

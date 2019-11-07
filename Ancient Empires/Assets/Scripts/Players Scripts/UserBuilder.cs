@@ -10,12 +10,7 @@ public class UserBuilder : PlayerBuilder
 
     public override Player Construct()
     {
-        Player p = new Player
-        {
-            fractionID = teamID,
-            ID = ID
-        };
-        return p;
+        return null;
     }
 
     public override void SetName(string n)

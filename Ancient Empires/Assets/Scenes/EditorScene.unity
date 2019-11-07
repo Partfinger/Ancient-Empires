@@ -9096,13 +9096,13 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2142000451}
-        m_MethodName: SetRiverMode
+      - m_Target: {fileID: 1116931187}
+        m_MethodName: SetSpawnPointMode
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: -1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -14408,13 +14408,13 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2142000451}
-        m_MethodName: SetRiverMode
+      - m_Target: {fileID: 1116931187}
+        m_MethodName: SetSpawnPointMode
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -17211,13 +17211,13 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2142000451}
-        m_MethodName: SetRiverMode
+      - m_Target: {fileID: 1116931187}
+        m_MethodName: SetSpawnPointMode
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -23544,6 +23544,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hex Grid
       objectReference: {fileID: 0}
+    - target: {fileID: 3683946481897047034, guid: a61f2a7c81165094498895251013964d,
+        type: 3}
+      propertyPath: editor
+      value: 
+      objectReference: {fileID: 2142000451}
     - target: {fileID: 2735955118882397220, guid: a61f2a7c81165094498895251013964d,
         type: 3}
       propertyPath: gui
@@ -23604,10 +23609,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3683946481897047034, guid: a61f2a7c81165094498895251013964d,
-        type: 3}
-      propertyPath: editor
-      value: 
-      objectReference: {fileID: 2142000451}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a61f2a7c81165094498895251013964d, type: 3}

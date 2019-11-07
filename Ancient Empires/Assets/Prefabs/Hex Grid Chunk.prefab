@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7980a4cbe74644514bcd19be773f45c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grid: {fileID: 0}
   hexFeatureCollection:
   - prefabs:
     - {fileID: 8627972561475793570, guid: e342e614686392747a1c00b8dc518ce3, type: 3}
@@ -57,7 +58,7 @@ MonoBehaviour:
     - {fileID: 1151163031285908527, guid: 75504249d0feb0a4f8377a340d5167ec, type: 3}
   hexBuildingCollections:
   - prefabs:
-    - {fileID: 1858579495946398813, guid: c7738db578764694792ed6dc78926f54, type: 3}
+    - {fileID: 7907867798721549116, guid: c7738db578764694792ed6dc78926f54, type: 3}
   - prefabs:
     - {fileID: 8521192520661808922, guid: c115154ceaaeb7042b89491f7a28d7a8, type: 3}
     - {fileID: 5955784580390079179, guid: 224a2ddc0745d72479f45f1c09b80e4c, type: 3}

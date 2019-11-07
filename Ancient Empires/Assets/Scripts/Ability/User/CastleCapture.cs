@@ -10,7 +10,7 @@ public class CastleCapture : UnitAbility
         HexCastle castle = unit.Location.Building as HexCastle;
         if (castle)
         {
-            if (castle.Owner == null)
+            if (castle.Owner)
                 return !unit.Owner.IsAlly(castle.Owner);
             else
                 return true;

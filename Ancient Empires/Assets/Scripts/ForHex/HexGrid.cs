@@ -23,11 +23,11 @@ public abstract class HexGrid : MonoBehaviour {
 
     public void Initialize(MapManager manager)
     {
-        CreateMap(manager.X, manager.Z);
         if (!cellShaderData)
         {
             cellShaderData = gameObject.AddComponent<HexCellShaderData>();
         }
+        CreateMap(manager.X, manager.Z);
         HexMapCamera.ValidatePosition();
     }
 

@@ -5,4 +5,5 @@ using UnityEngine;
 public class Manager : MonoBehaviour
 {
     public HexGrid grid;
+    public static PartieManager manager;
 }

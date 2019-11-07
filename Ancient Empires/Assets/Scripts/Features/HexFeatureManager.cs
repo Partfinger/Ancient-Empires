@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class HexFeatureManager : MonoBehaviour {
+public class HexFeatureManager : Manager {
 
 	public HexFeatureCollection[] hexFeatureCollection, hexBuildingCollections;
 
@@ -9,8 +9,6 @@ public class HexFeatureManager : MonoBehaviour {
     public Transform BrigdePrefab;
 
 	Transform container;
-
-    public HexGrid grid;
 
     static int[] defence =
     {
@@ -56,7 +54,7 @@ public class HexFeatureManager : MonoBehaviour {
         Transform instance = Instantiate(hexBuildingCollections[num].Pick(0));
         cell.Building = instance.gameObject.GetComponent<HexBuilding>();
         cell.Building.AppointCell(ref cell);
-        cell.Building.Owner = Partie.players[owner];
+        cell.Building.Owner = manager.players[owner];
         cell.ability = AbilityType.unitMarket;
         instance.localPosition = HexMetrics.Perturb(cell.Position);
         instance.SetParent(container, false);

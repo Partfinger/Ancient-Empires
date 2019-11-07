@@ -5,7 +5,7 @@ using UnityEngine;
 public class AII : IPlayerInterface
 {
 
-    AIPlayer bot;
+    //AIPlayer bot;
 
     public Player Player { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     Unit IPlayerInterface.SelectedUnit { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }

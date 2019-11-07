@@ -281,7 +281,7 @@ public class Unit : MonoBehaviour
         AddExp(hit * victim.QualitySum);
     }
 
-    protected void RecountStats()
+    public void RecountStats()
     {
         int bonus = rank << 1;
 
@@ -348,7 +348,7 @@ public class Unit : MonoBehaviour
     {
         return !cell.IsUnderwater && !cell.Unit;
     }
-
+    /*
     public void Save(BinaryWriter writer)
     {
         writer.Write(unitID);
@@ -370,5 +370,5 @@ public class Unit : MonoBehaviour
         Orientation = reader.ReadSingle();
 
         RecountStats();
-    }
+    }*/
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2272,7 +2272,7 @@ MonoBehaviour:
     IsSpecific: 0
     Name: 
     Desc: Map desc
-    "Versio\u0442": 
+    Version: 
     EditorVer: 0
     MaxPlayers: 0
     X: 0
@@ -2287,10 +2287,18 @@ MonoBehaviour:
   SetMap: {fileID: 1404945638}
   CancelButton: {fileID: 219597616}
   emptyMini: {fileID: 21300000, guid: b86dc0dc34f15924393ed478e1f130fe, type: 3}
-  userBuilderPrefab: {fileID: 6449856624568095032, guid: 5d99c81668d2f5c489a8cde36bda36c0,
+  playerFormBuilder: {fileID: -6334941205018165052, guid: 543b511d03d9a29498f19c16fc80c759,
     type: 3}
-  botBuilderPrefab: {fileID: 6449856624568095032, guid: 543b511d03d9a29498f19c16fc80c759,
-    type: 3}
+  colors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 1, g: 1, b: 0, a: 1}
+  - {r: 1, g: 0.5019608, b: 0, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0.9591837, a: 1}
+  - {r: 0.71631193, g: 0, b: 1, a: 0}
   itemPrefab: {fileID: 114778907200386024, guid: 3ba1efbe9386b435da480e11c9fcb2df,
     type: 3}
   listContent: {fileID: 343795087}
@@ -2904,7 +2912,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 975, y: 0}
+  m_SizeDelta: {x: 975, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1101445617
 MonoBehaviour:
@@ -4727,7 +4735,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 906033536}
         m_MethodName: PlayClick
         m_Mode: 1
         m_Arguments:

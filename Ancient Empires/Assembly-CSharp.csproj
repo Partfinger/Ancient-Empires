@@ -104,9 +104,11 @@
     <Compile Include="Assets\Scripts\ForHex\ListPool.cs" />
     <Compile Include="Assets\Scripts\MainMenu\CombatMenu.cs" />
     <Compile Include="Assets\Scripts\MainMenu\MainMenu.cs" />
+    <Compile Include="Assets\Scripts\MainMenu\PlayerForm.cs" />
     <Compile Include="Assets\Scripts\Managers\AbilityManager.cs" />
     <Compile Include="Assets\Scripts\Managers\Manager.cs" />
     <Compile Include="Assets\Scripts\Managers\MapManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\PartieManager.cs" />
     <Compile Include="Assets\Scripts\Managers\PathCostManager.cs" />
     <Compile Include="Assets\Scripts\Managers\UnitManager.cs" />
     <Compile Include="Assets\Scripts\MP\MPlayer.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="Assets\Scripts\Players Scripts\PlayerBuilder.cs" />
     <Compile Include="Assets\Scripts\Players Scripts\UserBuilder.cs" />
     <Compile Include="Assets\Scripts\Spawners\BuildingSpawner.cs" />
+    <Compile Include="Assets\Scripts\Spawners\PlayerSpawner.cs" />
     <Compile Include="Assets\Scripts\Spawners\TriggerCell.cs" />
     <Compile Include="Assets\Scripts\Spawners\UnitSpawner.cs" />
     <Compile Include="Assets\Scripts\UI\AbilityLogicUI.cs" />

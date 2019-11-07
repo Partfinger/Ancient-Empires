@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class MapManager
 {
     public bool IsSpecific;
-    public string Name = "", Desc = "Map desc", Versioт;
+    public string Name = "", Desc = "Map desc", Version;
     public int EditorVer, MaxPlayers, X,Z;
     public List<Vector2Int> SpawnPositions;
     public float mapVer = 1.0f;

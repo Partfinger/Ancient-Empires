@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public UnitsArray setup;
     [SerializeField]
     protected List<Unit> units = new List<Unit>();
     [SerializeField]
@@ -12,11 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     public int ID, fractionID, Gold, goldIncome, commanderCounter = 1;
     public IPlayerInterface ui;
-
-    public Player()
-    {
-
-    }
+    public Color color;
 
     public Unit Commander
     {
@@ -24,6 +20,12 @@ public class Player : MonoBehaviour
         {
             return commander;
         }
+    }
+
+    internal void Apply(PlayerSpawner spawner)
+    {
+        ID = spawner.ID;
+        fractionID = spawner.teamID;
     }
 
     public bool UnitLimit
