@@ -214,7 +214,7 @@ public abstract class HexGrid : MonoBehaviour {
         
         for (int i = 0; i < chunks.Length; i++)
         {
-            chunks[i].Refresh();
+            chunks[i].ForcedRefresh();
         }
     }
 }

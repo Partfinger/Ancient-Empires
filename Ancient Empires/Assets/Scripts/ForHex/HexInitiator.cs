@@ -12,7 +12,6 @@ public class HexInitiator : MonoBehaviour
 
     private void Start()
     {
-
         manager.map = PartieBridge.manager;
         manager.MakePlayers(PartieBridge.players);
         if (PartieBridge.manager == null)
@@ -47,7 +46,6 @@ public class HexInitiator : MonoBehaviour
             cell = grid.GetCell(spawner.indexCell);
             if (cell.ActiveBuilding == BuildingType.village)
                 continue;
-            Debug.Log(spawner.indexCell);
             building = cell.Building;
             building.Owner = manager.players[spawner.owner];
             building.IsCaption = spawner.isCaptured;

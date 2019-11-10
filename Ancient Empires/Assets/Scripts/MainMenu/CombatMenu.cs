@@ -37,10 +37,12 @@ public class CombatMenu : MonoBehaviour, ILevelSelector
         PlayerForm currentPlayer = Instantiate(playerFormBuilder);
         currentPlayer.transform.SetParent(playersListContent.transform, false);
         currentPlayer.SetName("Pathfinder");
+        currentPlayer.data.ID = 1;
         playerBuilders.Add(currentPlayer);
-        for (int i=0; i< 7; i++)
+        for (int i=0, r = 2; i< 7; i++, r++)
         {
             PlayerForm anyPlayer = Instantiate(playerFormBuilder);
+            anyPlayer.data.ID = r;
             playerBuilders.Add(anyPlayer);
             anyPlayer.transform.SetParent(playersListContent.transform, false);
         }

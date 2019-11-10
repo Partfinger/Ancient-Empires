@@ -34,7 +34,13 @@ public class HexGridChunk : MonoBehaviour {
 		enabled = true;
 	}
 
-	public void ShowUI (bool visible) {
+    public void ForcedRefresh()
+    {
+        Triangulate();
+    }
+
+
+    public void ShowUI (bool visible) {
 		gridCanvas.gameObject.SetActive(visible);
 	}
 
@@ -43,7 +49,7 @@ public class HexGridChunk : MonoBehaviour {
 		enabled = false;
 	}
 
-	public void Triangulate () {
+	void Triangulate () {
 		terrain.Clear();
 		rivers.Clear();
 		roads.Clear();
