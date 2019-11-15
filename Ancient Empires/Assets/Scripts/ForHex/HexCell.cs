@@ -16,8 +16,20 @@ public class HexCell : MonoBehaviour {
 	public HexGridChunk chunk;
 
     public AbilityType ability;
+    [SerializeField]
+    HexBuilding building;
 
-    public HexBuilding Building = null;
+    public HexBuilding Building
+    {
+        get
+        {
+            return building;
+        }
+        set
+        {
+            building = value;
+        }
+    }
 
     public Buff buff = new Buff();
     public bool InQueue { get; set; }
@@ -119,7 +131,6 @@ public class HexCell : MonoBehaviour {
 					SetRoad(i, false);
 				}
 			}
-
 			Refresh();
 		}
 	}

@@ -20,7 +20,7 @@ public class Movement : UnitAbility
         if (unit.Location != cell && !cell.Unit)
         {
             calculate = PathCostManager.GetMovement(unit.unitData.MovementType);
-            grid.FindAnyPath(unit.Location, cell, ref calculate, unit.Speed);
+            grid.FindAnyPath(unit.Location, cell, ref calculate, unit.Mobility);
             unit.Travel(grid.GetPath());
             grid.ClearPath();
         }

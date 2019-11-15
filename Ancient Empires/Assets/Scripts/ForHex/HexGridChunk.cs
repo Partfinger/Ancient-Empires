@@ -37,6 +37,7 @@ public class HexGridChunk : MonoBehaviour {
     public void ForcedRefresh()
     {
         Triangulate();
+        enabled = false;
     }
 
 

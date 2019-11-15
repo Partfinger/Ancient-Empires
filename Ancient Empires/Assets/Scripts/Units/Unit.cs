@@ -18,7 +18,8 @@ public class Unit : MonoBehaviour
     [SerializeField]
     protected int unitID, health;
 
-    protected int offenceMin, offenceMax, defence, mobility, experience, nextRankExperience, healthMax = 100, rank = 0;
+    protected int offenceMin, offenceMax, defence, experience, nextRankExperience, healthMax = 100, rank = 0, baseMobility;
+    public int Mobility;
 
     [SerializeField]
     AbilityType[] abilities;
@@ -32,8 +33,8 @@ public class Unit : MonoBehaviour
         offenceMin = unitData.BaseOffenceMin;
         offenceMax = unitData.BaseOffenceMax;
         defence = unitData.BaseDefence;
-        mobility = unitData.BaseMobility;
-        health = healthMax * 1;
+        baseMobility = unitData.BaseMobility;
+        health = healthMax;
         GetNextRankExperience();
         enabled = false;
     }
@@ -47,6 +48,11 @@ public class Unit : MonoBehaviour
             return;
         }
         coldDown += Time.deltaTime;
+    }
+
+    public void TurnUpdate()
+    {
+        Mobility = TurnMobility;
     }
 
     public void SetLocation(ref HexCell l)
@@ -73,6 +79,14 @@ public class Unit : MonoBehaviour
         if (location)
         {
             transform.localPosition = location.Position;
+        }
+    }
+
+    public int TurnMobility
+    {
+        get
+        {
+            return baseMobility + buff.Mobility;
         }
     }
 
@@ -133,14 +147,6 @@ public class Unit : MonoBehaviour
         get
         {
             return defence + buff.Defence;
-        }
-    }
-
-    public int Speed
-    {
-        get
-        {
-            return mobility + buff.Mobility;
         }
     }
 
@@ -288,7 +294,7 @@ public class Unit : MonoBehaviour
         offenceMin = unitData.BaseOffenceMin + bonus;
         offenceMax = unitData.BaseOffenceMax + bonus;
         defence = unitData.BaseDefence + bonus;
-        mobility = unitData.BaseMobility + ( 10 * rank ) / 6;
+        baseMobility = unitData.BaseMobility + ( 10 * rank ) / 6;
 
         GetNextRankExperience();
 
@@ -348,27 +354,4 @@ public class Unit : MonoBehaviour
     {
         return !cell.IsUnderwater && !cell.Unit;
     }
-    /*
-    public void Save(BinaryWriter writer)
-    {
-        writer.Write(unitID);
-        writer.Write(health);
-        writer.Write(experience);
-        writer.Write(rank);
-
-        location.coordinates.Save(writer);
-        writer.Write(orientation);
-    }
-
-    public void Load(BinaryReader reader, HexGrid grid)
-    {
-        health = reader.ReadInt32();
-        experience = reader.ReadInt32();
-        rank = reader.ReadInt32();
-
-        Location = grid.GetCell(HexCoordinates.Load(reader));
-        Orientation = reader.ReadSingle();
-
-        RecountStats();
-    }*/
 }

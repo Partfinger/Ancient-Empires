@@ -8,7 +8,7 @@ public class CastleCapture : UnitAbility
     public override bool IsUsable(ref Unit unit)
     {
         HexCastle castle = unit.Location.Building as HexCastle;
-        if (castle)
+        if (castle && castle.IsCaption)
         {
             if (castle.Owner)
                 return !unit.Owner.IsAlly(castle.Owner);

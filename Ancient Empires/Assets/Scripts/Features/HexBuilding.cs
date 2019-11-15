@@ -6,7 +6,7 @@ public abstract class HexBuilding : MonoBehaviour
 {
     [SerializeField]
     protected bool isCaption;
-
+    [SerializeField]
     Player owner;
 
     [SerializeField]
@@ -26,7 +26,17 @@ public abstract class HexBuilding : MonoBehaviour
         }
     }
 
-    public bool IsCaption { get { return IsCaption; } set { isCaption = true; } }
+    public bool IsCaption
+    {
+        get
+        {
+            return isCaption;
+        }
+        set
+        {
+            isCaption = value;
+        }
+    }
 
     protected abstract void ApplyBuff();
 

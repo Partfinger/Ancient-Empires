@@ -16,7 +16,10 @@ public class AbilityManager : Manager
     {
         List<Ability> result = new List<Ability>();
         Unit unit = cell.Unit;
-        result.AddRange(ConvertToAbility(unit.GetAbilities(), ref unit));
+        if (unit && unit.Owner == @interface.Player)
+        {
+            result.AddRange(ConvertToAbility(unit.GetAbilities(), ref unit));
+        }
         if (cell.ability != 0)
         {
             Ability a = array[(byte)cell.ability];

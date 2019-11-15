@@ -75,8 +75,11 @@ public class HexMapStuffEditor : MonoBehaviour
                 playerBuildings.Remove(index);
             }
             BuildingSpawner spawner = new BuildingSpawner(ActivePlayer, index, buildingCapture);
+            Debug.Log("Build spawner");
+            Debug.Log(ActivePlayer + " " + buildingCapture);
             selectedCell.BuildingLevel = (byte)activeBuildingLevel;
             selectedCell.ActiveBuilding = (BuildingType)activeBuilding;
+            playerBuildings.Add(index,spawner);
             //
             if (selectedCell.IsFeature)
             {
@@ -85,7 +88,7 @@ public class HexMapStuffEditor : MonoBehaviour
             }
             selectedCell.chunk.Refresh();
         }
-        if (UnitMode && spawnPointMode == -1)
+        if (UnitMode && spawnPointMode == -1 && ActivePlayer > 0)
         {
             if (activeUnit > -1)
             {
@@ -94,6 +97,8 @@ public class HexMapStuffEditor : MonoBehaviour
                 if (unitSpawners.ContainsKey(index))
                     unitSpawners.Remove(index);
                 UnitSpawner newUnit = new UnitSpawner(activeUnit, ActivePlayer, unitStartHP,0, unitStartRank, index);
+                Debug.Log("Unit spawner");
+                Debug.Log(activeUnit + " " + ActivePlayer + " " + unitStartHP);
                 unitSpawners.Add(selectedCell.Index, newUnit);
                 RenderUnit(ref activeUnit);
             }
@@ -117,6 +122,8 @@ public class HexMapStuffEditor : MonoBehaviour
             if (spawnPointMode == 0)
             {
                 UnitSpawner newUnit = new UnitSpawner(0, ActivePlayer, unitStartHP, 0, unitStartRank, index);
+                Debug.Log("Unit spawner mode");
+                Debug.Log(activeUnit + " " + ActivePlayer + " " + unitStartHP);
                 unitSpawners.Add(selectedCell.Index, newUnit);
                 playerSpawnPoints.Add(index);
                 RenderUnit(ref activeUnit);
@@ -167,6 +174,7 @@ public class HexMapStuffEditor : MonoBehaviour
             }
 
             List<string> owners = new List<string>();
+            owners.Add("Neutral");
             for (int i = 1; i < editor.ActiveMap.MaxPlayers + 1; i++)
             {
                 owners.Add($"Player {i}");
@@ -189,6 +197,11 @@ public class HexMapStuffEditor : MonoBehaviour
     public void SetUnitStartHP(string newHP)
     {
         unitStartHP = int.Parse(newHP);
+    }
+
+    public void SetActivePlayer(int newPlayer)
+    {
+        ActivePlayer = newPlayer;
     }
 
     public void SetUnitStartRank(string rank)

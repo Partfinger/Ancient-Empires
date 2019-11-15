@@ -14,11 +14,10 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     public AbilityLogicUI AbilitySelectorPrefub;
     public Image AbilitySelectPanelPrefub;
     public Image MarketPanel;
-    public RectTransform MarketContent;
     public GameObject abilityContent;
     public GameObject abilityContentPrefub;
     public AbilityManager abilityManager;
-    public UnitMarket market;
+    public UnitManager manager;
     [SerializeField]
     bool abilityCompleted = false;
     [SerializeField]
@@ -74,6 +73,7 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         set
         {
             currentPlayer = value;
+            currentPlayer.ui = this;
         }
     }
 
@@ -192,6 +192,11 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         }
     }
 
+    public void AddBoughtUnit(int id)
+    {
+        manager.AddBoughtUnit(currentPlayer, id, currentCell, 0f);
+    }
+
     void HideAbilityPanel()
     {
         AbilitySelectPanel.gameObject.SetActive(false);
@@ -206,17 +211,7 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         if (currentCell)
         {
             selectedUnit = currentCell.Unit;
-            if (selectedUnit)
-            {
-                if (!selectedUnit.enabled)
-                {
-                    usableAbility = abilityManager.GetAbilitiesForCell(this, ref currentCell);
-                }
-                else
-                {
-                    selectedUnit = null;
-                }
-            }
+            usableAbility = abilityManager.GetAbilitiesForCell(this, ref currentCell);
             if (usableAbility.Count > 0)
                 ShowAbilityPanel();
         }
@@ -250,11 +245,11 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
 
     public void OpenUnitMarket()
     {
-        throw new System.NotImplementedException();
+        MarketPanel.gameObject.SetActive(true);
     }
 
     public void HideUnitMarket()
     {
-        throw new System.NotImplementedException();
+        MarketPanel.gameObject.SetActive(false);
     }
 }

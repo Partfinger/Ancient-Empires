@@ -12,12 +12,6 @@ public class UnitMarket : PlayerAbility
         @interface.OpenUnitMarket();
     }
 
-    public override void TriggerAbility(IPlayerInterface @interface, dynamic param1)
-    {
-        Canceled(@interface);
-        @interface.Player.AddBoughtUnit(param1);
-    }
-
     public override bool IsUsable(IPlayerInterface @interface, ref HexCell cell)
     {
         HexCastle castle = cell.Building as HexCastle;

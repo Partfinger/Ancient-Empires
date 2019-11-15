@@ -49,11 +49,6 @@ public class Player : MonoBehaviour
         units.Add(newUnit);
     }
 
-    public void AddBoughtUnit(int id)
-    {
-
-    }
-
     public void RemoveUnit(Unit unit)
     {
         units.Remove(unit);
@@ -66,7 +61,10 @@ public class Player : MonoBehaviour
 
     public static bool operator ==(Player p1, Player p2)
     {
-        return p1.ID == p2.ID;
+        if (p1 && p2)
+            return p1.ID == p2.ID;
+        else
+            return false;
     }
 
     public static bool operator !=(Player p1, Player p2)
@@ -76,6 +74,8 @@ public class Player : MonoBehaviour
 
     public static bool IsAllies(Player p1, Player p2)
     {
+        if (p1.ID == p2.ID)
+            return true;
         if (p1.fractionID > 0 && p2.fractionID > 0)
             if (p1.fractionID == p2.fractionID)
                 return true;
@@ -84,9 +84,18 @@ public class Player : MonoBehaviour
 
     public bool IsAlly(Player any)
     {
+        if (any.ID == ID)
+            return true;
         if (fractionID > 0 && any.fractionID > 0)
             if (fractionID == any.fractionID)
                 return true;
         return false;
+    }
+
+    public void TurnUpdate()
+    {
+        for (int i = 0; i < units.Count; i++)
+            units[i].TurnUpdate();
+        Gold += goldIncome;
     }
 }

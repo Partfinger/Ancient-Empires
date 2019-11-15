@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: Ranged Attack Ability
   m_EditorClassIdentifier: Assembly-CSharp::RangeAttack
-  Name: New Ability
+  Name: Ranged Attack
   Desc: Short description
   Sprite: {fileID: 21300000, guid: a8de0718cbe7ca2418ebf49ee70662f1, type: 3}

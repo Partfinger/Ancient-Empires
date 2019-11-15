@@ -11,7 +11,7 @@ public class MeleeAttack : UnitAbility
         HexCell n;
         for (HexDirection d = HexDirection.NE; d<= HexDirection.NW; d++)
         {
-            if ( (n = location.GetNeighbor(d)) && n.Unit )
+            if ( (n = location.GetNeighbor(d)) && n.Unit && !n.Unit.Owner.IsAlly(unit.Owner))
             {
                 return true;
             }
