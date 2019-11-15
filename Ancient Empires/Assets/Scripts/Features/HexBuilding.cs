@@ -6,15 +6,15 @@ public abstract class HexBuilding : MonoBehaviour
 {
     [SerializeField]
     protected bool isCaption;
+    [SerializeField]
+    Player owner;
 
     [SerializeField]
-    protected int owner;
+    public Material material;
 
     public HexCell cell;
 
-    public bool IsCaption { get { return IsCaption; } }
-
-    public int Owner
+    public Player Owner
     {
         get
         {
@@ -26,9 +26,17 @@ public abstract class HexBuilding : MonoBehaviour
         }
     }
 
-    public abstract UnitActions GetUnitActions(ref Unit unit);
-
-    public abstract UserAction GetUserAction();
+    public bool IsCaption
+    {
+        get
+        {
+            return isCaption;
+        }
+        set
+        {
+            isCaption = value;
+        }
+    }
 
     protected abstract void ApplyBuff();
 

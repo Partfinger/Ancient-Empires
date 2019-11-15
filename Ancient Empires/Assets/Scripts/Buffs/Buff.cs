@@ -2,13 +2,45 @@
 public class Buff
 {
     // 0 - a, 1 -d, 2 - m
-    public int[] stats = new int[3];
+    int[] stats = new int[3];
 
     public Buff(int a =0, int d = 0, int m = 0)
     {
         stats[0] = a;
         stats[1] = d;
         stats[2] = m;
+    }
+
+    public int QualitySum
+    {
+        get
+        {
+            return stats[0] + stats[1];
+        }
+    }
+
+    public int Offence
+    {
+        get
+        {
+            return stats[0];
+        }
+    }
+
+    public int Defence
+    {
+        get
+        {
+            return stats[1];
+        }
+    }
+
+    public int Mobility
+    {
+        get
+        {
+            return stats[2];
+        }
     }
 
     public void Revert()

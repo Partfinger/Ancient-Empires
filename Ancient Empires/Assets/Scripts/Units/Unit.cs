@@ -1,35 +1,144 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public enum UnitActions
+public class Unit : MonoBehaviour
 {
-    empty, finish, move, attack, mend, capture
-}
-
-public abstract class Unit : MonoBehaviour
-{
-    public HexCell cell;
-
-    /// BaseOffenceMin - 0, BaseOffenceMax - 1, BaseDefence - 2, BaseMobility - 3, HealthMax - 4, OffenceMin - 5,
-    /// OffenceMax - 6, defence - 7, Mobility - 8, health -9, experience - 10, nextRankExperience - 11, rank - 12
-    [SerializeField]
-    int[] stats;
+    public Player Owner;
+    public static HexGameUI gui;
+    public UnitData unitData;
     public Buff buff = new Buff();
+    List<HexCell> pathToTravel;
+    const float travelSpeed = 7f;
+    const float rotationSpeed = 180f;
+    const float coldDownTime = 10f;
+    float coldDown = 0f;
 
-    public int Health { get { return stats[9]; } }
+    [SerializeField]
+    protected int unitID, health;
+
+    protected int offenceMin, offenceMax, defence, experience, nextRankExperience, healthMax = 100, rank = 0, baseMobility;
+    public int Mobility;
+
+    [SerializeField]
+    AbilityType[] abilities;
+
+    float orientation;
+    [SerializeField]
+    protected HexCell location;
 
     private void Awake()
     {
-        stats[9] = stats[4] * 1;
-        RecountStats();
+        offenceMin = unitData.BaseOffenceMin;
+        offenceMax = unitData.BaseOffenceMax;
+        defence = unitData.BaseDefence;
+        baseMobility = unitData.BaseMobility;
+        health = healthMax;
+        GetNextRankExperience();
+        enabled = false;
+    }
+
+    private void Update()
+    {
+        if (coldDown > coldDownTime)
+        {
+            coldDown = 0f;
+            enabled = false;
+            return;
+        }
+        coldDown += Time.deltaTime;
+    }
+
+    public void TurnUpdate()
+    {
+        Mobility = TurnMobility;
+    }
+
+    public void SetLocation(ref HexCell l)
+    {
+        location = l;
+        transform.localPosition = l.Position;
+    }
+
+    public AbilityType GetOnlyMove()
+    {
+        return abilities[1];
+    }
+
+    public int ID
+    {
+        get
+        {
+            return unitID;
+        }
+    }
+
+    void OnEnable()
+    {
+        if (location)
+        {
+            transform.localPosition = location.Position;
+        }
+    }
+
+    public int TurnMobility
+    {
+        get
+        {
+            return baseMobility + buff.Mobility;
+        }
+    }
+
+    public HexCell Location
+    {
+        get
+        {
+            return location;
+        }
+        set
+        {
+            if (location)
+            {
+                location.Unit = null;
+            }
+            location = value;
+            location.Unit = this;
+            transform.localPosition = value.Position;
+        }
+    }
+
+    public float Orientation
+    {
+        get
+        {
+            return orientation;
+        }
+        set
+        {
+            orientation = value;
+            transform.localRotation = Quaternion.Euler(0f, value, 0f);
+        }
+    }
+
+    public int Rank
+    {
+        get
+        {
+            return rank;
+        }
+        set
+        {
+            rank = value;
+            RecountStats();
+        }
     }
 
     public int Offence
     {
         get
         {
-            return Random.Range(stats[5], stats[6]) + buff.stats[0];
+            return Random.Range(offenceMin, offenceMax) + buff.Offence;
         }
     }
 
@@ -37,116 +146,212 @@ public abstract class Unit : MonoBehaviour
     {
         get
         {
-            return stats[7] + buff.stats[1];
+            return defence + buff.Defence;
+        }
+    }
+
+    public int Health
+    {
+        get
+        {
+            return health;
+        }
+        set
+        {
+            health = value;
         }
     }
 
     public int QualitySum
     {
-        get { return stats[5] + stats[6] + stats[7]; }
+        get { return offenceMin + offenceMax + defence; }
     }
 
-    public void GetMotionSpace()
+    public AbilityType[] GetAbilities()
     {
-        int mobility = stats[8] + buff.stats[2];
-
-
+        return abilities;
     }
 
-    public void Move(HexCell[] path)
+    public void ValidateLocation()
     {
-
+        transform.localPosition = location.Position;
     }
 
-    void CheckNextRank()
+    public void SetLocationQuiet(HexCell value)
     {
-        if (stats[10] > stats[11])
+        location = value;
+        transform.localPosition = value.Position;
+    }
+
+    void TravelLok(HexCell value)
+    {
+        location = value;
+        location.Unit = this;
+        transform.localPosition = value.Position;
+    }
+
+    public void Travel(List<HexCell> path)
+    {
+        if (location.Unit != this)
+            TravelLok(path[path.Count - 1]);
+        else
+            Location = path[path.Count - 1];
+        pathToTravel = path;
+        gui.WaitForEndOfTravel();
+        StopAllCoroutines();
+        StartCoroutine(TravelPath());
+    }
+
+    IEnumerator LookAt(Vector3 point)
+    {
+        point.y = transform.localPosition.y;
+        Quaternion fromRotation = transform.localRotation;
+        Quaternion toRotation =
+            Quaternion.LookRotation(point - transform.localPosition);
+        float angle = Quaternion.Angle(fromRotation, toRotation);
+        if (angle > 0f)
         {
-            SetRank(stats[12]++);
+            float speed = rotationSpeed / angle;
+
+            for (
+                float t = Time.deltaTime * speed;
+                t < 1f;
+                t += Time.deltaTime * speed
+            )
+            {
+                transform.localRotation =
+                    Quaternion.Slerp(fromRotation, toRotation, t);
+                yield return null;
+            }
+
+            transform.LookAt(point);
+            orientation = transform.localRotation.eulerAngles.y;
         }
     }
 
-    public void SetRank(int newRank)
+    IEnumerator TravelPath()
     {
-        stats[12] = newRank;
-        stats[10] -= stats[11];
-        RecountStats();
+        Vector3 a, b, c = pathToTravel[0].Position;
+        transform.localPosition = c;
+        yield return LookAt(pathToTravel[1].Position);
+
+        float t = Time.deltaTime * travelSpeed;
+        for (int i = 1; i < pathToTravel.Count; i++)
+        {
+            a = c;
+            b = pathToTravel[i - 1].Position;
+            c = (b + pathToTravel[i].Position) * 0.5f;
+            for (; t < 1f; t += Time.deltaTime * travelSpeed)
+            {
+                transform.localPosition = Bezier.GetPoint(a, b, c, t);
+                Vector3 d = Bezier.GetDerivative(a, b, c, t);
+                d.y = 0f;
+                transform.localRotation = Quaternion.LookRotation(d);
+                yield return null;
+            }
+            t -= 1f;
+        }
+
+        a = c;
+        b = pathToTravel[pathToTravel.Count - 1].Position;
+        c = b;
+        for (; t < 1f; t += Time.deltaTime * travelSpeed)
+        {
+            transform.localPosition = Bezier.GetPoint(a, b, c, t);
+            Vector3 d = Bezier.GetDerivative(a, b, c, t);
+            d.y = 0f;
+            transform.localRotation = Quaternion.LookRotation(d);
+            yield return null;
+        }
+        transform.localPosition = location.Position;
+        orientation = transform.localRotation.eulerAngles.y;
+
+        ListPool<HexCell>.Add(pathToTravel);
+        pathToTravel = null;
+        gui.SelectUnitAfterMove();
     }
 
-    void RecountStats()
+    public virtual void Attack(Unit victim)
     {
-        int bonus = stats[12] << 1;
-
-        stats[5] = stats[0] + bonus;
-        stats[6] = stats[1] + bonus;
-        stats[7] = stats[2] + bonus;
-        stats[8] = stats[3] + (stats[12] / 6);
-
-        stats[11] = GetNextRankExperience();
-    }
-
-    public int GetNextRankExperience()
-    {
-        return QualitySum * 66;
-    }
-
-
-    public void Attack(Unit victim)
-    {
-        int hit = (Offence - victim.Defence) * Health / 100;
+        int hit = (Offence - victim.Defence) * health / 100;
 
         if (hit < 0)
         {
             hit = 0;
         }
-        else if (hit > victim.Health)
+        else if (hit > victim.health)
         {
-            hit = victim.Health;
+            hit = victim.health;
         }
         victim.Hit(hit);
-        stats[10] += victim.QualitySum * hit;
-        CheckNextRank();
+        AddExp(hit * victim.QualitySum);
     }
 
-    public bool CheckIsDead()
+    public void RecountStats()
     {
-        if (Health == 0)
+        int bonus = rank << 1;
+
+        offenceMin = unitData.BaseOffenceMin + bonus;
+        offenceMax = unitData.BaseOffenceMax + bonus;
+        defence = unitData.BaseDefence + bonus;
+        baseMobility = unitData.BaseMobility + ( 10 * rank ) / 6;
+
+        GetNextRankExperience();
+
+        if (rank < 11 && (rank & 1) == 0)
+            name = unitData.Name(rank >> 1);
+    }
+
+    public void CheckNextRank()
+    {
+        while (experience >= nextRankExperience)
         {
-            Die();
-            return true;
+            rank++;
+            experience -= nextRankExperience;
+            RecountStats();
         }
-        return false;
     }
 
-    void Die()
+    void GetNextRankExperience()
     {
+        nextRankExperience = QualitySum * 66;
+    }
 
+    public void AddExp(int exp)
+    {
+        experience += exp;
+    }
+
+    public virtual void Die()
+    {
+        location.Unit = null;
+        Owner.RemoveUnit(this);
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Only clear map!!!!!
+    /// </summary>
+    public void Remove()
+    {
+        Destroy(gameObject);
+    }
+
+    public bool IsDead
+    {
+        get
+        {
+            return health == 0;
+        }
     }
 
     public void Hit(int hit)
     {
-        stats[9] -= hit;
+        health -= hit;
     }
 
-    public void Cure(int hp)
+    public virtual bool IsValidDestination(HexCell cell)
     {
-        int delta = stats[4] - stats[9];
-        if (delta < hp)
-        {
-            stats[9] += delta;
-        }
-        else
-        {
-            stats[9] += hp;
-        }
-    }
-
-    public abstract void Battle(Unit attacker, Unit victim);
-
-    public abstract HexCell[] GetAttackCells();
-
-    public virtual UnitActions Skill()
-    {
-        return 0;
+        return !cell.IsUnderwater && !cell.Unit;
     }
 }

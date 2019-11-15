@@ -1,0 +1,9 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Manager : MonoBehaviour
+{
+    public HexGrid grid;
+    public static PartieManager manager;
+}
