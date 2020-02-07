@@ -4,8 +4,6 @@ public class HexFeatureManager : Manager {
 
 	public HexFeatureCollection[] hexFeatureCollection, hexBuildingCollections;
 
-    public AbilityType[] cellAbilities;
-
     public Transform BrigdePrefab;
 
 	Transform container;
@@ -42,7 +40,7 @@ public class HexFeatureManager : Manager {
     {
         Transform instance = Instantiate(hexBuildingCollections[(int)cell.ActiveBuilding - 1].Pick(cell.BuildingLevel));
         cell.Building = instance.gameObject.GetComponent<HexBuilding>();
-        cell.ability = AbilityType.unitMarket;
+        //cell.ability = AbilityType.unitMarket;
         cell.Building.AppointCell(ref cell);
         instance.localPosition = HexMetrics.Perturb(cell.Position);
         instance.SetParent(container, false);
@@ -55,7 +53,7 @@ public class HexFeatureManager : Manager {
         cell.Building = instance.gameObject.GetComponent<HexBuilding>();
         cell.Building.AppointCell(ref cell);
         cell.Building.Owner = manager.players[owner];
-        cell.ability = AbilityType.unitMarket;
+        //cell.ability = AbilityType.unitMarket;
         instance.localPosition = HexMetrics.Perturb(cell.Position);
         instance.SetParent(container, false);
     }

@@ -15,26 +15,14 @@ public class HexCell : MonoBehaviour {
 
 	public HexGridChunk chunk;
 
-    public AbilityType ability;
-    [SerializeField]
-    HexBuilding building;
+    public HexBuilding Building;
 
-    public HexBuilding Building
-    {
-        get
-        {
-            return building;
-        }
-        set
-        {
-            building = value;
-        }
-    }
 
     public Buff buff = new Buff();
-    public bool InQueue { get; set; }
 
-    int distance, terrainTypeIndex = 0;
+    public bool WasChecked { get; set; }
+
+    int distance = -1, terrainTypeIndex = 0;
 
     byte featureLevel = 1;
     byte activeFeature = 0;
@@ -487,6 +475,11 @@ public class HexCell : MonoBehaviour {
         Text label = uiRect.GetComponent<Text>();
         label.text = text;
     }
+	
+	public void UpdateDistanceLabel () {
+		Text label = uiRect.GetComponent<Text>();
+		label.text = distance.ToString();
+	}
 
     public void DisableHighlight()
     {

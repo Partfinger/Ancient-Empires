@@ -48,7 +48,10 @@ MonoBehaviour:
   unitData: {fileID: 11400000, guid: 37887e3a8c786b44a9e40eca6a3a0eb4, type: 2}
   unitID: 1
   health: 0
-  abilities: 000102
+  endTurn: {fileID: 11400000, guid: a4eabbfd258f5874596f252a60bfb8fb, type: 2}
+  movement: {fileID: 11400000, guid: d9954034e74710d4e81266f92e2144e7, type: 2}
+  attack: {fileID: 11400000, guid: 63568b79e814ef64eaa716dbd3f77eed, type: 2}
+  abilities: []
   location: {fileID: 0}
 --- !u!1 &8772393431872694100
 GameObject:

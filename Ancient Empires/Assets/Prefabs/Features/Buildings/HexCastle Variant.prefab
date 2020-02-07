@@ -1153,8 +1153,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3a9ff61065c504eb1dc16addefcc10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCaption: 0
+  isCaption: 1
+  owner: {fileID: 0}
   material: {fileID: 0}
+  ability: {fileID: 11400000, guid: 158c933e58daf13488cac5b871da17af, type: 2}
   cell: {fileID: 0}
 --- !u!1 &7075773514257064754
 GameObject:

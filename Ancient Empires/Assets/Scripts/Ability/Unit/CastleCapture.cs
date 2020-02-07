@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Castle Capture Ability", menuName = "Castle Capture Ability", order = 53)]
 public class CastleCapture : UnitAbility
 {
-    public override bool IsUsable(ref Unit unit)
+    public override bool IsUsable(Unit unit)
     {
         HexCastle castle = unit.Location.Building as HexCastle;
         if (castle && castle.IsCaption)
@@ -18,14 +18,10 @@ public class CastleCapture : UnitAbility
         return false;
     }
 
-    public override void Selected(ref Unit unit)
+    public override bool Selected(Unit unit)
     {
         (unit.Location.Building as HexCastle).Owner = unit.Owner;
         unit.enabled = true;
-    }
-
-    public override string ToString()
-    {
-        throw new System.NotImplementedException();
+        return true;
     }
 }

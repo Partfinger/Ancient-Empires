@@ -7,24 +7,18 @@ using UnityEngine.UI;
 
 public class UnitMarket : PlayerAbility
 {
-    public override void Selected(IPlayerInterface @interface)
+    public override bool IsUsable(Player player, HexBuilding building)
     {
-        @interface.OpenUnitMarket();
+        if (player == building.Owner)
+        {
+            return true;
+        }
+        return false;
     }
 
-    public override bool IsUsable(IPlayerInterface @interface, ref HexCell cell)
+    public override bool Selected(IPlayerInterface iplayer)
     {
-        HexCastle castle = cell.Building as HexCastle;
-        return castle && castle.Owner == @interface.Player;
-    }
-
-    public override void Canceled(IPlayerInterface @interface)
-    {
-        @interface.HideUnitMarket();
-    }
-
-    public override string ToString()
-    {
-        throw new System.NotImplementedException();
+        iplayer.OpenUnitMarket();
+        return true;
     }
 }

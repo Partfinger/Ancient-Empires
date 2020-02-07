@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b907145afabae42a2b209e88c92635, type: 3}
   m_Name: EndTurn Ability
   m_EditorClassIdentifier: 
-  Name: New Ability
+  Name: End unit`s turn.
   Desc: Short description
   Sprite: {fileID: 21300000, guid: be586e194b2271e49b4af3279be24dde, type: 3}

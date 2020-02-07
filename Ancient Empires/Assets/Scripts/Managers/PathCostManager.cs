@@ -48,7 +48,7 @@ public static class PathCostManager
             }
             else
             {
-                moveCost += edgeType == HexEdgeType.Flat ? 10 : 14;
+                moveCost += edgeType == HexEdgeType.Slope ? 4 : 14;
                 //moveCost += neighbor.IsFeature ? neighbor.FeatureLevel : 0;
             }
             return moveCost;

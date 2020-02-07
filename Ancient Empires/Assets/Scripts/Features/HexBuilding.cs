@@ -12,6 +12,9 @@ public abstract class HexBuilding : MonoBehaviour
     [SerializeField]
     public Material material;
 
+    [SerializeField]
+    protected PlayerAbility ability;
+
     public HexCell cell;
 
     public Player Owner
@@ -45,4 +48,12 @@ public abstract class HexBuilding : MonoBehaviour
         cell = c;
         ApplyBuff();
     }
+
+    public void GetAbility(Player player, ref List<Ability> list)
+    {
+        if (ability && ability.IsUsable(player, this))
+            list.Add( ability);
+    }
+
+
 }

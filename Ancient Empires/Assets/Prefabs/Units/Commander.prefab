@@ -126,5 +126,9 @@ MonoBehaviour:
   unitData: {fileID: 11400000, guid: eefa2d090801a7f428e38041f2e792a5, type: 2}
   unitID: 0
   health: 0
-  abilities: 00010204
+  endTurn: {fileID: 11400000, guid: a4eabbfd258f5874596f252a60bfb8fb, type: 2}
+  movement: {fileID: 11400000, guid: d9954034e74710d4e81266f92e2144e7, type: 2}
+  attack: {fileID: 11400000, guid: 63568b79e814ef64eaa716dbd3f77eed, type: 2}
+  abilities:
+  - {fileID: 11400000, guid: 846142454f781b045b951c16c64bbda5, type: 2}
   location: {fileID: 0}

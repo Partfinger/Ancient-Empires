@@ -4,8 +4,15 @@ using UnityEngine;
 
 public abstract class PlayerAbility : Ability
 {
-    public override bool IsUsable(IPlayerInterface @interface, ref HexCell cell)
+    public override bool Selected(Unit unit)
     {
-        return false;
+        throw new System.NotImplementedException();
     }
+
+    public override bool Selected(IPlayerInterface iplayer)
+    {
+        return true;
+    }
+
+    public abstract bool IsUsable(Player player, HexBuilding building);
 }

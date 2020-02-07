@@ -12,17 +12,30 @@ public class Unit : MonoBehaviour
     List<HexCell> pathToTravel;
     const float travelSpeed = 7f;
     const float rotationSpeed = 180f;
-    const float coldDownTime = 10f;
-    float coldDown = 0f;
 
     [SerializeField]
     protected int unitID, health;
 
-    protected int offenceMin, offenceMax, defence, experience, nextRankExperience, healthMax = 100, rank = 0, baseMobility;
-    public int Mobility;
+    protected int offenceMin, offenceMax, defence, experience, nextRankExperience, healthMax = 100, rank = 0, baseMobility, mobility;
+
+    public int Mobility
+    {
+        get
+        {
+            return mobility;
+        }
+        set
+        {
+            mobility = value;
+        }
+    }
+
+    public EndTurnAbility endTurn;
+    public Movement movement;
+    public AttackAbility attack;
 
     [SerializeField]
-    AbilityType[] abilities;
+    UnitAbility[] abilities;
 
     float orientation;
     [SerializeField]
@@ -37,9 +50,10 @@ public class Unit : MonoBehaviour
         health = healthMax;
         GetNextRankExperience();
         enabled = false;
+        Mobility = baseMobility;
     }
 
-    private void Update()
+    /*private void Update()
     {
         if (coldDown > coldDownTime)
         {
@@ -48,6 +62,36 @@ public class Unit : MonoBehaviour
             return;
         }
         coldDown += Time.deltaTime;
+    }*/
+
+    public void GetUsableAbilities(ref List<Ability> result)
+    {
+        result.Add(endTurn);
+        if (movement.IsUsable(this))
+            result.Add(movement);
+        if (attack.IsUsable(this))
+            result.Add(attack);
+        for (int i =0; i < abilities.Length; i++)
+        {
+            if (abilities[i].IsUsable(this))
+            {
+                result.Add(abilities[i]);
+            }
+        }
+    }
+
+    public void GetUsableAbilitiesAfterMove(ref List<Ability> result)
+    {
+        result.Add(endTurn);
+        if (attack.IsUsable(this))
+            result.Add(attack);
+        for (int i = 0; i < abilities.Length; i++)
+        {
+            if (abilities[i].IsUsable(this))
+            {
+                result.Add(abilities[i]);
+            }
+        }
     }
 
     public void TurnUpdate()
@@ -59,11 +103,6 @@ public class Unit : MonoBehaviour
     {
         location = l;
         transform.localPosition = l.Position;
-    }
-
-    public AbilityType GetOnlyMove()
-    {
-        return abilities[1];
     }
 
     public int ID
@@ -167,11 +206,6 @@ public class Unit : MonoBehaviour
         get { return offenceMin + offenceMax + defence; }
     }
 
-    public AbilityType[] GetAbilities()
-    {
-        return abilities;
-    }
-
     public void ValidateLocation()
     {
         transform.localPosition = location.Position;
@@ -269,22 +303,6 @@ public class Unit : MonoBehaviour
         ListPool<HexCell>.Add(pathToTravel);
         pathToTravel = null;
         gui.SelectUnitAfterMove();
-    }
-
-    public virtual void Attack(Unit victim)
-    {
-        int hit = (Offence - victim.Defence) * health / 100;
-
-        if (hit < 0)
-        {
-            hit = 0;
-        }
-        else if (hit > victim.health)
-        {
-            hit = victim.health;
-        }
-        victim.Hit(hit);
-        AddExp(hit * victim.QualitySum);
     }
 
     public void RecountStats()

@@ -19,8 +19,6 @@ public class UnitData : ScriptableObject
     protected Sprite icon;
     [SerializeField]
     protected int cost, baseOffenceMin, baseOffenceMax, baseDefence, baseMobility;
-    [SerializeField]
-    MovementType movementType;
 
     public string Name(int id)
     {
@@ -80,14 +78,6 @@ public class UnitData : ScriptableObject
         get
         {
             return baseMobility;
-        }
-    }
-
-    public MovementType MovementType
-    {
-        get
-        {
-            return movementType;
         }
     }
 }

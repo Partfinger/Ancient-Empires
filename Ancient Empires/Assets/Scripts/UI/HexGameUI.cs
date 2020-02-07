@@ -5,10 +5,13 @@ using UnityEngine.UI;
 
 public class HexGameUI : MonoBehaviour, IPlayerInterface
 {
+    [Header("Current update:")]
+    [SerializeField] UpdateStatus status = 0;
     public HexGameGrid grid;
     public HexCell currentCell;
     public Unit selectedUnit;
     List<Ability> usableAbility = new List<Ability>();
+    [SerializeField]
     Ability selectedAbility;
     public Image AbilitySelectPanel;
     public AbilityLogicUI AbilitySelectorPrefub;
@@ -19,9 +22,11 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     public AbilityManager abilityManager;
     public UnitManager manager;
     [SerializeField]
-    bool abilityCompleted = false;
+    bool abilityCompleted = true, abilityShow = false, unitAfterTravel = false;
     [SerializeField]
     Player currentPlayer;
+
+    public enum UpdateStatus : byte { def, aterMove};
 
     delegate void _Update();
 
@@ -48,18 +53,7 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         }
         set
         {
-            selectedAbility = value;
-            if (selectedAbility is UnitAbility)
-            {
-                selectedAbility.Selected(ref selectedUnit);
-                if (selectedAbility is EndTurnAbility)
-                {
-                    abilityCompleted = true;
-                    selectedAbility = null;
-                }
-            }
-            else
-                selectedAbility.Selected(this);
+            abilityCompleted = ((selectedAbility = value) is UnitAbility) ? selectedAbility.Selected(selectedUnit) : selectedAbility.Selected(this);
             HideAbilityPanel();
         }
     }
@@ -81,12 +75,12 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     {
         Ability.grid = grid;
         grid.gui = Unit.gui = AbilityLogicUI.UI = this;
-        currentUpdate = DefUpdate;
+        currentUpdate = DefaultUpdate;
     }
 
     void Update()
     {
-        currentUpdate();
+            currentUpdate();
     }
 
     public void AbilityCompleted()
@@ -96,26 +90,21 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         usableAbility.Clear();
     }
 
-    void DefUpdate()
+    void DefaultUpdate()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (selectedAbility is UnitMarket)
-                    MarketPanel.gameObject.SetActive(false);
-
-                DoSelection();
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                if (selectedAbility)
+                if (selectedAbility && !abilityCompleted)
                 {
-                    UpdateCurrentCell();
-                    selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
-                    if (abilityCompleted)
-                        abilityCompleted = false;
+                    UpdateCurrentCellForAbility();
+                    selectedAbility.TriggerAbility(selectedUnit, currentCell);
+                    abilityCompleted = true;
+                    selectedAbility = null;
                 }
+                else
+                    DoSelection();
             }
         }
     }
@@ -125,39 +114,91 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         if (Input.GetMouseButtonDown(1))
         {
             UpdateCurrentCell();
-            selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
+            selectedAbility.TriggerAbility(selectedUnit, currentCell);
             if (abilityCompleted)
             {
                 abilityCompleted = false;
-                currentUpdate = DefUpdate;
+                //currentUpdate = DefUpdate;
             }
         }
     }
 
     void SelectAbilityAfterMove()
     {
-        if (abilityCompleted)
+        if (selectedAbility)
         {
-            abilityCompleted = false;
-            currentUpdate = DefUpdate;
+            if (abilityCompleted)
+            {
+                selectedAbility = null;
+                currentUpdate = DefaultUpdate;
+                status = UpdateStatus.def;
+                return;
+            }
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            {
+                UpdateCurrentCellForAbility();
+                abilityCompleted = selectedAbility.TriggerAbility(selectedUnit, currentCell);
+                if (abilityCompleted)
+                {
+                    selectedAbility = null;
+                    currentUpdate = DefaultUpdate;
+                    status = UpdateStatus.def;
+                    return;
+                }
+                else
+                {
+                    selectedAbility = null;
+                    abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
+                    ShowAbilityPanel();
+                }
+            }
         }
-        else if (selectedAbility)
+        else if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
+            HideAbilityPanel();
+            selectedUnit.movement.Back(selectedUnit);
+            selectedAbility = selectedUnit.movement;
+            abilityCompleted = selectedAbility.Selected(selectedUnit);
+            currentUpdate = DefaultUpdate;
+            status = UpdateStatus.def;
+            return;
+        }
+        /*if (selectedAbility)
+        {
+            if (abilityCompleted)
+            {
+                selectedAbility = null;
+                currentUpdate = DefaultUpdate;
+                status = UpdateStatus.def;
+            }
             if (Input.GetMouseButtonDown(1))
             {
-                UpdateCurrentCell();
-                selectedAbility.TriggerAbility(ref selectedUnit, ref currentCell);
-                abilityCompleted = false;
-                currentUpdate = DefUpdate;
+                UpdateCurrentCellForAbility();
+                selectedAbility.TriggerAbility(selectedUnit, currentCell);
+                abilityCompleted = true;
+                selectedAbility = null;
+                currentUpdate = DefaultUpdate;
+                status = UpdateStatus.def;
             }
             else if (Input.GetMouseButtonDown(0))
             {
                 selectedAbility = null;
-                usableAbility = abilityManager.GetAbilitiesAfterTravel(this, ref selectedUnit);
+                abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
                 ShowAbilityPanel();
             }
         }
-
+        else if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(0))
+            {
+                HideAbilityPanel();
+                selectedUnit.movement.Back(selectedUnit);
+                selectedAbility = selectedUnit.movement;
+                abilityCompleted = selectedAbility.Selected(selectedUnit);
+                currentUpdate = DefaultUpdate;
+                status = UpdateStatus.def;
+            }
+        }*/
     }
 
     public void WaitForEndOfTravel()
@@ -169,10 +210,10 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     {
         enabled = true;
         selectedAbility = null;
-        usableAbility = abilityManager.GetAbilitiesAfterTravel(this, ref selectedUnit);
+        abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
         ShowAbilityPanel();
-        abilityCompleted = false;
         currentUpdate = SelectAbilityAfterMove;
+        status = UpdateStatus.aterMove;
     }
 
     void ShowAbilityPanel()
@@ -202,18 +243,32 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         AbilitySelectPanel.gameObject.SetActive(false);
         Destroy(abilityContent);
         usableAbility.Clear();
+        abilityShow = false;
     }
 
     void DoSelection()
     {
-        HideAbilityPanel();
+        if (abilityShow)
+        {
+            HideAbilityPanel();
+        }
         UpdateCurrentCell();
         if (currentCell)
         {
             selectedUnit = currentCell.Unit;
-            usableAbility = abilityManager.GetAbilitiesForCell(this, ref currentCell);
-            if (usableAbility.Count > 0)
-                ShowAbilityPanel();
+            if (selectedUnit && selectedUnit.Owner != currentPlayer)
+            {
+                selectedUnit = null;
+            }
+            if (abilityCompleted)
+            {
+                abilityManager.GetAbilitiesForCell(currentCell, selectedUnit, this, ref usableAbility);
+                if (usableAbility.Count > 0)
+                {
+                    ShowAbilityPanel();
+                    abilityShow = true;
+                }
+            }
         }
     }
 
@@ -224,9 +279,24 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         if (cell != currentCell)
         {
             currentCell = cell;
+            if (!abilityCompleted)
+            {
+                selectedAbility.Canceled();
+                abilityCompleted = true;
+            }
             return true;
         }
         return false;
+    }
+
+    void UpdateCurrentCellForAbility()
+    {
+        HexCell cell =
+            grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        if (cell != currentCell)
+        {
+            currentCell = cell;
+        }
     }
 
     public void SetEditMode(bool toggle)

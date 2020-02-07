@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Ranged Attack Ability", menuName = "Ranged Attack Ability", order = 51)]
+[CreateAssetMenu(fileName = "New Ranged Attack Ability", menuName = "Ranged Attack Ability", order = 62)]
 public class RangeAttack : UnitAbility
 {
-    public override bool IsUsable(ref Unit unit)
+    public override bool IsUsable(Unit unit)
     {
         RangedUnitData data = unit.unitData as RangedUnitData;
         if (data)
@@ -48,20 +48,22 @@ public class RangeAttack : UnitAbility
         return false;
     }
 
-    public override void TriggerAbility(ref Unit unit, ref HexCell cell)
+    public override bool TriggerAbility(Unit unit, HexCell cell)
     {
+        /*
         Unit victim = cell.Unit;
-        unit.Attack(victim);
+        //unit.Attack(victim);
         unit.CheckNextRank();
         if (!victim.IsDead)
             victim.CheckNextRank();
         else
             victim.Die();
-        unit.enabled = true;
+        unit.enabled = true;*/
+        return false;
     }
-
+    /*
     public override string ToString()
     {
         return "This unit can attack enemy on distance";
-    }
+    }*/
 }

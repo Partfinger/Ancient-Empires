@@ -18,34 +18,6 @@ public class HexGameGrid : HexGrid
         }
     }
 
-    public void FindAnyPath(HexCell fromCell, HexCell toCell, ref PathCostManager.Calculate calculate, int speed)
-    {
-        ClearPath();
-        currentPathFrom = fromCell;
-        currentPathTo = toCell;
-        currentPathExists = SearchAny(ref fromCell, ref toCell, ref calculate, ref speed);
-        if (currentPathExists)
-        {
-            ShowPath(speed);
-        }
-    }
-
-    public List<HexCell> GetPath()
-    {
-        if (!currentPathExists)
-        {
-            return null;
-        }
-        List<HexCell> path = ListPool<HexCell>.Get();
-        for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
-        {
-            path.Add(c);
-        }
-        path.Add(currentPathFrom);
-        path.Reverse();
-        return path;
-    }
-
     void ShowPath(int speed)
     {
         if (currentPathExists)
