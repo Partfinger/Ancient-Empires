@@ -22,11 +22,11 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     public AbilityManager abilityManager;
     public UnitManager manager;
     [SerializeField]
-    bool abilityCompleted = true, abilityShow = false, unitAfterTravel = false;
+    bool abilityCompleted = true, abilityShow = false, NewUnit = false;
     [SerializeField]
     Player currentPlayer;
 
-    public enum UpdateStatus : byte { def, aterMove};
+    public enum UpdateStatus : byte { def, aterMove, MoveNewUnit, afterMarketAfteMove };
 
     delegate void _Update();
 
@@ -74,20 +74,28 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
     private void Awake()
     {
         Ability.grid = grid;
-        grid.gui = Unit.gui = AbilityLogicUI.UI = this;
+        grid.gui = AbilityLogicUI.UI = this;
         currentUpdate = DefaultUpdate;
     }
 
     void Update()
     {
-            currentUpdate();
+        currentUpdate();
     }
 
-    public void AbilityCompleted()
+    void TriggerAbility()
     {
-        abilityCompleted = true;
+        UpdateCurrentCellForAbility();
+        abilityCompleted = selectedAbility.TriggerAbility(selectedUnit, currentCell); ;
         selectedAbility = null;
-        usableAbility.Clear();
+    }
+
+    void BackToMove()
+    {
+        HideAbilityPanel();
+        selectedUnit.movement.Back(selectedUnit, NewUnit);
+        selectedAbility = selectedUnit.movement;
+        abilityCompleted = selectedAbility.Selected(selectedUnit);
     }
 
     void DefaultUpdate()
@@ -98,10 +106,8 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
             {
                 if (selectedAbility && !abilityCompleted)
                 {
-                    UpdateCurrentCellForAbility();
-                    selectedAbility.TriggerAbility(selectedUnit, currentCell);
+                    TriggerAbility();
                     abilityCompleted = true;
-                    selectedAbility = null;
                 }
                 else
                     DoSelection();
@@ -109,18 +115,83 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         }
     }
 
-    void SelectUnitMove()
+    void MoveNewUnit()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            UpdateCurrentCell();
-            selectedAbility.TriggerAbility(selectedUnit, currentCell);
-            if (abilityCompleted)
+            UpdateCurrentCellForAbility();
+            if (currentCell != selectedUnit.Location)
             {
-                abilityCompleted = false;
-                //currentUpdate = DefUpdate;
+                abilityCompleted = (selectedAbility as Movement).Trigger( ref selectedUnit, ref currentCell);
+                if (abilityCompleted)
+                {
+                    selectedAbility = null;
+                    currentUpdate = SelectAbilityAfterNewMove;
+                    status = UpdateStatus.afterMarketAfteMove;
+                }
             }
         }
+    }
+
+    void SelectAbilityAfterNewMove()
+    {
+        if (selectedAbility)
+        {
+            if (abilityCompleted)
+            {
+                NewUnit = false;
+                selectedAbility = null;
+                currentUpdate = DefaultUpdate;
+                status = UpdateStatus.def;
+            }
+            else if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            {
+                TriggerAbility();
+                if (abilityCompleted)
+                {
+                    NewUnit = false;
+                    currentUpdate = DefaultUpdate;
+                    status = UpdateStatus.def;
+                }
+                else
+                {
+                    abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
+                    ShowAbilityPanel();
+                }
+            }
+        }
+        else if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        {
+            BackToMove();
+            currentUpdate = MoveNewUnit;
+            status = UpdateStatus.MoveNewUnit;
+        }
+        /*
+        if ()
+        {
+            if (selectedAbility)
+            {
+                TriggerAbility();
+                if (abilityCompleted)
+                {
+                    NewUnit = false;
+                    currentUpdate = DefaultUpdate;
+                    status = UpdateStatus.def;
+                }
+                else
+                {
+                    abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
+                    ShowAbilityPanel();
+                }
+            }
+            else
+            {
+                BackToMove();
+                status = UpdateStatus.MoveNewUnit;
+                currentUpdate = MoveNewUnit;
+            }
+        }
+        */
     }
 
     void SelectAbilityAfterMove()
@@ -136,18 +207,14 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
             }
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
             {
-                UpdateCurrentCellForAbility();
-                abilityCompleted = selectedAbility.TriggerAbility(selectedUnit, currentCell);
+                TriggerAbility();
                 if (abilityCompleted)
                 {
-                    selectedAbility = null;
                     currentUpdate = DefaultUpdate;
                     status = UpdateStatus.def;
-                    return;
                 }
                 else
                 {
-                    selectedAbility = null;
                     abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
                     ShowAbilityPanel();
                 }
@@ -155,95 +222,10 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         }
         else if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            HideAbilityPanel();
-            selectedUnit.movement.Back(selectedUnit);
-            selectedAbility = selectedUnit.movement;
-            abilityCompleted = selectedAbility.Selected(selectedUnit);
+            BackToMove();
             currentUpdate = DefaultUpdate;
             status = UpdateStatus.def;
-            return;
         }
-        /*if (selectedAbility)
-        {
-            if (abilityCompleted)
-            {
-                selectedAbility = null;
-                currentUpdate = DefaultUpdate;
-                status = UpdateStatus.def;
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                UpdateCurrentCellForAbility();
-                selectedAbility.TriggerAbility(selectedUnit, currentCell);
-                abilityCompleted = true;
-                selectedAbility = null;
-                currentUpdate = DefaultUpdate;
-                status = UpdateStatus.def;
-            }
-            else if (Input.GetMouseButtonDown(0))
-            {
-                selectedAbility = null;
-                abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
-                ShowAbilityPanel();
-            }
-        }
-        else if (!EventSystem.current.IsPointerOverGameObject())
-        {
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(0))
-            {
-                HideAbilityPanel();
-                selectedUnit.movement.Back(selectedUnit);
-                selectedAbility = selectedUnit.movement;
-                abilityCompleted = selectedAbility.Selected(selectedUnit);
-                currentUpdate = DefaultUpdate;
-                status = UpdateStatus.def;
-            }
-        }*/
-    }
-
-    public void WaitForEndOfTravel()
-    {
-        enabled = false;
-    }
-
-    public void SelectUnitAfterMove()
-    {
-        enabled = true;
-        selectedAbility = null;
-        abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
-        ShowAbilityPanel();
-        currentUpdate = SelectAbilityAfterMove;
-        status = UpdateStatus.aterMove;
-    }
-
-    void ShowAbilityPanel()
-    {
-        int count;
-        if ((count = usableAbility.Count) > 0)
-        {
-            AbilitySelectPanel.gameObject.SetActive(true);
-            AbilitySelectPanel.rectTransform.sizeDelta = new Vector2(65 * count + 15, 65);
-            abilityContent = Instantiate(abilityContentPrefub, AbilitySelectPanel.transform);
-            for (int i = 0; i < count; i++)
-            {
-                AbilityLogicUI abilityLogic = Instantiate(AbilitySelectorPrefub, abilityContent.transform);
-                abilityLogic.transform.localPosition = new Vector3(-(15 + i * 65), 32.5f);
-                abilityLogic.Ability = usableAbility[i];
-            }
-        }
-    }
-
-    public void AddBoughtUnit(int id)
-    {
-        manager.AddBoughtUnit(currentPlayer, id, currentCell, 0f);
-    }
-
-    void HideAbilityPanel()
-    {
-        AbilitySelectPanel.gameObject.SetActive(false);
-        Destroy(abilityContent);
-        usableAbility.Clear();
-        abilityShow = false;
     }
 
     void DoSelection()
@@ -272,6 +254,66 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         }
     }
 
+    public void Wait()
+    {
+        enabled = false;
+    }
+
+    public void SelectUnitAfterMove()
+    {
+        enabled = true;
+        selectedAbility = null;
+        abilityManager.GetAbilitiesAfterTravel(selectedUnit, ref usableAbility);
+        ShowAbilityPanel();
+        if (!NewUnit)
+        {
+            currentUpdate = SelectAbilityAfterMove;
+            status = UpdateStatus.aterMove;
+        }
+    }
+
+    void ShowAbilityPanel()
+    {
+        int count;
+        if ((count = usableAbility.Count) > 0)
+        {
+            AbilitySelectPanel.gameObject.SetActive(true);
+            AbilitySelectPanel.rectTransform.sizeDelta = new Vector2(65 * count + 15, 65);
+            abilityContent = Instantiate(abilityContentPrefub, AbilitySelectPanel.transform);
+            for (int i = 0; i < count; i++)
+            {
+                AbilityLogicUI abilityLogic = Instantiate(AbilitySelectorPrefub, abilityContent.transform);
+                abilityLogic.transform.localPosition = new Vector3(-(15 + i * 65), 32.5f);
+                abilityLogic.Ability = usableAbility[i];
+            }
+        }
+    }
+
+    public void AddBoughtUnit(int id)
+    {
+        NewUnit = manager.AddBoughtUnit(currentPlayer, id, currentCell, 0f);
+        selectedAbility = selectedUnit.movement;
+        if (NewUnit)
+        {
+            currentUpdate = MoveNewUnit;
+            status = UpdateStatus.MoveNewUnit;
+        }
+        else
+        {
+            currentUpdate = DefaultUpdate;
+            status = UpdateStatus.def;
+        }
+        abilityCompleted = selectedAbility.Selected(selectedUnit);
+    }
+
+    void HideAbilityPanel()
+    {
+        AbilitySelectPanel.gameObject.SetActive(false);
+        Destroy(abilityContent);
+        usableAbility.Clear();
+        abilityShow = false;
+    }
+
     bool UpdateCurrentCell()
     {
         HexCell cell =
@@ -282,6 +324,7 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
             if (!abilityCompleted)
             {
                 selectedAbility.Canceled();
+                usableAbility.Clear();
                 abilityCompleted = true;
             }
             return true;
@@ -304,13 +347,6 @@ public class HexGameUI : MonoBehaviour, IPlayerInterface
         enabled = !toggle;
         grid.ShowUI(!toggle);
         grid.ClearPath();
-    }
-
-    public void MovementInt(ref Unit unit)
-    {
-        selectedUnit = unit;
-        selectedAbility = abilityManager.GetMovement();
-        currentUpdate = SelectUnitMove;
     }
 
     public void OpenUnitMarket()

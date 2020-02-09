@@ -25,4 +25,14 @@ public class AII : IPlayerInterface
     {
         throw new System.NotImplementedException();
     }
+
+    public void SelectUnitAfterMove()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Wait()
+    {
+        throw new System.NotImplementedException();
+    }
 }

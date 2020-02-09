@@ -7,7 +7,6 @@ public class HexGameGrid : HexGrid
     public HexGameUI gui;
     HexCell currentPathFrom, currentPathTo;
     bool currentPathExists;
-    HexCellPriorityQueue searchFrontier;
     int searchFrontierPhase;
 
     public bool HasPath
@@ -51,65 +50,5 @@ public class HexGameGrid : HexGrid
             currentPathExists = false;
         }
         currentPathFrom = currentPathTo = null;
-    }
-
-    bool SearchAny(ref HexCell fromCell, ref HexCell toCell, ref PathCostManager.Calculate calculate, ref int speed)
-    {
-        searchFrontierPhase += 2;
-        if (searchFrontier == null)
-        {
-            searchFrontier = new HexCellPriorityQueue();
-        }
-        else
-        {
-            searchFrontier.Clear();
-        }
-
-        fromCell.SearchPhase = searchFrontierPhase;
-        fromCell.Distance = 0;
-        searchFrontier.Enqueue(fromCell);
-        while (searchFrontier.Count > 0)
-        {
-            HexCell current = searchFrontier.Dequeue();
-            current.SearchPhase += 1;
-
-            if (current == toCell)
-            {
-                return true;
-            }
-
-            int currentTurn = current.Distance - 1 / speed;
-
-            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-            {
-                int moveCost = calculate(ref current, ref d, ref searchFrontierPhase, out HexCell neighbor);
-                if (moveCost == -1) continue;
-
-                int distance = current.Distance + moveCost;
-                int turn = distance / speed + 1;
-                if (turn > currentTurn)
-                {
-                    distance = turn * speed + moveCost;
-                }
-
-                if (neighbor.SearchPhase < searchFrontierPhase)
-                {
-                    neighbor.SearchPhase = searchFrontierPhase;
-                    neighbor.Distance = distance;
-                    neighbor.PathFrom = current;
-                    neighbor.SearchHeuristic =
-                        neighbor.coordinates.DistanceTo(toCell.coordinates);
-                    searchFrontier.Enqueue(neighbor);
-                }
-                else if (distance < neighbor.Distance)
-                {
-                    int oldPriority = neighbor.SearchPriority;
-                    neighbor.Distance = distance;
-                    neighbor.PathFrom = current;
-                    searchFrontier.Change(neighbor, oldPriority);
-                }
-            }
-        }
-        return false;
     }
 }

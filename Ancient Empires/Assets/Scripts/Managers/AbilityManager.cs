@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class AbilityManager : Manager
 {
-    [SerializeField]
-    Ability[] array;
-
     public List<Ability> GetAbilitiesForCell(HexCell cell, bool u, IPlayerInterface @interface, ref List<Ability> abilities)
     {
         if (u)
@@ -20,18 +17,5 @@ public class AbilityManager : Manager
     {
         if (unit)
             unit.GetUsableAbilitiesAfterMove(ref abilities);
-    }
-
-    public Ability GetMovement()
-    {
-        return array[1];
-    }
-
-    public int Length
-    {
-        get
-        {
-            return array.Length;
-        }
     }
 }

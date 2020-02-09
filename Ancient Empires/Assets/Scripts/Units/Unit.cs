@@ -6,7 +6,6 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     public Player Owner;
-    public static HexGameUI gui;
     public UnitData unitData;
     public Buff buff = new Buff();
     List<HexCell> pathToTravel;
@@ -231,7 +230,7 @@ public class Unit : MonoBehaviour
         else
             Location = path[path.Count - 1];
         pathToTravel = path;
-        gui.WaitForEndOfTravel();
+        Owner.ui.Wait();
         StopAllCoroutines();
         StartCoroutine(TravelPath());
     }
@@ -299,10 +298,9 @@ public class Unit : MonoBehaviour
         }
         transform.localPosition = location.Position;
         orientation = transform.localRotation.eulerAngles.y;
-
         ListPool<HexCell>.Add(pathToTravel);
         pathToTravel = null;
-        gui.SelectUnitAfterMove();
+        Owner.ui.SelectUnitAfterMove();
     }
 
     public void RecountStats()

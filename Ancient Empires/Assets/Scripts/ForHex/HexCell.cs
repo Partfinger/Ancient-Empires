@@ -77,18 +77,6 @@ public class HexCell : MonoBehaviour {
     }
 
     public HexCell PathFrom { get; set; }
-    public int SearchHeuristic { get; set; }
-    public int SearchPhase { get; set; }
-    public int SearchPriority
-    {
-        get
-        {
-            return distance + SearchHeuristic;
-        }
-    }
-
-    public HexCell NextWithSamePriority { get; set; }
-
     public int Distance
     {
         get

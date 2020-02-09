@@ -10,9 +10,11 @@ public interface IPlayerInterface
 
     Ability SelectedAbility { get; set; }
 
-    void MovementInt(ref Unit unit);
+    void SelectUnitAfterMove();
 
     void OpenUnitMarket();
 
     void HideUnitMarket();
+
+    void Wait();
 }

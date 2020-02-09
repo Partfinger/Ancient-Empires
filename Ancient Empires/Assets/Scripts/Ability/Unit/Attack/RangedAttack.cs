@@ -5,47 +5,29 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Ranged Attack Ability", menuName = "Ranged Attack Ability", order = 62)]
 public class RangeAttack : UnitAbility
 {
+
+    [SerializeField] byte minRange, maxRange;
+
     public override bool IsUsable(Unit unit)
     {
-        RangedUnitData data = unit.unitData as RangedUnitData;
-        if (data)
+        HexCell location = unit.Location;
+        int centerX = location.coordinates.X;
+        int centerZ = location.coordinates.Z;
+
+        for (int r = 0, z = centerZ - brushSize; z <= centerZ; z++, r++)
         {
-            int min = data.AttackDistanceMin - 1, max = data.AttackDistanceMax;
-
-            HexCoordinates center = unit.Location.coordinates;
-            HexCoordinates current;
-            HexCell cell;
-
-            int centerX = center.X;
-            int centerZ = center.Z;
-
-            for (int r = 0, z = centerZ - max; z <= centerZ; z++, r++)
+            for (int x = centerX - r; x <= centerX + brushSize; x++)
             {
-                for (int x = centerX - r; x <= centerX + max; x++)
-                {
-                    current = new HexCoordinates(x, z);
-                    cell = grid.GetCell(current);
-                    if (cell && center.DistanceTo(current) > min && cell.Unit)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            for (int r = 0, z = centerZ + max; z > centerZ; z--, r++)
-            {
-                for (int x = centerX - max; x <= centerX + r; x++)
-                {
-                    current = new HexCoordinates(x, z);
-                    cell = grid.GetCell(current);
-                    if (cell && center.DistanceTo(current) > min && cell.Unit)
-                    {
-                        return true;
-                    }
-                }
+                EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
             }
         }
-        return false;
+        for (int r = 0, z = centerZ + brushSize; z > centerZ; z--, r++)
+        {
+            for (int x = centerX - brushSize; x <= centerX + r; x++)
+            {
+                EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+            }
+        }
     }
 
     public override bool TriggerAbility(Unit unit, HexCell cell)

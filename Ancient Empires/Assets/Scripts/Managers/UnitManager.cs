@@ -29,21 +29,23 @@ public class UnitManager : Manager
         unit.RecountStats();
     }
 
-    public void AddBoughtUnit(Player player, int id, HexCell castle, float orientation)
+    public bool AddBoughtUnit(Player player, int id, HexCell cell, float orientation)
     {
-        Unit unit = Object.Instantiate(unitsArray.GetUnit(id), grid.transform, false);
+        Unit unit = Instantiate(unitsArray.GetUnit(id), grid.transform, false);
         unit.Owner = player;
         player.AddUnit(ref unit);
         unit.Orientation = orientation;
-        if (castle.Unit)
+        if (cell.Unit)
         {
-            unit.SetLocationQuiet(castle);
-            player.ui.MovementInt(ref unit);
+            unit.SetLocationQuiet(cell);
+            player.ui.SelectedUnit = unit;
+            return true;
         }
         else
         {
-            unit.Location = castle;
+            unit.Location = cell;
             player.ui.SelectedUnit = unit;
+            return false;
         }
     }
 

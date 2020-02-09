@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -247,9 +247,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4506d9853a41f14a890bc21c00a762c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status: 0
   grid: {fileID: 6836532613123117389}
   currentCell: {fileID: 0}
   selectedUnit: {fileID: 0}
+  selectedAbility: {fileID: 0}
   AbilitySelectPanel: {fileID: 91280469}
   AbilitySelectorPrefub: {fileID: -3892340359404703837, guid: 33b332e74cb9e0b4cba5f8cfd13aedbe,
     type: 3}
@@ -263,6 +265,7 @@ MonoBehaviour:
   manager: {fileID: 1619430694}
   abilityCompleted: 1
   abilityShow: 0
+  unitAfterTravel: 0
   currentPlayer: {fileID: 0}
 --- !u!114 &118613934
 MonoBehaviour:

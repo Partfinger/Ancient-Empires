@@ -5,8 +5,8 @@ using UnityEngine;
 
 public abstract class Movement : UnitAbility
 {
-    protected List<int> Space = new List<int>();
-    protected List<HexCell> Frontier = new List<HexCell>();
+    protected List<int> Space = ListPool<int>.Get();
+    protected List<HexCell> Frontier = ListPool<HexCell>.Get();
     public static byte EmptyCost = 10;
     protected static HexCell fromCell;
 
@@ -21,9 +21,12 @@ public abstract class Movement : UnitAbility
         fromCell = null;
     }
 
-    public void Back(Unit unit)
+    public void Back(Unit unit, bool isNew)
     {
-        unit.Location = fromCell;
+        if (isNew)
+            unit.SetLocationQuiet(fromCell);
+        else
+            unit.Location = fromCell;
     }
 
     protected void Finish()
@@ -34,9 +37,21 @@ public abstract class Movement : UnitAbility
             current = grid.GetCell(Space[i]);
             current.Distance = -1;
             current.DisableHighlight();
-            current.WasChecked = false;        }
+            current.SetLabel("");
+            current.WasChecked = false;        
+        }
         Space.Clear();
     }
+
+    public override bool TriggerAbility(Unit unit, HexCell cell)
+    {
+        bool res = Trigger(ref unit, ref cell);
+        if (!res)
+            Canceled();
+        return res;
+    }
+
+    public abstract bool Trigger(ref Unit unit, ref HexCell destination);
 
     protected List<HexCell> GetPath(HexCell from, HexCell to)
     {
